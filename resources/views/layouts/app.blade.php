@@ -1,146 +1,122 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- CSRF Token -->
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    <title>{{ config('app.name', 'Laravel') }}</title>
-
+        <title>Laravel</title>
+        <!-- Styles -->
+     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
+     <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
     <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.3.5/dist/alpine.min.js" defer></script>
     <script src="{{ asset('js/app.js') }}" defer></script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
-    <link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet"> <!--Totally optional :) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js" integrity="sha256-xKeoJ50pzbUGkpQxDYHD7o7hxe0LaOGeguUidbq6vis=" crossorigin="anonymous"></script>
-    <!-- Styles -->
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-</head>
-<body class="bg-gray-900 font-sans leading-normal tracking-normal mt-12">
+        <!-- Fonts -->
+        <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
+        <style>
+            .duration-300 {
+                transition-duration: 300ms;
+            }
+            .ease-in {
+                transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
+            }
+            .ease-out {
+                transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+            }
+            .scale-90 {
+                transform: scale(.9);
+            }
+            .scale-100 {
+                transform: scale(1);
+            }
+        </style>
 
-<!--Nav-->
-<nav class="bg-gray-900 pt-2 md:pt-1 pb-1 px-1 mt-0 h-auto fixed w-full z-20 top-0">
-
-    <div class="flex flex-wrap items-center">
-        <div class="flex flex-shrink md:w-1/3 justify-center md:justify-start text-white">
-            <a href="#">
-                <span class="text-xl pl-2"><i class="em em-grinning"></i></span>
-            </a>
-        </div>
-
-        <div class="flex flex-1 md:w-1/3 justify-center md:justify-start text-white px-2">
-            <span class="relative w-full">
-                <input type="search" placeholder="Search" class="w-full bg-gray-800 text-sm text-white transition border border-transparent focus:outline-none focus:border-gray-700 rounded py-1 px-2 pl-10 appearance-none leading-normal">
-                <div class="absolute search-icon" style="top: .5rem; left: .8rem;">
-                    <svg class="fill-current pointer-events-none text-white w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                        <path d="M12.9 14.32a8 8 0 1 1 1.41-1.41l5.35 5.33-1.42 1.42-5.33-5.34zM8 14A6 6 0 1 0 8 2a6 6 0 0 0 0 12z"></path>
-                    </svg>
+    </head>
+    <body class="relative flex h-screen w-screen overflow-y-hidden" x-data="{ isOpen: false }" @keydown.escape="isOpen = false">
+        <header class="absolute flex flex-col flex-no-wrap items-center text-center inset-y-0 left-0 h-screen w-auto bg-teal-900" :class="{ 'block shadow-3xl': isOpen, 'xs:hidden': !isOpen }"
+        @click.away="isOpen = false"
+        x-show="true"
+        x-transition:enter="ease-out duration-200"
+        x-transition:enter-start="opacity-0 transform"
+        x-transition:enter-end="opacity-100 transform"
+        x-transition:leave="ease-in duration-200"
+        x-transition:leave-start="opacity-100 transform"
+        x-transition:leave-end="opacity-0 transform">
+               <div class="p-5 pt-16 pb-10">
+                   <span class="px-4 py-3 bg-white rounded-full"><i class="fas fa-user-tie 3x"></i></span>
                 </div>
-            </span>
-        </div>
-
-        <div class="flex w-full pt-2 content-center justify-between md:w-1/3 md:justify-end">
-            <ul class="list-reset flex justify-between flex-1 md:flex-none items-center">
-                <li class="flex-1 md:flex-none md:mr-3">
-                    <a class="inline-block py-2 px-4 text-white no-underline" href="#">Active</a>
+                <ul class="flex flex-col justify-evenly">
+                <a href="#" title="Dashboard">
+                    <li class="p-5 px-8 bg-teal-500">
+                        <span class="text-2xl text-white"><i class="fas fa-inbox"></i></span>
+                    </li>
+                </a>
+                <a href="#" title="Business">
+                    <li class="p-5 px-8">
+                        <span class="text-2xl text-gray-300"><i class="fa fa-business-time"></i></span>
+                    </li>
+                </a>
+                <a href="#" title="Customer Management">
+                    <li class="p-5 px-8">
+                        <span class="text-2xl text-gray-300"><i class="fas fa-users-cog"></i></span>
+                    </li>
+                </a>
+                <a href="#" title="Subscriptions">
+                    <li class="p-5 px-8">
+                        <span class="text-2xl text-gray-300"><i class="fas fa-suitcase"></i></span>
+                    </li>
+                </a>
+                <a href="#" title="Jobs">
+                    <li class="p-5 px-8">
+                        <span class="text-2xl text-gray-300"><i class="fas fa-toolbox"></i></span>
+                    </li>
+                </a>
+                <a href="#" title="Settings">
+                    <li class="p-5 px-8">
+                        <span class="text-2xl text-gray-300"><i class="fas fa-cog"></i></span>
+                    </li>
+                </a>
+            </ul>
+        </header>
+        <nav class="flex-1 flex flex-col px-10 pt-5 xs:w-screen absolute inset-y-0 right-0 h-12">
+            <ul class="flex flex-row flex-shrink justify-between">
+                <li>
+                   <!--Toggle button (hidden on large screens)-->
+                    <button @click="isOpen = !isOpen" type="button" class="block sm:hidden md:hidden lg:hidden xl:hidden px-2 text-gray-800 hover:text-teal-900 focus:outline-none focus:text-teal-900"
+                        :class="{ 'transition transform-180': isOpen }"
+                    >
+                    <svg class="h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path x-show="isOpen" class="text-gray-300" fill-rule="evenodd" clip-rule="evenodd" d="M18.278 16.864a1 1 0 0 1-1.414 1.414l-4.829-4.828-4.828 4.828a1 1 0 0 1-1.414-1.414l4.828-4.829-4.828-4.828a1 1 0 0 1 1.414-1.414l4.829 4.828 4.828-4.828a1 1 0 1 1 1.414 1.414l-4.828 4.829 4.828 4.828z"/>
+                        <path x-show="!isOpen" fill-rule="evenodd" d="M4 5h16a1 1 0 0 1 0 2H4a1 1 0 1 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2z"/>
+                    </svg>
+                    </button>
                 </li>
-                <li class="flex-1 md:flex-none md:mr-3">
-                    <a class="inline-block text-gray-600 no-underline hover:text-gray-200 hover:text-underline py-2 px-4" href="#">link</a>
+                <li>
+                    <span class="xs:visible hidden p-1 px-2 bg-gray-400 rounded-md"><i class="fas fa-bell"></i></span>
                 </li>
-                <li class="flex-1 md:flex-none md:mr-3">
-                    <div class="relative inline-block">
-                        <button onclick="toggleDD('myDropdown')" class="drop-button text-white focus:outline-none"> <span class="pr-2"><i class="em em-robot_face"></i></span> Hi, User <svg class="h-3 fill-current inline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg></button>
-                        <div id="myDropdown" class="dropdownlist absolute bg-gray-900 text-white right-0 mt-3 p-3 overflow-auto z-30 invisible">
-                            <input type="text" class="drop-search p-2 text-gray-600" placeholder="Search.." id="myInput" onkeyup="filterDD('myDropdown','myInput')">
-                            <a href="#" class="p-2 hover:bg-gray-800 text-white text-sm no-underline hover:no-underline block"><i class="fa fa-user fa-fw"></i> Profile</a>
-                            <a href="#" class="p-2 hover:bg-gray-800 text-white text-sm no-underline hover:no-underline block"><i class="fa fa-cog fa-fw"></i> Settings</a>
-                            <div class="border border-gray-800"></div>
-                            <a href="#" class="p-2 hover:bg-gray-800 text-white text-sm no-underline hover:no-underline block"><i class="fas fa-sign-out-alt fa-fw"></i> Log Out</a>
-                        </div>
-                    </div>
+                <li class="px-4">
+                    <span class="p-1 px-2 bg-gray-400 rounded-md"><i class="fas fa-bell"></i></span>
+                </li>
+                <li class="px-4">
+                    <span class="p-1 px-2 rounded-md bg-gray-400"><i class="fas fa-calendar-alt"></i></span>
+                </li>
+                <li class="px-4">
+                    <span class="p-2 text-gray-500"><i class="fas fa-th"></i></span>
+                </li>
+                <li class="px-4">
+                 <img class="w-8 h-8 rounded-full" src="/files/images?filename={{Auth::user()->avatar}}" alt="">
                 </li>
             </ul>
-        </div>
-    </div>
-
-</nav>
-
-
-
-<div class="flex flex-col md:flex-row">
-
-    <div class="bg-gray-900 shadow-lg h-16 fixed bottom-0 mt-12 md:relative md:h-screen z-10 w-full md:w-48">
-
-        <div class="md:mt-12 md:w-48 md:fixed md:left-0 md:top-0 content-center md:content-start text-left justify-between">
-            <ul class="list-reset flex flex-row md:flex-col py-0 md:py-3 px-1 md:px-2 text-center md:text-left">
-                <li class="mr-3 flex-1">
-                    <a href="#" class="block py-1 md:py-3 pl-1 align-middle text-white no-underline hover:text-white border-b-2 border-gray-800 hover:border-pink-500">
-                        <i class="fas fa-tasks pr-0 md:pr-3"></i><span class="pb-1 md:pb-0 text-xs md:text-base text-gray-600 md:text-gray-400 block md:inline-block">Tasks</span>
-                    </a>
-                </li>
-                <li class="mr-3 flex-1">
-                    <a href="#" class="block py-1 md:py-3 pl-1 align-middle text-white no-underline hover:text-white border-b-2 border-gray-800 hover:border-purple-500">
-                        <i class="fa fa-envelope pr-0 md:pr-3"></i><span class="pb-1 md:pb-0 text-xs md:text-base text-gray-600 md:text-gray-400 block md:inline-block">Messages</span>
-                    </a>
-                </li>
-                <li class="mr-3 flex-1">
-                    <a href="#" class="block py-1 md:py-3 pl-1 align-middle text-white no-underline hover:text-white border-b-2 border-blue-600">
-                        <i class="fas fa-chart-area pr-0 md:pr-3 text-blue-600"></i><span class="pb-1 md:pb-0 text-xs md:text-base text-white md:text-white block md:inline-block">Analytics</span>
-                    </a>
-                </li>
-                <li class="mr-3 flex-1">
-                    <a href="#" class="block py-1 md:py-3 pl-0 md:pl-1 align-middle text-white no-underline hover:text-white border-b-2 border-gray-800 hover:border-red-500">
-                        <i class="fa fa-wallet pr-0 md:pr-3"></i><span class="pb-1 md:pb-0 text-xs md:text-base text-gray-600 md:text-gray-400 block md:inline-block">Payments</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-
-
-    </div>
-
-    <div class="main-content flex-1 bg-gray-100 mt-12 md:mt-2 pb-24 md:pb-5">
+        </nav>
+        <div class="flex-row w-full inset-y-auto xs:pl-0 pl-20 pt-16 left-0" id="main">
             @yield('content')
-    </div>
-</div>
+        </div>
 
-    <script>
-        /*Toggle dropdown list*/
-        function toggleDD(myDropMenu) {
-            document.getElementById(myDropMenu).classList.toggle("invisible");
-        }
-        /*Filter dropdown options*/
-        function filterDD(myDropMenu, myDropMenuSearch) {
-            var input, filter, ul, li, a, i;
-            input = document.getElementById(myDropMenuSearch);
-            filter = input.value.toUpperCase();
-            div = document.getElementById(myDropMenu);
-            a = div.getElementsByTagName("a");
-            for (i = 0; i < a.length; i++) {
-                if (a[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
-                    a[i].style.display = "";
-                } else {
-                    a[i].style.display = "none";
-                }
-            }
-        }
-        // Close the dropdown menu if the user clicks outside of it
-        window.onclick = function(event) {
-            if (!event.target.matches('.drop-button') && !event.target.matches('.drop-search')) {
-                var dropdowns = document.getElementsByClassName("dropdownlist");
-                for (var i = 0; i < dropdowns.length; i++) {
-                    var openDropdown = dropdowns[i];
-                    if (!openDropdown.classList.contains('invisible')) {
-                        openDropdown.classList.add('invisible');
-                    }
-                }
-            }
-        }
-    </script>
-</body>
+        <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.0.1/dist/alpine.js" defer></script>
+    </body>
 </html>

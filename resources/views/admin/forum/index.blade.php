@@ -97,6 +97,24 @@
             </div>
         </section>
         <hr>
+        <section class="flex xs:flex-col xs:w-auto w-11/12 xs:items-center justify-evenly p-6">
+            <div class="bg-white p-3 m-2 shadow-md rounded-md text-center">
+                <h3>1</h3>
+                <p>Active Courses</p>
+            </div>
+            <div class="bg-white p-3 m-2 shadow-md rounded-md text-center">
+                <h3>1</h3>
+                <p>Active Courses</p>
+            </div>
+            <div class="bg-white p-3 m-2 shadow-md rounded-md text-center">
+                <h3>1</h3>
+                <p>Active Courses</p>
+            </div>
+            <div class="bg-white p-3 m-2 shadow-md rounded-md text-center">
+                <h3>1</h3>
+                <p>Active Courses</p>
+            </div>
+        </section>
     </div>
        @else
            <h4>Coming Soon</h4>
