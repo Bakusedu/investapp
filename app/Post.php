@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
-    protected $fillable = ['author', 'topic', 'forum_category_id','user_id', 'content'];
+    protected $fillable = ['author', 'title', 'slug', 'forum_category_id','user_id', 'content'];
 
     public function forum()
     {

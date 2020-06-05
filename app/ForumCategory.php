@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ForumCategory extends Model
 {
-    protected $fillable = ['title'];
+    protected $fillable = ['title', 'description', 'slug', 'user_id','forum_id'];
     public function posts()
     {
         return $this->hasMany('App\Post');

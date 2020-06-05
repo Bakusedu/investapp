@@ -37,24 +37,37 @@
           }
 
           </style>
+          @yield('head')
     </head>
     <body>
-        <main class="bg-white font-montserrat h-full">
             <nav class="flex items-center justify-between flex-wrap py-4 px-6 fixed w-full z-50 top-0"
                 x-data="{ isOpen: false }"
                 @keydown.escape="isOpen = false"
-                :class="{ 'shadow-lg bg-gray-100' : isOpen , 'bg-white shadow-lg' : !isOpen}"
+                :class="{ 'shadow-lg bg-gray-100' : isOpen , 'bg-transparent' : !isOpen}"
             >
 
                 <!--Logo etc-->
-                <div class="flex items-center flex-shrink-0 text-yellow-500 mr-6">
+                <div class="flex items-center flex-shrink-0 mr-6">
                     <a class="text-yellow-500 no-underline hover:text-yellow-600 hover:no-underline" href="#">
                         <span class="text-2xl pl-2"><i class="em em-grinning"></i> The LiftHub</span>
                     </a>
+                    <div class="pt-2 pl-6 relative mx-auto text-gray-600">
+                        <input class="border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none"
+                          type="search" name="search" placeholder="Search">
+                        <button type="submit" class="absolute right-0 top-0 mt-5 mr-6">
+                          <svg class="text-gray-600 h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg"
+                            xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px"
+                            viewBox="0 0 56.966 56.966" style="enable-background:new 0 0 56.966 56.966;" xml:space="preserve"
+                            width="512px" height="512px">
+                            <path
+                              d="M55.146,51.887L41.588,37.786c3.486-4.144,5.396-9.358,5.396-14.786c0-12.682-10.318-23-23-23s-23,10.318-23,23  s10.318,23,23,23c4.761,0,9.298-1.436,13.177-4.162l13.661,14.208c0.571,0.593,1.339,0.92,2.162,0.92  c0.779,0,1.518-0.297,2.079-0.837C56.255,54.982,56.293,53.08,55.146,51.887z M23.984,6c9.374,0,17,7.626,17,17s-7.626,17-17,17  s-17-7.626-17-17S14.61,6,23.984,6z" />
+                          </svg>
+                        </button>
+                    </div>
                 </div>
 
                 <!--Toggle button (hidden on large screens)-->
-                <button @click="isOpen = !isOpen" type="button" class="block sm:hidden md:hidden lg:hidden xl:hidden px-2 text-gray-800 hover:text-yellow-900 focus:outline-none focus:text-yellow-900"
+                <button @click="isOpen = !isOpen" type="button" class="block sm:hidden md:hidden lg:hidden xl:hidden text-gray-800 hover:text-yellow-900 focus:outline-none focus:text-yellow-900"
                     :class="{ 'transition transform-180': isOpen }"
                 >
                 <svg class="h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -62,8 +75,8 @@
                     <path x-show="!isOpen" fill-rule="evenodd" d="M4 5h16a1 1 0 0 1 0 2H4a1 1 0 1 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2z"/>
                 </svg>
                 </button>
-
                 <!--Menu-->
+
                 <div class="w-full flex-grow sm:flex sm:items-center sm:w-auto md:flex md:items-center md:w-auto lg:flex lg:items-center lg:w-auto xl:flex xl:items-center xl:w-auto"
                     :class="{ 'block shadow-3xl': isOpen, 'hidden': !isOpen }"
                     @click.away="isOpen = false"
@@ -77,14 +90,17 @@
                 >
                     <ul class="pt-6 sm:pt-0 md:pt-0 lg:pt-0 xl:pt-0 list-reset sm:flex md:flex lg:flex xl:flex justify-end flex-1 items-center">
                         <li class="mr-3">
-                            <a class="inline-block py-2 px-4 text-yellow-500 no-underline" href="#" @click="isOpen = false">Who are we?</a>
+                            <a class="inline-block py-2 px-4 text-yellow-500 no-underline" href="#" @click="isOpen = false">Home</a>
                         </li>
                         <li class="mr-3">
-                            <a class="inline-block text-gray-600 no-underline hover:text-gray-500 hover:text-underline py-2 px-4" href="#" @click="isOpen = false">What do we do?</a>
+                            <a class="inline-block text-gray-600 no-underline hover:text-gray-500 hover:text-underline py-2 px-4" href="#" @click="isOpen = false">Forum</a>
                         </li>
                         @auth
                         <li class="mr-3">
                             <a class="rounded-full shadow-lg inline-block text-gray-600 no-underline hover:text-white hover:text-underline hover:bg-yellow-400 py-2 px-4" href="#" @click="isOpen = false">Dashboard</a>
+                        </li>
+                        <li class="mr-3">
+                            <div class="rounded-full h-12 w-12 flex items-center justify-center" style="background-image: url('/files/images?filename={{Auth::user()->avatar}}'); background-size: cover"></div>
                         </li>
                         @endauth
                         @unless (Auth::check())
@@ -97,26 +113,26 @@
                         @endunless
                     </ul>
                 </div>
-
             </nav>
+            <div class="relative h-24 shadow-md p-4">
 
+            </div>
             @yield('content')
 
-    </main>
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.0.1/dist/alpine.js" defer></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <script>
-        $(document).ready(function() {
-            $(window).scroll(function() {
-              if ($(document).scrollTop() > 2) {
-                $("nav").addClass("transition duration-500 ease-in-out transform -translate-y-1 scale-x-100 opacity-75");
-              } else {
-                $("nav").removeClass("transition duration-500 ease-in-out transform -translate-y-1 scale-104  opacity-75");
-              }
-            });
-          });
-        </script>
+    $(document).ready(function() {
+        $(window).scroll(function() {
+          if ($(document).scrollTop() > 2) {
+            $("nav").addClass("transition duration-500 ease-in-out transform -translate-y-1 scale-104 bg-yellow-600");
+          } else {
+            $("nav").removeClass("transition duration-500 ease-in-out transform -translate-y-1 scale-104 bg-yellow-600");
+          }
+        });
+      });
+    </script>
 </body>
 </html>
 

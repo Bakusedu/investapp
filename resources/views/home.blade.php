@@ -5,7 +5,6 @@
     <h1 class="p-2 font-semibold font-sans text-gray-700 text-2xl">Dashboard</h1>
     <hr class="w-full bg-gray-500">
     <div class="xs:flex-col-reverse flex h-full overflow-x-hidden xs:overflow-y-scroll">
-       @if (Auth::user()->isAdmin)
        <div class="xs:flex xs:flex-1 xs:flex-col xs:w-full xs:p-3 w-1/4 pb-20 border-r-2 border-grey xs:content-center xs:overflow-y-visible overflow-y-scroll">
         <div x-data="{ open: false, message: 'boy o boy' }" class="m-2">
             <div class="flex flex-row p-2 xs:h-full xs:w-full bg-white rounded-md shadow-md" x-on:click="open = true">
@@ -13,7 +12,7 @@
                 <div>
                     <h3 class="font-bold text-gray-800">School Event</h3>
                     <p class="text-gray-700">This is a description of school evenys</p>
-                </div>
+            </div>
             </div>
           <!--Overlay-->
             <div class="overflow-auto" style="background-color: rgba(0,0,0,0.5)" x-show="open" x-show="open" @click.away="open = false" :class="{ 'absolute inset-0 z-10 flex items-center justify-center': open }">
@@ -98,9 +97,6 @@
         </section>
         <hr>
     </div>
-       @else
-           <h4>Coming Soon</h4>
-       @endif
     </div>
 </div>
 
