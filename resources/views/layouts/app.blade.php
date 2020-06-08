@@ -35,7 +35,7 @@
                 transform: scale(1);
             }
         </style>
-
+    @yield('head')
     </head>
     <body class="relative flex h-screen w-screen overflow-y-hidden" x-data="{ isOpen: false }" @keydown.escape="isOpen = false">
         <header class="absolute flex flex-col flex-no-wrap items-center text-center inset-y-0 left-0 h-screen w-auto bg-teal-900" :class="{ 'block shadow-3xl': isOpen, 'xs:hidden': !isOpen }"

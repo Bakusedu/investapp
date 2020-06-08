@@ -19,6 +19,7 @@ class CreateWaitingListsTable extends Migration
             $table->integer('programme_id');
             $table->string('programme_title');
             $table->string('username');
+            $table->string('status')->default('pending');
             $table->string('email');
             $table->string('phone');
             $table->timestamps();

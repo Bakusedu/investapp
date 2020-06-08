@@ -20,6 +20,7 @@ Route::get('/', function () {
 Route::get('/dashboard', 'UsersController@dashboard')->name('user.dashboard')->middleware('hasprogramme');
 Route::get('/join/programme', 'ProgrammeController@joinPage')->name('programme.join');
 Route::get('/programme/details', 'ProgrammeController@details')->name('programme.details');
+Route::get('/programme/calendar', 'ProgrammeController@userCalendar')->name('user.calendar');
 Route::get('/request/to/join', 'ProgrammeController@sendRequest')->name('join.request');
 
 Route::group(['prefix' => 'forum'], function () {
@@ -38,10 +39,13 @@ Route::group(['prefix' => 'admin', 'middleware'=>'admin'], function () {
     Route::post('/store/forum', "ForumCategoryController@saveForum")->name('save.forum');
     Route::get('/home', 'HomeController@index')->name('home');
 
+    Route::get('/approve/request', 'ProgrammeController@approve')->name('approve.request');
+
     //Programmes
 
     Route::get('/programmes', "ProgrammeController@index")->name('programmes.index')->middleware('auth');
     Route::post('/programme/store', 'ProgrammeController@store')->name('store.programme');
+    Route::get('/programme/calendar', 'ProgrammeController@viewCalender')->name('programme.calendar');
     Route::post('/events/store', 'ProgrammeController@createEvent')->name('save.event');
 });
 

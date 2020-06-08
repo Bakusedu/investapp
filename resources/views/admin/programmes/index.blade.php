@@ -1,13 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
-<style>
-    [x-cloak] {
-      display: none;
-    }
-</style>
 
-<div class="bg-gray-100 pl-3 px-2 h-full overflow-y-scroll">
+<div class="bg-gray-100 pl-3 px-2 pb-16 h-full overflow-y-scroll">
     @if(Session::has('success'))
     <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4" role="alert">
         <p class="font-bold">Success</p>
@@ -58,7 +53,7 @@
                             </div>
                          </div>
                         <label class="block text-gray-700 text-sm font-bold m-2">
-                           Brief Description of programme
+                           Detailed Overview of the programme
                         </label>
                         <textarea name="desc" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" cols="30" rows="10">{{ old('desc') }}</textarea>
                         <input type="file" class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline" name="featured" required >
@@ -89,31 +84,35 @@
                     </div>
                     <form action="{{route('save.event')}}" method="post">
                         @csrf
-                        <div class="inline-block relative w-64">
-                            <select name="programmeId" class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline">
-                                @foreach ($programmes as $item)
-                                <option value="{{$item->id}}">{{$item->title}}</option>
-                                @endforeach
-                            </select>
-                            </div>
-                            <div class="w-64">
-                            <label class="block text-gray-700 text-sm font-bold m-2">
-                                Event Title
-                                </label>
-                            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="{{old('title')}}" name="title" type="text" placeholder="Enter  title">
-                            </div>
+                            <div class="flex">
+                                <div class="flex-none w-1/2">
+                                    <select required name="programmeId" class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline">
+                                        @foreach ($programmes as $item)
+                                        <option value="{{$item->id}}">{{$item->title}}</option>
+                                        @endforeach
+                                    </select>
+                                    </div>
+                                    <div class="flex-none w-1/2">
+                                    <input required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="{{old('title')}}" name="title" type="text" placeholder="Enter  title">
+                                    </div>
+                                </div>
+                                    <div class="flex flex-row w-full">
+                                     <div class="flex-1">
+                                        <label class="block text-gray-700 text-sm font-bold m-2" > Start Date</label>
+                                        <input required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="{{old('startdate')}}" name="startdate" type="datetime-local" placeholder="Start Date">
+                                     </div>
+                                     <div class="flex-1">
 
-                            <label class="block text-gray-700 text-sm font-bold m-2" > Start Date</label>
-                            <input class="shadow appearance-none border rounded w-1/2 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="{{old('startdate')}}" name="startdate" type="datetime-local" placeholder="Start Date">
-
-                            <label class="block text-gray-700 text-sm font-bold m-2">End Date</label>
-                            <input class="shadow appearance-none border rounded w-1/2 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="{{old('enddate')}}" name="enddate" type="datetime-local" placeholder="End Date">
+                                        <label class="block text-gray-700 text-sm font-bold m-2">End Date</label>
+                                        <input required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="{{old('enddate')}}" name="enddate" type="datetime-local" placeholder="End Date">
+                                     </div>
+                                    </div>
 
                             <label class="block text-gray-700 text-sm font-bold m-2">
                                 Event Task
                              </label>
                              <button class="font-semibold px-10 py-3 rounded-t bg-yellow-600">Create</button>
-                             <textarea name="details" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" cols="30" rows="10">{{old('details')}}</textarea>
+                             <textarea name="details" required placeholder="Enter event details here" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" cols="30" rows="10">{{old('details')}}</textarea>
                     </form>
                 </div>
                 <!--/Dialog -->
@@ -126,7 +125,6 @@
           <tr>
             <th class="border px-4 py-2">Title</th>
             <th class="border px-4 py-2">Description</th>
-            <th class="border px-4 py-2">Categories</th>
             <th class="border px-4 py-2">Status</th>
             <th class="border px-4 py-2">Actions</th>
           </tr>
@@ -139,13 +137,45 @@
             <td class="border px-4 py-2">{{$item->description}}</td>
             <td class="border px-4 py-2">@if($item->isActive)Active @else Not Active @endif</td>
             <td>
-                <a href="#" class="border-black bg-yellow-700 rounded p-2 hover:bg-yellow-600 text-white m-3"><span class="xs:hidden">Deactivate</span> <span><i class="fa fa-eye"></i></span></a>
+            <a href="{{route('programme.calendar',['id'=>$item->id])}}" class="border-black bg-yellow-700 rounded p-2 hover:bg-yellow-600 text-white m-3"><span class="xs:hidden">View Events Calender</span> <span><i class="fa fa-eye"></i></span></a>
             </td>
           </tr>
         @endforeach
     </tbody>
     @else
         <p class="px-8 text-red-600">No programme created!</p>
+    @endif
+    </table>
+    <div class="p-6 bg-gray-500 text-lg font-semibold">Join Programme Request - <span class="bg-red-500 text-sm rounded-full p-1">({{$pending}}) Pending Requests</span> </div>
+    <hr class="w-full bg-gray-500">
+    <table class="table-auto w-full font-mono">
+        <thead>
+          <tr>
+            <th class="border px-4 py-2">User Name</th>
+            <th class="border px-4 py-2">Email</th>
+            <th class="border px-4 py-2">Phone number</th>
+            <th class="border px-4 py-2">Programme</th>
+            <th class="border px-4 py-2">Status</th>
+          </tr>
+        </thead>
+    @if ($waiting->isNotEmpty())
+    <tbody>
+        @foreach ($waiting as $item)
+          <tr>
+          <td class="border px-4 py-2">{{$item->username}}</td>
+            <td class="border px-4 py-2">{{$item->email}}</td>
+            <td class="border px-4 py-2">{{$item->phone}}</td>
+            <td class="border px-4 py-2">{{$item->programme_title}}</td>
+            <td class="border px-4 py-2">@if($item->status === 'pending')Awaiting Approval
+
+            <a href="{{route('approve.request', ['id' => $item->id])}}" class="border-black bg-yellow-700 rounded p-2 hover:bg-yellow-600 text-white m-3"><span>Approve</span> <span><i class="fa fa-eye"></i></span></a>
+            @else Active @endif</td>
+          </tr>
+        @endforeach
+    </tbody>
+    {{$waiting->links()}}
+    @else
+        <p class="px-8 text-red-600">No pending requests!</p>
     @endif
     </table>
 </div>

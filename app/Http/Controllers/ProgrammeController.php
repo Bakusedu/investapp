@@ -6,7 +6,7 @@ use App\Programme;
 use Illuminate\Http\Request;
 use App\Event;
 use Auth;
-use WaitingList;
+use App\WaitingList;
 class ProgrammeController extends Controller
 {
     /**
@@ -17,7 +17,9 @@ class ProgrammeController extends Controller
     public function index()
     {
         $programmes = Programme::all();
-        return view('admin.programmes.index', compact('programmes'));
+        $pending = WaitingList::whereStatus('pending')->count();
+        $waiting = WaitingList::latest()->paginate(10);
+        return view('admin.programmes.index', compact('programmes','waiting', 'pending'));
     }
 
     /**
@@ -83,6 +85,17 @@ class ProgrammeController extends Controller
         //
     }
 
+    public function approve(Request $request)
+    {
+        $waiting = WaitingList::findOrFail($request->id);
+        $waiting->status = 'approved';
+        $waiting->save();
+        $programme = Programme::findOrFail($waiting->programme_id);
+        $programme->users()->attach($waiting->user_id);
+        Session::flash('success', 'Approved Successfully');
+        return redirect()->back();
+    }
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -126,7 +139,18 @@ class ProgrammeController extends Controller
     public function details(Request $request)
     {
         $programme = Programme::findOrFail($request->id);
-        return view('programme-details', compact('programme'));
+        $requested = false;
+        $confirmed = false;
+        if (Auth::check()) {
+            $whitelist = WaitingList::whereUserId(Auth::user()->id)
+                                        ->whereIn('programme_id',[$programme->id])->first();
+
+          if ($whitelist != null) {
+            $requested = true ;
+            $whitelist->status ==  'approved' ? $confirmed = true: $confirmed = false ;
+          }
+        }
+        return view('programme-details', compact('programme', 'requested', 'confirmed'));
     }
 
     public function sendRequest(Request $request)
@@ -141,5 +165,22 @@ class ProgrammeController extends Controller
             'user_id' => $user->id,
             'programme_id' => $programme->id
         ]);
+
+        return redirect()->back();
+    }
+
+    public function viewCalender(Request $request)
+    {
+        $programme = Programme::findOrFail($request->id);
+        $events = $programme->events()->get();
+
+        return view('admin.programmes.calendar', compact('events'));
+    }
+
+    public function userCalendar(Request $request)
+    {
+        $programme = Programme::findOrFail($request->id);
+        $events = $programme->events()->get();
+        return view('users.user-calendar', compact('events'));
     }
 }
