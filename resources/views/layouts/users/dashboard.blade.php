@@ -3,10 +3,11 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-
+        <meta name="csrf-token" content="{{ csrf_token() }}" />
         <title>The LiftHub</title>
         <!-- Styles -->
      <link href="{{ mix('css/app.css') }}" rel="stylesheet">
+     <link href="{{ asset('css/share.css') }}" rel="stylesheet">
      <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
@@ -15,6 +16,8 @@
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
+    <link href="{{asset('corner-popup-master/dist/css/corner-popup.min.css')}}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
         <style>
@@ -37,23 +40,32 @@
           }
 
           </style>
+          <script src="https://cdn.tiny.cloud/1/16mjg8w5uowhodrmhwys0l715tqywmv5m2awzf4q5nqq5fh2/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+          <script> tinymce.init({
+              selector: 'textarea#content',
+              plugins: 'a11ychecker advcode casechange formatpainter linkchecker autolink lists checklist media mediaembed pageembed permanentpen powerpaste table advtable tinycomments tinymcespellchecker',
+              toolbar: 'a11ycheck addcomment showcomments casechange checklist',
+              toolbar_mode: 'floating',
+              tinycomments_mode: 'embedded',
+              tinycomments_author: 'Author name',
+            });</script>
           @yield('head')
     </head>
     <body>
             <nav class="flex items-center justify-between flex-wrap py-4 px-6 fixed w-full z-50 top-0"
                 x-data="{ isOpen: false }"
                 @keydown.escape="isOpen = false"
-                :class="{ 'shadow-lg bg-gray-100' : isOpen , 'bg-transparent' : !isOpen}"
+                :class="{ 'shadow-lg bg-gray-100' : isOpen , 'bg-yellow-100' : !isOpen}"
             >
 
                 <!--Logo etc-->
-                <div class="flex items-center flex-shrink-0 mr-6">
-                    <a class="text-yellow-500 no-underline hover:text-yellow-600 hover:no-underline" href="#">
-                        <span class="text-2xl pl-2"><i class="em em-grinning"></i> The LiftHub</span>
+                <div class="flex items-center mr-6">
+                    <a class="text-yellow-500 no-underline hover:text-yellow-600 hover:no-underline" href="/">
+                    <img class="w-24" src="{{asset('images/160290cdb0652b0525e8191290986af1.png')}}" alt="">
                     </a>
                     <div class="pt-2 pl-6 relative mx-auto text-gray-600">
                         <input class="border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none"
-                          type="search" name="search" placeholder="Search">
+                          type="search" name="search" placeholder="Search Forum">
                         <button type="submit" class="absolute right-0 top-0 mt-5 mr-6">
                           <svg class="text-gray-600 h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg"
                             xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px"
@@ -67,7 +79,7 @@
                 </div>
 
                 <!--Toggle button (hidden on large screens)-->
-                <button @click="isOpen = !isOpen" type="button" class="block sm:hidden md:hidden lg:hidden xl:hidden text-gray-800 hover:text-yellow-900 focus:outline-none focus:text-yellow-900"
+                <button @click="isOpen = !isOpen" type="button" class="block right-0 sm:hidden xs:fixed md:hidden lg:hidden xl:hidden text-gray-800 hover:text-yellow-900 focus:outline-none focus:text-yellow-900"
                     :class="{ 'transition transform-180': isOpen }"
                 >
                 <svg class="h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -90,14 +102,14 @@
                 >
                     <ul class="pt-6 sm:pt-0 md:pt-0 lg:pt-0 xl:pt-0 list-reset sm:flex md:flex lg:flex xl:flex justify-end flex-1 items-center">
                         <li class="mr-3">
-                            <a class="inline-block py-2 px-4 text-yellow-500 no-underline" href="#" @click="isOpen = false">Home</a>
+                        <a class="inline-block py-2 px-4 text-yellow-500 no-underline" href="{{route('user.dashboard')}}" @click="isOpen = false">Home</a>
                         </li>
                         <li class="mr-3">
-                            <a class="inline-block text-gray-600 no-underline hover:text-gray-500 hover:text-underline py-2 px-4" href="#" @click="isOpen = false">Forum</a>
+                        <a class="inline-block text-gray-600 @if(Request::is('forum/home')) shadow-lg @endif rounded-full no-underline hover:text-gray-500 hover:text-underline py-2 px-4" href="{{route('forum.home')}}" @click="isOpen = false">Forum</a>
                         </li>
                         @auth
                         <li class="mr-3">
-                            <a class="rounded-full shadow-lg inline-block text-gray-600 no-underline hover:text-white hover:text-underline hover:bg-yellow-400 py-2 px-4" href="#" @click="isOpen = false">Dashboard</a>
+                        <a class="@if(Request::is('dashboard')) shadow-lg @endif rounded-full inline-block text-gray-600 no-underline hover:text-white hover:text-underline hover:bg-yellow-400 py-2 px-4" href="{{route('user.dashboard')}}" @click="isOpen = false">Dashboard</a>
                         </li>
                         <li class="mr-3">
                             <div class="rounded-full h-12 w-12 flex items-center justify-center" style="background-image: url('/files/images?filename={{Auth::user()->avatar}}'); background-size: cover"></div>
@@ -114,21 +126,20 @@
                     </ul>
                 </div>
             </nav>
-            <div class="relative h-24 shadow-md p-4">
-
-            </div>
+            @yield('header')
             @yield('content')
 
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.0.1/dist/alpine.js" defer></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+     @yield('script')
     <script>
     $(document).ready(function() {
         $(window).scroll(function() {
           if ($(document).scrollTop() > 2) {
-            $("nav").addClass("transition duration-500 ease-in-out transform -translate-y-1 scale-104 bg-yellow-600");
+            $("nav").addClass("transition duration-500 ease-in-out transform -translate-y-1 scale-104 opacity-75");
           } else {
-            $("nav").removeClass("transition duration-500 ease-in-out transform -translate-y-1 scale-104 bg-yellow-600");
+            $("nav").removeClass("transition duration-500 ease-in-out transform -translate-y-1 scale-104 opacity-75");
           }
         });
       });

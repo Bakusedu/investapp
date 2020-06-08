@@ -18,7 +18,7 @@
             @csrf
             <div class="flex flex-wrap -mx-3 pb-3">
               <div class="xs:w-full w-1/2 px-3 mb-6 md:mb-0">
-                <input class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="first_name" name="first_name" type="text" placeholder="First Name">
+                <input class="appearance-none block w-full bg-gray-200 text-gray-700 border-gray-200 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="first_name" name="first_name" type="text" placeholder="First Name">
                 @error('first_name')
                     <p class="text-red-500 text-xs italic">{{ $message }}</p>
                 @enderror
@@ -56,13 +56,13 @@
                     <input type="file" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" name="avatar" id="avatar">
                 </div>
             </div>
-            <div class="flex items-center border-b border-b-2 border-teal-500 py-2">
-              <button class="flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded" type="submit">
+            <div class="flex items-center border-b border-b-2 border-yellow-500 py-2">
+              <button class="flex-shrink-0 bg-yellow-600 hover:bg-yellow-700 border-yellow-600 hover:border-yellow-700 text-sm border-4 text-white py-1 px-2 rounded" type="submit">
                 Sign Up
               </button>
               <p class="ml-2 text-gray-500">Already have an account?</p>
-                <a class="flex-shrink-0 border-transparent border-4 text-teal-500
-                hover:text-teal-800 text-sm py-1 px-2 rounded" href="{{route('login')}}">
+                <a class="flex-shrink-0 border-transparent border-4 text-yellow-500
+                hover:text-yellow-800 text-sm py-1 px-2 rounded" href="{{route('login')}}">
                Login
               </a>
             </div>

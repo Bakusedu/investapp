@@ -1,14 +1,5 @@
-@extends('layouts.forum.header')
+@extends('layouts.users.dashboard')
 @section('head')
-<script src="https://cdn.tiny.cloud/1/16mjg8w5uowhodrmhwys0l715tqywmv5m2awzf4q5nqq5fh2/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
-<script> tinymce.init({
-    selector: 'textarea',
-    plugins: 'a11ychecker advcode casechange formatpainter linkchecker autolink lists checklist media mediaembed pageembed permanentpen powerpaste table advtable tinycomments tinymcespellchecker',
-    toolbar: 'a11ycheck addcomment showcomments casechange checklist',
-    toolbar_mode: 'floating',
-    tinycomments_mode: 'embedded',
-    tinycomments_author: 'Author name',
-  });</script>
     <style>
 .timeline {
   position: relative;
@@ -287,11 +278,34 @@
 }
     </style>
 @endsection
+@section('header')
+
+<div class="relative h-64 bg-yellow-100">
+    <div class="h-48 inset-x-0 bottom-0 px-8 absolute bg-fixed" style="top: 70px; background-image: url('{{asset('images/forum.jpg')}}'); background-size: cover;">
+        <div class="py-6 text-white">
+            <h2 class="text-4xl">
+                Join a forum today
+            </h2>
+            <h6 class="text-lg">
+                participate in any forum that interests you, share your idea with others
+            </h6>
+        </div>
+    </div>
+    <div class="h-12 inset-x-0 bottom-0 absolute" style="top: 230px;">
+        <div class="py-3 px-8 bg-yellow-100 text-black border-yellow-600 border-solid border-b">
+            <h2 class="text-2xl">
+                Forums
+            </h2>
+        </div>
+    </div>
+</div>
+
+@endsection
 @section('content')
-<div class="bg-gray-300 flex py-12 px-3 h-full">
-    <div x-data="{ tab: 'forums' }" class="w-screen">
+<div class="bg-gray-300 flex py-12 h-full">
+    <div x-data="{ tab: 'forums' }" class="w-full">
       <div
-        class="flex"
+        class="flex px-2"
       >
         <div class="flex -mx-px w-5/6">
             <button
@@ -320,7 +334,7 @@
         </button>
         </div>
         <div x-data="{ open: false }" class="flex-1 w-1/6 ">
-            <div
+        <div
             class="bg-transparent text-white text-sm md:text-base text-center font-semibold py-3 rounded-t bg-yellow-600"
             x-on:click="open = true"
             type="button"
@@ -361,7 +375,7 @@
                         <label class="block text-gray-700 text-sm font-bold m-2">
                            Write post content
                         </label>
-                        <textarea name="content" cols="30" rows="30"></textarea>
+                        <textarea name="content" id="content" cols="30" rows="30"></textarea>
                         <button class="font-semibold px-10 py-3 rounded-t bg-yellow-600">Post</button>
                     </form>
                 </div>
@@ -369,34 +383,34 @@
             </div><!-- /Overlay -->
         </div>
       </div>
-      <ul class="bg-white text-sm rounded-b p-4">
+      <ul class="bg-white text-sm rounded-b p-4 px-2">
         <li x-show="tab === 'forums'">
             <div class="border-1 border-gray-300 shadow-lg rounded-lg">
                 @foreach ($forums as $item)
                 <div class="sticky top-0 border-2 bg-gray-200 h-12 py-3 px-5 text-xl font-bold">{{$item->title}}</div>
                 @foreach ($item->categories as $item)
-                <div class="flex p-8">
-                    <div class="flex-1 flex justify-start text-gray-700 w-8/12 py-2 m-2">
-                        <div class="flex-1 w-1/12">
-                            <span class="rounded-full bg-gray-500 text-white p-2" style="font-size: 30px"><i class="fa fa-comments text-4xl"></i></span>
+                <div class="flex p-8 xs:py-2">
+                    <div class="flex-none flex justify-start text-gray-700 xs:w-6/12 w-8/12 py-2 xs:m-0 m-2">
+                        <div class="flex-1 xs:flex-none w-1/12">
+                            <span class="rounded-full bg-gray-500 xs:text-xs text-white xs:p-0 p-2" style="font-size: 30px"><i class="fa fa-comments xs:text-xs text-4xl"></i></span>
                         </div>
-                        <div class="flex-none w-11/12 px-3">
-                        <h2 class="text-teal-500 text-xl font-bold">{{$item->title}}</h2>
+                        <div class="flex-1 w-11/12 xs:w-full px-3">
+                        <a href="{{route("topics", ['slug'=>$item->slug])}}"><h2 class="text-teal-500 text-xl font-bold">{{$item->title}}</h2></a>
                             <p class="text-gray-500">{{$item->description}} </p>
                         </div>
                     </div>
-                    <div class="flex-none text-gray-800 text-center w-1/12 px-4 py-2 m-2">
+                    <div class="flex-none xs:hidden text-gray-800 text-center w-1/12 px-4 py-2 m-2">
                     <h2 class="text-lg font-bold text-gray-500">{{$item->posts->count()}}</h2>
                         <p class="text-gray-500">Posts</p>
                     </div>
-                    <div class="flex-none flex text-gray-700 text-center w-3/12 px-4 py-2 m-2">
-                            <div class="flex-1 w-1/12">
-                            <div class="rounded-full w-12 h-12 bg-gray-500 text-white p-2" style="background-image: url('/files/images?filename={{Auth::user()->avatar}}'); background-size:cover"></div>
+                    <div class="flex-none flex text-gray-700 text-center xs:w-6/12 w-3/12 px-4 py-2 m-2">
+                            <div class="flex-1 xs:hidden w-1/12">
+                            <div class="rounded-full w-12 h-12 bg-gray-500 text-white p-2" style="background-image: url('/files/images?filename={{$item->posts->last()['user']['avatar']}}'); background-size:cover"></div>
                             </div>
-                            <div class="flex-none w-11/12 px-3">
+                            <div class="flex-none xs:w-full w-11/12 px-3">
                                 <h2 class="font-bold text-blue-500">{{$item->posts->last()['title']}}</h2>
                                 <p class="font-bold">{{$item->posts->last()['author']}}</p>
-                                <p class="text-gray-500">june 23</p>
+                            <p class="text-gray-500">{{\Carbon\Carbon::parse($item->posts->last()['created_at'])->diffForHumans()}}</p>
                             </div>
                     </div>
                   </div>
@@ -441,5 +455,5 @@
         </li>
       </ul>
     </div>
-  </div>
+</div>
 @endsection

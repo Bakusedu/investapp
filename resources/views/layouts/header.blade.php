@@ -15,6 +15,7 @@
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
+    <link rel="stylesheet" href="{{asset('css/share.css')}}">
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
         <style>
@@ -48,8 +49,8 @@
 
                 <!--Logo etc-->
                 <div class="flex items-center flex-shrink-0 text-yellow-500 mr-6">
-                    <a class="text-yellow-500 no-underline hover:text-yellow-600 hover:no-underline" href="#">
-                        <span class="text-2xl pl-2"><i class="em em-grinning"></i> The LiftHub</span>
+                    <a class="text-yellow-500 no-underline hover:text-yellow-600 hover:no-underline" href="/">
+                        <img class="w-24" src="{{asset('images/160290cdb0652b0525e8191290986af1.png')}}" alt="">
                     </a>
                 </div>
 
@@ -77,22 +78,22 @@
                 >
                     <ul class="pt-6 sm:pt-0 md:pt-0 lg:pt-0 xl:pt-0 list-reset sm:flex md:flex lg:flex xl:flex justify-end flex-1 items-center">
                         <li class="mr-3">
-                            <a class="inline-block py-2 px-4 text-yellow-500 no-underline" href="#" @click="isOpen = false">Who are we?</a>
+                            <a href="{{route('forum.home')}}" class="rounded-full hover:shadow-lg inline-block text-gray-600 no-underline hover:text-white hover:text-underline hover:bg-yellow-600 py-2 px-4" href="#" @click="isOpen = false">Forum</a>
                         </li>
                         <li class="mr-3">
-                            <a class="inline-block text-gray-600 no-underline hover:text-gray-500 hover:text-underline py-2 px-4" href="#" @click="isOpen = false">What do we do?</a>
+                          <a href="https://blog.lifthub.org/" class="rounded-full hover:shadow-lg inline-block text-gray-600 no-underline hover:text-white hover:text-underline hover:bg-yellow-600 py-2 px-4" href="#" @click="isOpen = false">Blog</a>
                         </li>
                         @auth
                         <li class="mr-3">
-                            <a class="rounded-full shadow-lg inline-block text-gray-600 no-underline hover:text-white hover:text-underline hover:bg-yellow-400 py-2 px-4" href="#" @click="isOpen = false">Dashboard</a>
+                        <a href="{{route('user.dashboard')}}" class="rounded-full shadow-lg inline-block text-gray-600 no-underline hover:text-white hover:text-underline hover:bg-yellow-600 py-2 px-4" href="#" @click="isOpen = false">Dashboard</a>
                         </li>
                         @endauth
                         @unless (Auth::check())
                         <li class="mr-3">
-                        <a class="inline-block text-gray-600 no-underline hover:text-gray-500 hover:text-underline py-2 px-4" href="{{route('login')}}" @click="isOpen = false">Login</a>
+                        <a class="rounded-full inline-block  text-gray-600 no-underline hover:text-white hover:text-underline hover:bg-yellow-600 py-2 px-4" href="{{route('login')}}" @click="isOpen = false">Login</a>
                         </li>
                         <li class="mr-3">
-                        <a class="rounded-full shadow-lg inline-block text-gray-600 no-underline hover:text-white hover:text-underline hover:bg-yellow-400 py-2 px-4" href="{{route('register')}}" @click="isOpen = false">Register</a>
+                        <a class="rounded-full inline-block text-gray-600 no-underline hover:text-white hover:text-underline hover:bg-yellow-600 py-2 px-4" href="{{route('register')}}" @click="isOpen = false">Register</a>
                         </li>
                         @endunless
                     </ul>

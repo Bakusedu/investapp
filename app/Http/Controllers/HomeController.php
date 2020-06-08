@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\Post;
+use Auth;
+use App\Comment;
+use App\Forum;
+use App\ForumCategory;
 class HomeController extends Controller
 {
     /**
@@ -23,6 +27,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $posts = Post::latest()->paginate(10);
+        return view('home', compact('posts'));
     }
 }

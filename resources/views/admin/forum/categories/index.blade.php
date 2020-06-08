@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="bg-gray-100 pl-3 px-2 h-full">
+<div class="bg-gray-100 pl-3 px-2 h-full overflow-y-scroll">
     @if(Session::has('success'))
     <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4" role="alert">
         <p class="font-bold">Success</p>
@@ -16,13 +16,13 @@
         @endforeach
     </div>
     @endif
-    <div class="flex justify-evenly">
-        <h1 class="flex-1 p-2 font-semibold font-sans text-gray-700 text-2xl">Forums</h1>
+    <div class="flex justify-evenly font-semibold font-mono">
+        <h1 class="flex-1 p-2 font-semibold font-mono text-gray-700 text-2xl">Forums</h1>
         <div x-data="{openForumModal: false}"><button x-on:click="openForumModal = true" class="bg-yellow-600 px-4 py-3 shadow-md rounded-lg text-white">Create Forum</button>
              <!--Overlay-->
              <div class="overflow-auto" style="background-color: rgba(0,0,0,0.5)" x-show="openForumModal" x-show="openForumModal" @click.away="openForumModal = false" :class="{ 'absolute inset-0 z-10 flex items-center justify-center': openForumModal }">
                 <!--Dialog-->
-                <div class="bg-white w-1/2 h-screen md:max-w-md mx-auto rounded shadow-lg py-4 mt-10 text-left px-6" x-show="openForumModal" @click.away="openForumModal = false"
+                <div class="bg-white w-1/2 xs:w-full h-screen md:max-w-md mx-auto rounded shadow-lg py-4 mt-10 text-left px-6" x-show="openForumModal" @click.away="openForumModal = false"
                     x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 scale-90"
                     x-transition:enter-end="opacity-100 scale-100" x-transition:leave="ease-in duration-300" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-90">
 
@@ -59,7 +59,7 @@
              <!--Overlay-->
              <div class="overflow-auto" style="background-color: rgba(0,0,0,0.5)" x-show="open" x-show="open" @click.away="open = false" :class="{ 'absolute inset-0 z-10 flex items-center justify-center': open }">
                 <!--Dialog-->
-                <div class="bg-white w-1/2 h-screen md:max-w-md mx-auto rounded shadow-lg py-4 mt-10 text-left px-6" x-show="open" @click.away="open = false" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="ease-in duration-300" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-90">
+                <div class="bg-white w-1/2 xs:w-full h-screen md:max-w-md mx-auto rounded shadow-lg py-4 mt-10 text-left px-6" x-show="open" @click.away="open = false" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="ease-in duration-300" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-90">
 
                     <!--Title-->
                     <div class="flex justify-between items-center pb-3">
@@ -95,13 +95,14 @@
         </div>
     </div>
     <hr class="w-full bg-gray-500">
-    <table class="table-auto w-full">
+    <table class="table-auto w-full font-mono">
         <thead>
           <tr>
             <th class="border px-4 py-2">Title</th>
             <th class="border px-4 py-2">Description</th>
             <th class="border px-4 py-2">Categories</th>
             <th class="border px-4 py-2">Status</th>
+            <th class="border px-4 py-2">Actions</th>
           </tr>
         </thead>
     @if ($forums->isNotEmpty())
@@ -112,6 +113,10 @@
             <td class="border px-4 py-2">{{$item->description}}</td>
             <td class="border px-4 py-2">{{$item->categories->count()}}</td>
             <td class="border px-4 py-2">@if($item->isActive)Active @else Not Active @endif</td>
+            <td>
+                <a href="#" class="border-black bg-yellow-700 rounded p-2 hover:bg-yellow-600 text-white m-3"><span class="xs:hidden">Deactivate</span> <span><i class="fa fa-eye"></i></span></a>
+                    <a href="{{route('topics', ['slug'=>$item->slug])}}" class="border-black bg-red-700 rounded p-2 hover:bg-red-600 text-white"><span class="xs:hidden">Delete</span> <span><i class="fa fa-trash"></i></span></a>
+            </td>
           </tr>
         @endforeach
     </tbody>
@@ -119,25 +124,30 @@
         <p class="px-8 text-red-600">No forum created!</p>
     @endif
     </table>
-    <h2 class="text-xl pl-3 p-4 text-gray-700 font-bold">Forum Categories</h2>
-    <table class="table-auto w-full">
+    <h2 class="text-2xl font-semibold font-mono pl-3 p-4 text-gray-700">Forum Categories</h2>
+    <hr class="w-full bg-gray-500">
+    <table class="table-auto w-full font-mono">
         <thead>
-          <tr>
+          <tr class="hover:shadow-md">
             <th class="border px-4 py-2">Title</th>
             <th class="border px-4 py-2">Description</th>
             <th class="border px-4 py-2">No of Topics</th>
             <th class="border px-4 py-2">Forum</th>
+            <th class="border px-4 py-2">Actions</th>
           </tr>
         </thead>
     @if ($categories->isNotEmpty())
     <tbody>
         @foreach ($categories as $item)
-          <tr>
-            <td class="border px-4 py-2">{{$item->title}}</td>
-                <td class="border px-4 py-2">{{$item->description}}</td>
-            <td class="border px-4 py-2">{{$item->posts->count()}}</td>
-            <td class="border px-4 py-2">{{$item->forum->title}}</td>
-          </tr>
+            <tr class="hover:shadow-md">
+                <td class="border px-4 py-2">{{$item->title}}</td>
+                    <td class="border px-4 py-2">{{$item->description}}</td>
+                <td class="border px-4 py-2">{{$item->posts->count()}}</td>
+                <td class="border px-4 py-2">{{$item->forum->title}}</td>
+                <td> <a href="{{route('topics', ['slug'=>$item->slug])}}" class="border-black bg-yellow-700 rounded p-2 hover:bg-yellow-600 text-white m-3"><span class="xs:hidden">View</span> <span><i class="fa fa-eye"></i></span></a>
+                    <a href="{{route('topics', ['slug'=>$item->slug])}}" class="border-black bg-red-700 rounded p-2 hover:bg-red-600 text-white"><span class="xs:hidden">Delete</span> <span><i class="fa fa-trash"></i></span></a>
+                </td>
+            </tr>
         @endforeach
     </tbody>
     @else

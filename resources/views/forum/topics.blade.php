@@ -1,4 +1,4 @@
-@extends('layouts.forum.header')
+@extends('layouts.users.dashboard')
 @section('head')
     <style>
 .timeline {
@@ -278,6 +278,29 @@
 }
     </style>
 @endsection
+@section('header')
+
+<div class="relative h-64 bg-yellow-100">
+    <div class="h-48 inset-x-0 bottom-0 px-8 absolute bg-fixed" style="top: 70px; background-image: url('{{asset('images/forum.jpg')}}'); background-size: cover;">
+        <div class="py-6 text-white">
+            <h2 class="text-4xl">
+                Join a forum today
+            </h2>
+            <h6 class="text-lg">
+                participate in any forum that interests you, share your idea with others
+            </h6>
+        </div>
+    </div>
+    <div class="h-12 inset-x-0 bottom-0 absolute" style="top: 230px;">
+        <div class="py-3 px-8 bg-yellow-100 text-black border-yellow-600 border-solid border-b">
+            <h2 class="text-2xl">
+                Forums
+            </h2>
+        </div>
+    </div>
+</div>
+
+@endsection
 @section('content')
 <div class="bg-gray-300 flex py-12 px-3 h-full h-screen">
     <div x-data="{ tab: 'forums' }" class="w-screen">
@@ -318,28 +341,43 @@
             >
             Start a new topic
             </div>
-            <!--Overlay-->
-            <div class="overflow-auto" style="background-color: rgba(0,0,0,0.5)" x-show="open" x-show="open" @click.away="open = false" :class="{ 'absolute inset-0 z-10 flex items-center justify-center': open }">
+             <!--Overlay-->
+             <div class="overflow-auto" style="background-color: rgba(0,0,0,0.5)" x-show="open" x-show="open" @click.away="open = false" :class="{ 'absolute inset-0 z-10 flex items-center justify-center': open }">
                 <!--Dialog-->
-                <div class="bg-white w-11/12 md:max-w-md mx-auto rounded shadow-lg py-4 text-left px-6" x-show="open" @click.away="open = false" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100">
+                <div class="bg-white w-1/2 h-screen md:max-w-md mx-auto rounded shadow-lg py-4 mt-48 text-left px-6" x-show="open" @click.away="open = false" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="ease-in duration-300" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-90">
 
                     <!--Title-->
                     <div class="flex justify-between items-center pb-3">
-                        <p class="text-2xl font-bold">Simple Modal!</p>
+                        <p class="text-2xl font-bold">Create Post</p>
                         <div class="cursor-pointer z-50" @click="open = false">
                             <svg class="fill-current text-black" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
                                 <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"></path>
                             </svg>
                         </div>
                     </div>
-
-                    <!-- content -->
-                    <p>Modal content can go here</p>
-                    <p>...</p>
-                    <p>...</p>
-                    <p>...</p>
-                    <p>...</p>
-
+                    <form action="{{route('save.post')}}" method="post">
+                        @csrf
+                        <div class="inline-block relative w-64">
+                            <select name="categoryId" class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline">
+                              <option>Choose a category</option>
+                             @foreach ($categories as $item)
+                            <option value="{{$item->id}}">{{$item->title}}</option>
+                             @endforeach
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                              <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                            </div>
+                          </div>
+                          <label class="block text-gray-700 text-sm font-bold m-2">
+                            Post title
+                          </label>
+                            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name="title" type="text" placeholder="Enter Post Title">
+                        <label class="block text-gray-700 text-sm font-bold m-2">
+                           Write post content
+                        </label>
+                        <textarea name="content" id="content" cols="30" rows="30"></textarea>
+                        <button class="font-semibold px-10 py-3 rounded-t bg-yellow-600">Post</button>
+                    </form>
                 </div>
                 <!--/Dialog -->
             </div><!-- /Overlay -->
@@ -348,24 +386,26 @@
       <ul class="bg-white text-sm rounded-b p-4">
         <li x-show="tab === 'forums'">
                <div class="p-8">
-                   <h2 class="top-0 text-lg font-bold">Business Forum</h2>
-                   <p class="top-0 text-gray-500">Issues facein fj sdf</p>
+               <h2 class="top-0 text-lg font-bold">{{$category->title}}</h2>
+                   <p class="top-0 text-gray-500">{{$category->description}}</p>
                   <div class="mt-5 p-8 rounded-lg border-gray-400 border">
-                        <div class="flex bg-orange-100">
-                            <div class="flex-1 flex justify-start text-gray-700 w-11/12 py-2 m-2">
-                                <div class="flex-1 w-1/12">
-                                  <span class="rounded-full bg-gray-500 text-white p-2" style="font-size: 30px"><i class="fa fa-comments text-4xl"></i></span>
-                                </div>
-                                <div class="flex-none w-10/12 px-3">
-                                  <h2 class="text-xl font-bold">Topic General Topics</h2>
-                                  <p class="text-gray-500">By Some decsd ksd j sd </p>
-                                </div>
-                              </div>
-                              <div class="flex-none text-gray-800 text-center w-2/12 px-4 py-2 m-2">
-                                <h2 class="text-lg font-bold">12 replies</h2>
-                                <p class="text-gray-500">23 views</p>
-                              </div>
+                      @foreach ($category->posts as $item)
+                      <div class="flex bg-orange-100 my-2">
+                        <div class="flex-1 flex justify-start text-gray-700 w-11/12 py-2 m-2">
+                            <div class="flex-1 w-1/12">
+                              <span class="rounded-full bg-gray-500 text-white xs:text-xs w-8 h-8 xs:p-0 p-2" style="font-size: 30px"><i class="fa fa-comments xs:text-sm text-4xl"></i></span>
+                            </div>
+                            <div class="flex-none w-10/12 px-3">
+                            <a href="{{route('forum.post', ['slug'=>$item->slug])}}"><h2 class="text-xl xs:text-base font-bold">{{$item->title}}</h2></a>
+                            {{-- <div class="text-gray-500 italic white">{!! \Illuminate\Support\Str::limit(trim($item->content), 50, $end='...') !!}</div> --}}
+                            </div>
+                          </div>
+                          <div class="flex-none text-gray-800 text-center w-2/12 px-4 py-2 m-2">
+                            <h2 class="text-lg xs:text-base font-bold">{{$item->comments->count()}} replies</h2>
+                            {{-- <p class="text-gray-500">23 views</p> --}}
+                          </div>
                         </div>
+                      @endforeach
                   </div>
             </div>
         </li>
