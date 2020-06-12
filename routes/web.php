@@ -20,7 +20,7 @@ Route::get('/', function () {
 Route::get('/dashboard', 'UsersController@dashboard')->name('user.dashboard')->middleware('hasprogramme');
 Route::get('/join/programme', 'ProgrammeController@joinPage')->name('programme.join');
 Route::get('/programme/details', 'ProgrammeController@details')->name('programme.details');
-Route::get('/programme/calendar', 'ProgrammeController@userCalendar')->name('user.calendar');
+Route::get('/programme/calendar/{id}', 'ProgrammeController@userCalendar')->name('user.calendar');
 Route::get('/request/to/join', 'ProgrammeController@sendRequest')->name('join.request');
 
 Route::group(['prefix' => 'forum'], function () {

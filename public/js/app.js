@@ -1899,10 +1899,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/ExampleComponent.vue?vue&type=script&lang=js&":
-/*!***************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/ExampleComponent.vue?vue&type=script&lang=js& ***!
-  \***************************************************************************************************************************************************************************/
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/DashboardComponent.vue?vue&type=script&lang=js&":
+/*!*****************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/DashboardComponent.vue?vue&type=script&lang=js& ***!
+  \*****************************************************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1924,9 +1924,2348 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+var MAX_SIZE = 1000000;
+var MAX_WIDTH = 720;
+var MAX_HEIGHT = 720;
 /* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      image: {
+        size: '',
+        height: '',
+        width: ''
+      },
+      myprogrammes: [],
+      imageError: '',
+      imageLoaded: false,
+      isLoggedIn: true,
+      user: '',
+      programmes: [],
+      hasProgram: false,
+      show: true,
+      pagination: {},
+      details: false,
+      isloading: true,
+      programme: '',
+      create: '',
+      viewFacilitators: '',
+      requesting: 'notsent',
+      edit: false,
+      editId: null,
+      manager: true
+    };
+  },
+  methods: {
+    fetchStories: function fetchStories(page_url) {
+      var vm = this;
+      this.show = false;
+      page_url = page_url || '/api/programmes/all';
+      axios.get(page_url).then(function (response) {
+        vm.makePagination(response.data);
+        vm.programmes = response.data.data;
+        console.log(response);
+      });
+    },
+    makePagination: function makePagination(data) {
+      var pagination = {
+        current_page: data.current_page,
+        last_page: data.last_page,
+        next_page_url: data.next_page_url,
+        prev_page_url: data.prev_page_url
+      };
+      this.pagination = pagination;
+    },
+    fetchDetails: function fetchDetails(id) {
+      var _this = this;
+
+      this.details = true;
+      axios.get('/api/program/details', {
+        params: {
+          id: id
+        }
+      }).then(function (response) {
+        _this.programme = response.data;
+        console.log(response.data);
+        _this.isloading = false;
+      });
+    },
+    editEvents: function editEvents(id) {
+      var _this2 = this;
+
+      axios.get('/api/program/details', {
+        params: {
+          id: id
+        }
+      }).then(function (response) {
+        _this2.programme = response.data;
+        _this2.edit = true;
+      });
+    },
+    selectedFile: function selectedFile() {
+      var _this3 = this;
+
+      this.imageError = '';
+      var file = this.$refs.myFile.files[0];
+      if (!file || file.type.indexOf('image/') !== 0) return;
+      this.image.size = file.size;
+
+      if (this.image.size > MAX_SIZE) {
+        this.imageError = "The image size (".concat(this.image.size, ") is too much (max is ").concat(MAX_SIZE, ").");
+        return;
+      }
+
+      var reader = new FileReader();
+      reader.readAsDataURL(file);
+
+      reader.onload = function (evt) {
+        var img = new Image();
+
+        img.onload = function () {
+          _this3.image.width = img.width;
+          _this3.image.height = img.height;
+          console.log(_this3.image);
+
+          if (_this3.image.width > MAX_WIDTH) {
+            _this3.imageError = "The image width (".concat(_this3.image.width, ") is too much (max is ").concat(MAX_WIDTH, ").");
+            return;
+          }
+
+          if (_this3.image.height > MAX_HEIGHT) {
+            _this3.imageError = "The image height (".concat(_this3.image.height, ") is too much (max is ").concat(MAX_HEIGHT, ").");
+            return;
+          }
+        };
+
+        img.src = evt.target.result;
+      };
+
+      reader.onerror = function (evt) {
+        console.error(evt);
+      };
+    },
+    joinProgram: function joinProgram(id) {
+      var _this4 = this;
+
+      this.requesting = 'sending';
+      axios.get('/api/join', {
+        params: {
+          id: id
+        }
+      }).then(function (response) {
+        _this4.$notify({
+          group: 'foo',
+          title: 'Success',
+          text: 'Your request is awaiting approval',
+          duration: 10000
+        });
+
+        _this4.requesting = 'sent';
+      });
+    }
+  },
   mounted: function mounted() {
-    console.log('Component mounted.');
+    //Check if the user is Authenticated
+    this.isLoggedIn = window.Laravel.isLoggedin;
+    this.isLoggedIn ? this.user = window.Laravel.user : this.user = null;
+    this.fetchStories();
+  },
+  beforeMount: function beforeMount() {
+    var _this5 = this;
+
+    hasProgram: {
+      var vm = this;
+      axios.get('/api/programmes/mine').then(function (response) {
+        _this5.myprogrammes = response.data.data;
+        console.log(response.data.data);
+        response.data.data.length > 0 ? vm.hasProgram = true : vm.hasProgram = false;
+      });
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/EditProgramme.vue?vue&type=script&lang=js&":
+/*!************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/EditProgramme.vue?vue&type=script&lang=js& ***!
+  \************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _event_bus__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../event-bus */ "./resources/js/event-bus.js");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+var MAX_SIZE = 1000000;
+var MAX_WIDTH = 720;
+var MAX_HEIGHT = 720;
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['edit', 'programme'],
+  data: function data() {
+    return {
+      image: {
+        size: '',
+        height: '',
+        width: ''
+      },
+      addingSpeaker: false,
+      inviteLink: '',
+      programmeId: '',
+      imageUrl: null,
+      speakerFileUrl: null,
+      speakerFileError: '',
+      speakerImage: null,
+      errors: [],
+      imageError: '',
+      imageFile: '',
+      imageLoaded: false,
+      enddate: '',
+      startdate: '',
+      attendee: '',
+      highlight: [],
+      highlight1: '',
+      highlight2: '',
+      highlight3: '',
+      highlight4: '',
+      highlight5: '',
+      title: this.programme ? this.programme.title : '',
+      overview: '',
+      amount: '',
+      duration: '',
+      venue: '',
+      type: '',
+      open: true,
+      speakers: false,
+      speaker: {
+        facebook: '',
+        twitter: '',
+        linkedIn: '',
+        name: '',
+        email: '',
+        organization: '',
+        title: ''
+      }
+    };
+  },
+  methods: {
+    selectedFile: function selectedFile() {
+      var _this = this;
+
+      this.imageError = '';
+      var file = this.$refs.myFile.files[0];
+      this.imageUrl = URL.createObjectURL(file);
+      if (!file || file.type.indexOf('image/') !== 0) return;
+      this.image.size = file.size;
+
+      if (this.image.size > MAX_SIZE) {
+        this.imageError.push("The image size (".concat(this.image.size, ") is too much (max is ").concat(MAX_SIZE, ")."));
+        return;
+      }
+
+      var reader = new FileReader();
+      reader.readAsDataURL(file);
+
+      reader.onload = function (evt) {
+        var img = new Image();
+
+        img.onload = function () {
+          _this.image.width = img.width;
+          _this.image.height = img.height;
+          console.log(_this.image);
+
+          if (_this.image.width > MAX_WIDTH) {
+            _this.imageError = "The image width (".concat(_this.image.width, ") is too much (max is ").concat(MAX_WIDTH, ").");
+            return;
+          }
+
+          if (_this.image.height > MAX_HEIGHT) {
+            _this.imageError = "The image height (".concat(_this.image.height, ") is too much (max is ").concat(MAX_HEIGHT, ").");
+            return;
+          }
+        };
+
+        img.src = evt.target.result;
+      };
+
+      this.imageFile = file;
+
+      reader.onerror = function (evt) {
+        console.error(evt);
+      };
+    },
+    checkForm: function checkForm(e) {
+      this.highlight1 = this.$refs.highlight1.value;
+      this.highlight2 = this.$refs.highlight2.value;
+      this.highlight3 = this.$refs.highlight3.value;
+      this.highlight4 = this.$refs.highlight4.value;
+      this.highlight5 = this.$refs.highlight5.value;
+      this.title = this.$refs.title.value;
+      this.venue = this.$refs.venue.value;
+      this.attendee = this.$refs.attendee.value;
+      this.startdate = this.$refs.startdate.value;
+      this.amount = this.$refs.fee.value;
+      this.duration = this.$refs.duration.value;
+      this.overview = this.$refs.overview.value;
+      console.log(this.$refs.highlight4.value);
+      var d = [];
+
+      if (this.highlight1) {
+        d.push(this.highlight1);
+      }
+
+      if (this.highlight2) {
+        d.push(this.highlight2);
+      }
+
+      if (this.highlight3) {
+        d.push(this.highlight3);
+      }
+
+      if (this.highlight4) {
+        d.push(this.highlight4);
+      }
+
+      if (this.highlight5) {
+        d.push(this.highlight5);
+      }
+
+      this.highlight = d;
+      console.log(d);
+      this.errors = [];
+
+      if (!this.title || this.title.length < 10) {
+        this.errors.push('Title is required and must be more than 10 characters.');
+      }
+
+      if (!this.overview || this.overview.length < 200) {
+        this.errors.push('Overview is required and must be atleast 200 characters.');
+      }
+
+      if (this.amount.length < 1) {
+        this.errors.push('Fee is required, can be 0 for a free event.');
+      }
+
+      if (!this.attendee) {
+        this.errors.push('Number of expected attendees cannot be empty');
+      }
+
+      if (!this.startdate) {
+        this.errors.push('Start date is required');
+      }
+
+      if (this.imageError) {
+        this.errors.push('Image not accepted.');
+      }
+
+      if (!this.type) {
+        this.errors.push('The programme type field is required.');
+      }
+
+      if (this.highlight.length != 5) {
+        this.errors.push('5 Key feature fields are required.');
+      }
+
+      if (this.errors.length > 0) {
+        this.$notify({
+          group: 'foo',
+          title: 'Errors Found',
+          text: 'Unable to submit form',
+          type: 'warn',
+          duration: 10000
+        });
+      }
+
+      e.preventDefault();
+
+      if (this.errors.length == 0) {
+        this.createProgram();
+      }
+    },
+    createProgram: function createProgram() {
+      var formdata = new FormData();
+      formdata.append('image', this.image);
+      formdata.append('startdate', this.startdate);
+      formdata.append('desc', this.overview);
+      formdata.append('title', this.title);
+      formdata.append('duration', this.duration);
+      formdata.append('featured', this.imageFile);
+      formdata.append('type', this.type);
+      formdata.append('amount', this.amount);
+      formdata.append('venue', this.venue);
+      formdata.append('highlight1', this.highlight1);
+      formdata.append('highlight2', this.highlight2);
+      formdata.append('highlight3', this.highlight);
+      formdata.append('highlight4', this.highlight4);
+      formdata.append('highlight5', this.highlight5);
+      formdata.append('attendee', this.attendee);
+      formdata.append('programmeId', this.programme.programme.id);
+      var vm = this;
+      axios.post('/api/updateprogram', formdata, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }).then(function (response) {
+        console.log(response);
+        vm.programmeId = response.data.id;
+        vm.$emit('close', true);
+        vm.$notify({
+          text: 'Programme is created'
+        });
+        vm.$notify({
+          group: 'foo',
+          title: 'Info',
+          text: 'Invite speakers to your programme',
+          duration: 10000
+        });
+        vm.speakers = true;
+      })["catch"](function (e) {
+        this.$notify({
+          type: 'warn',
+          text: 'unable to create a new programme'
+        });
+      });
+    },
+    hide: function hide(event) {
+      this.$emit('close', true);
+    },
+    trigger: function trigger() {
+      this.$refs.speakerFile.click();
+    },
+    speakerFileValidation: function speakerFileValidation() {
+      var _this2 = this;
+
+      this.speakerFileError = '';
+      var speakerFile = this.$refs.speakerFile.files[0];
+      this.speakerFileUrl = URL.createObjectURL(speakerFile);
+      if (!speakerFile || speakerFile.type.indexOf('image/') !== 0) return;
+      this.image.size = speakerFile.size;
+
+      if (this.image.size > MAX_SIZE) {
+        this.speakerFileError = "The image size (".concat(this.image.size, ") is too much (max is ").concat(MAX_SIZE, ").");
+        return;
+      }
+
+      var reader = new FileReader();
+      reader.readAsDataURL(speakerFile);
+
+      reader.onload = function (evt) {
+        var img = new Image();
+
+        img.onload = function () {
+          _this2.image.width = img.width;
+          _this2.image.height = img.height;
+          console.log(_this2.image);
+
+          if (_this2.image.width > MAX_WIDTH) {
+            _this2.speakerFileError = "The image width (".concat(_this2.image.width, ") is too much (max is ").concat(MAX_WIDTH, ").");
+            return;
+          }
+
+          if (_this2.image.height > MAX_HEIGHT) {
+            _this2.speakerFileError = "The image height (".concat(_this2.image.height, ") is too much (max is ").concat(MAX_HEIGHT, ").");
+            return;
+          }
+        };
+
+        img.src = evt.target.result;
+      };
+
+      this.speakerImage = speakerFile;
+
+      reader.onerror = function (evt) {
+        console.error(evt);
+      };
+    },
+    ValidateEmail: function ValidateEmail(mail) {
+      if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)) {
+        return true;
+      }
+
+      return false;
+    },
+    validURL: function validURL(str) {
+      var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+      '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+      '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+      '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+
+      return !!pattern.test(str);
+    },
+    checkSpeakerForm: function checkSpeakerForm(e) {
+      this.errors = [];
+
+      if (!this.speaker.title) {
+        this.errors.push('Speaker\'s Title is required.');
+      }
+
+      if (!this.speaker.name || this.speaker.name.length < 5) {
+        this.errors.push('Enter a valid name.');
+      }
+
+      if (!this.speaker.organization) {
+        this.errors.push('Speaker organization cannot be empty');
+      }
+
+      if (this.speaker.facebook) {
+        var url = this.validURL(this.speaker.facebook);
+        url ? true : this.errors.push('The facebook URL is invalid');
+      }
+
+      if (this.speaker.twitter) {
+        var _url = this.validURL(this.speaker.twitter);
+
+        _url ? true : this.errors.push('The Twitter URL is invalid');
+      }
+
+      if (this.speaker.linkedIn) {
+        var _url2 = this.validURL(this.speaker.linkedIn);
+
+        _url2 ? true : this.errors.push('The speaker linkedIn URL is invalid');
+      }
+
+      if (!this.speaker.email || !this.speaker.email) {
+        var email = this.ValidateEmail(this.speaker.email);
+        email ? true : this.errors.push('The speaker email is invalid');
+      }
+
+      if (!this.speakerImage || this.speakerFileError) {
+        this.errors.push('Image field is required.');
+      }
+
+      if (this.errors.length > 0) {
+        this.$notify({
+          group: 'foo',
+          title: 'Errors Found',
+          text: 'Unable to submit form',
+          type: 'warn',
+          duration: 10000
+        });
+      }
+
+      e.preventDefault();
+
+      if (this.errors.length == 0) {
+        this.addSpeaker();
+      }
+    },
+    addSpeaker: function addSpeaker() {
+      this.addingSpeaker = true;
+      var formdata = new FormData();
+      formdata.append('programmeId', this.programmeId);
+      formdata.append('image', this.speakerImage);
+      formdata.append('title', this.speaker.title);
+      formdata.append('name', this.speaker.name);
+      formdata.append('facebook', this.speaker.facebook);
+      formdata.append('twitter', this.speaker.twitter);
+      formdata.append('linkedIn', this.speaker.linkedIn);
+      formdata.append('organization', this.speaker.organization);
+      formdata.append('email', this.speaker.email);
+      var vm = this;
+      axios.post('/api/addspeaker', formdata, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }).then(function (response) {
+        vm.$notify({
+          group: 'foo',
+          title: 'success',
+          text: 'Speaker added',
+          type: 'success',
+          duration: 10000
+        });
+        vm.speakers = true;
+        vm.addingSpeaker = false;
+        vm.inviteLink = response.data.invite_link;
+      })["catch"](function (e) {
+        vm.addingSpeaker = false;
+        vm.$notify({
+          type: 'warn',
+          text: 'unable to add speaker'
+        });
+      });
+    },
+    copyInviteLink: function copyInviteLink() {
+      var testingCodeToCopy = document.querySelector('#testing-code');
+      testingCodeToCopy.setAttribute('type', 'text');
+      testingCodeToCopy.select();
+      var vm = this;
+
+      try {
+        var successful = document.execCommand('copy');
+        vm.$notify({
+          type: 'success',
+          text: 'invite link is copied to clipboard'
+        });
+      } catch (err) {
+        vm.$notify({
+          type: 'warn',
+          text: 'unable to copy'
+        });
+      }
+      /* unselect the range */
+
+
+      testingCodeToCopy.setAttribute('type', 'hidden');
+      window.getSelection().removeAllRanges();
+    },
+    openEventForm: function openEventForm(event) {
+      var payload = {
+        'event': true,
+        'progId': this.programme.programme.id
+      };
+      _event_bus__WEBPACK_IMPORTED_MODULE_0__["default"].$emit('events', payload);
+      console.log('emitted');
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/EventManager.vue?vue&type=script&lang=js&":
+/*!***********************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/EventManager.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _event_bus__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../event-bus */ "./resources/js/event-bus.js");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['myprogrammes'],
+  data: function data() {
+    return {
+      openSpeakers: false,
+      eventSpeakers: '',
+      openEvent: false,
+      eventDetails: '',
+      waiting: false,
+      waitingList: ''
+    };
+  },
+  methods: {
+    loadSpeakers: function loadSpeakers(speakers) {
+      this.eventSpeakers = speakers;
+      this.openSpeakers = true;
+    },
+    loadEvents: function loadEvents(events) {
+      this.eventDetails = events;
+      this.openEvent = true;
+    },
+    loadList: function loadList(list) {
+      this.waitingList = list;
+      this.waiting = true;
+    }
+  },
+  mounted: function mounted() {
+    var vm = this;
+    _event_bus__WEBPACK_IMPORTED_MODULE_0__["default"].$on('closeSpeakers', function (payLoad) {
+      vm.openSpeakers = payLoad.action; //  vm.programmeId = payLoad.progId
+    });
+    _event_bus__WEBPACK_IMPORTED_MODULE_0__["default"].$on('closeEvents', function (payLoad) {
+      vm.openEvent = payLoad.action; //  vm.programmeId = payLoad.progId
+    });
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Facilitator.vue?vue&type=script&lang=js&":
+/*!**********************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Facilitator.vue?vue&type=script&lang=js& ***!
+  \**********************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['facilitators', 'view', 'creator'],
+  methods: {
+    close: function close(event) {
+      this.$emit('close', true);
+    }
+  },
+  mounted: function mounted() {
+    console.log(this.creator);
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/PostComponent.vue?vue&type=script&lang=js&":
+/*!************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/PostComponent.vue?vue&type=script&lang=js& ***!
+  \************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _event_bus__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../event-bus */ "./resources/js/event-bus.js");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+var MAX_SIZE = 1000000;
+var MAX_WIDTH = 720;
+var MAX_HEIGHT = 720;
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['create'],
+  data: function data() {
+    return {
+      image: {
+        size: '',
+        height: '',
+        width: ''
+      },
+      //Events Data
+      adding: false,
+      inviteLink: '',
+      programmeId: '',
+      imageUrl: null,
+      speakerFileUrl: null,
+      speakerFileError: '',
+      speakerImage: null,
+      errors: [],
+      imageError: '',
+      imageFile: '',
+      imageLoaded: false,
+      enddate: '',
+      startdate: '',
+      attendee: '',
+      highlight: [],
+      highlight1: '',
+      highlight2: '',
+      highlight3: '',
+      highlight4: '',
+      highlight5: '',
+      title: '',
+      feedback: false,
+      overview: '',
+      amount: '',
+      duration: '',
+      venue: '',
+      type: '',
+      open: true,
+      speakers: false,
+      speaker: {
+        facebook: '',
+        twitter: '',
+        linkedIn: '',
+        name: '',
+        email: '',
+        organization: '',
+        title: ''
+      },
+      events: false
+    };
+  },
+  methods: {
+    selectedFile: function selectedFile() {
+      var _this = this;
+
+      this.imageError = '';
+      var file = this.$refs.myFile.files[0];
+      this.imageUrl = URL.createObjectURL(file);
+      if (!file || file.type.indexOf('image/') !== 0) return;
+      this.image.size = file.size;
+
+      if (this.image.size > MAX_SIZE) {
+        this.imageError.push("The image size (".concat(this.image.size, ") is too much (max is ").concat(MAX_SIZE, ")."));
+        return;
+      }
+
+      var reader = new FileReader();
+      reader.readAsDataURL(file);
+
+      reader.onload = function (evt) {
+        var img = new Image();
+
+        img.onload = function () {
+          _this.image.width = img.width;
+          _this.image.height = img.height;
+          console.log(_this.image);
+
+          if (_this.image.width > MAX_WIDTH) {
+            _this.imageError = "The image width (".concat(_this.image.width, ") is too much (max is ").concat(MAX_WIDTH, ").");
+            return;
+          }
+
+          if (_this.image.height > MAX_HEIGHT) {
+            _this.imageError = "The image height (".concat(_this.image.height, ") is too much (max is ").concat(MAX_HEIGHT, ").");
+            return;
+          }
+        };
+
+        img.src = evt.target.result;
+      };
+
+      this.imageFile = file;
+
+      reader.onerror = function (evt) {
+        console.error(evt);
+      };
+    },
+    checkForm: function checkForm(e) {
+      var d = [];
+
+      if (this.highlight1) {
+        d.push(this.highlight1);
+      }
+
+      if (this.highlight2) {
+        d.push(this.highlight2);
+      }
+
+      if (this.highlight3) {
+        d.push(this.highlight3);
+      }
+
+      if (this.highlight4) {
+        d.push(this.highlight4);
+      }
+
+      if (this.highlight5) {
+        d.push(this.highlight5);
+      }
+
+      this.highlight = d;
+      console.log(d);
+      this.errors = [];
+
+      if (!this.title || this.title.length < 10) {
+        this.errors.push('Title is required and must be more than 10 characters.');
+      }
+
+      if (!this.overview || this.overview.length < 200) {
+        this.errors.push('Overview is required and must be atleast 200 characters.');
+      }
+
+      if (this.amount.length < 1) {
+        this.errors.push('Fee is required, can must 0 for a free event.');
+      }
+
+      if (!this.attendee) {
+        this.errors.push('Number of expected attendees cannot be empty');
+      }
+
+      if (!this.startdate) {
+        this.errors.push('Start date is required');
+      }
+
+      if (!this.imageFile && this.imageError) {
+        this.errors.push('Image field is required.');
+      }
+
+      if (this.highlight.length != 5) {
+        this.errors.push('5 Key feature fields are required.');
+      }
+
+      if (this.errors.length > 0) {
+        this.$notify({
+          group: 'foo',
+          title: 'Errors Found',
+          text: 'Unable to submit form',
+          type: 'warn',
+          duration: 10000
+        });
+      }
+
+      e.preventDefault();
+
+      if (this.errors.length == 0) {
+        this.createProgram();
+      }
+    },
+    createProgram: function createProgram() {
+      var formdata = new FormData();
+      formdata.append('image', this.image);
+      formdata.append('startdate', this.startdate);
+      formdata.append('desc', this.overview);
+      formdata.append('title', this.title);
+      formdata.append('duration', this.duration);
+      formdata.append('featured', this.imageFile);
+      formdata.append('type', this.type);
+      formdata.append('amount', this.amount);
+      formdata.append('venue', this.venue);
+      formdata.append('highlight1', this.highlight1);
+      formdata.append('highlight2', this.highlight2);
+      formdata.append('highlight3', this.highlight);
+      formdata.append('highlight4', this.highlight4);
+      formdata.append('highlight5', this.highlight5);
+      formdata.append('attendee', this.attendee);
+      var vm = this;
+      axios.post('/api/saveprogram', formdata, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }).then(function (response) {
+        console.log(response);
+        vm.programmeId = response.data.id;
+        vm.$emit('close', true);
+        vm.$notify({
+          text: 'Programme is created'
+        });
+        vm.$notify({
+          group: 'foo',
+          title: 'Info',
+          text: 'Invite speakers to your programme',
+          duration: 10000
+        });
+        vm.events = true;
+      })["catch"](function (e) {
+        this.$notify({
+          type: 'warn',
+          text: 'unable to create a new programme'
+        });
+      });
+    },
+    hide: function hide(event) {
+      this.$emit('close', true);
+    },
+    trigger: function trigger() {
+      this.$refs.speakerFile.click();
+    },
+    speakerFileValidation: function speakerFileValidation() {
+      var _this2 = this;
+
+      this.speakerFileError = '';
+      var speakerFile = this.$refs.speakerFile.files[0];
+      this.speakerFileUrl = URL.createObjectURL(speakerFile);
+      if (!speakerFile || speakerFile.type.indexOf('image/') !== 0) return;
+      this.image.size = speakerFile.size;
+
+      if (this.image.size > MAX_SIZE) {
+        this.speakerFileError = "The image size (".concat(this.image.size, ") is too much (max is ").concat(MAX_SIZE, ").");
+        return;
+      }
+
+      var reader = new FileReader();
+      reader.readAsDataURL(speakerFile);
+
+      reader.onload = function (evt) {
+        var img = new Image();
+
+        img.onload = function () {
+          _this2.image.width = img.width;
+          _this2.image.height = img.height;
+          console.log(_this2.image);
+
+          if (_this2.image.width > MAX_WIDTH) {
+            _this2.speakerFileError = "The image width (".concat(_this2.image.width, ") is too much (max is ").concat(MAX_WIDTH, ").");
+            return;
+          }
+
+          if (_this2.image.height > MAX_HEIGHT) {
+            _this2.speakerFileError = "The image height (".concat(_this2.image.height, ") is too much (max is ").concat(MAX_HEIGHT, ").");
+            return;
+          }
+        };
+
+        img.src = evt.target.result;
+      };
+
+      this.speakerImage = speakerFile;
+
+      reader.onerror = function (evt) {
+        console.error(evt);
+      };
+    },
+    ValidateEmail: function ValidateEmail(mail) {
+      if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)) {
+        return true;
+      }
+
+      return false;
+    },
+    validURL: function validURL(str) {
+      var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+      '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+      '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+      '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+
+      return !!pattern.test(str);
+    },
+    checkSpeakerForm: function checkSpeakerForm(e) {
+      this.errors = [];
+
+      if (!this.speaker.title) {
+        this.errors.push('Speaker\'s Title is required.');
+      }
+
+      if (!this.speaker.name || this.speaker.name.length < 5) {
+        this.errors.push('Enter a valid name.');
+      }
+
+      if (!this.speaker.organization) {
+        this.errors.push('Speaker organization cannot be empty');
+      }
+
+      if (this.speaker.facebook) {
+        var url = this.validURL(this.speaker.facebook);
+        url ? true : this.errors.push('The facebook URL is invalid');
+      }
+
+      if (this.speaker.twitter) {
+        var _url = this.validURL(this.speaker.twitter);
+
+        _url ? true : this.errors.push('The Twitter URL is invalid');
+      }
+
+      if (this.speaker.linkedIn) {
+        var _url2 = this.validURL(this.speaker.linkedIn);
+
+        _url2 ? true : this.errors.push('The speaker linkedIn URL is invalid');
+      }
+
+      if (!this.speaker.email || !this.speaker.email) {
+        var email = this.ValidateEmail(this.speaker.email);
+        email ? true : this.errors.push('The speaker email is invalid');
+      }
+
+      if (!this.speakerImage || this.speakerFileError) {
+        this.errors.push('Image field is required.');
+      }
+
+      if (this.errors.length > 0) {
+        this.$notify({
+          group: 'foo',
+          title: 'Errors Found',
+          text: 'Unable to submit form',
+          type: 'warn',
+          duration: 10000
+        });
+      }
+
+      e.preventDefault();
+
+      if (this.errors.length == 0) {
+        this.addSpeaker();
+      }
+    },
+    addSpeaker: function addSpeaker() {
+      this.adding = true;
+      var formdata = new FormData();
+      formdata.append('programmeId', this.programmeId);
+      formdata.append('image', this.speakerImage);
+      formdata.append('title', this.speaker.title);
+      formdata.append('name', this.speaker.name);
+      formdata.append('facebook', this.speaker.facebook);
+      formdata.append('twitter', this.speaker.twitter);
+      formdata.append('linkedIn', this.speaker.linkedIn);
+      formdata.append('organization', this.speaker.organization);
+      formdata.append('email', this.speaker.email);
+      var vm = this;
+      axios.post('/api/addspeaker', formdata, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }).then(function (response) {
+        vm.$notify({
+          group: 'foo',
+          title: 'success',
+          text: 'Speaker added',
+          type: 'success',
+          duration: 10000
+        });
+        vm.speakers = true;
+        vm.adding = false;
+        vm.inviteLink = response.data.invite_link;
+      })["catch"](function (e) {
+        vm.adding = false;
+        vm.$notify({
+          type: 'warn',
+          text: 'unable to add speaker'
+        });
+      });
+    },
+    validateEvent: function validateEvent() {
+      var startDate = this.$refs.eventStartDate.value;
+      var endDate = this.$refs.eventEndDate.value;
+      var details = this.$refs.eventDetails.value;
+      var title = this.$refs.eventTitle.value;
+      var feedback = this.feedback;
+
+      if (this.feedback) {
+        var question = this.$refs.eventQuestion.value;
+        var format = this.$refs.eventResponse.value;
+      }
+
+      this.errors = [];
+
+      if (!startDate) {
+        this.errors.push('Event Start Date is required');
+      }
+
+      if (!endDate) {
+        this.errors.push('Event End Date is required');
+      }
+
+      if (!details) {
+        this.errors.push('Event details is required');
+      }
+
+      if (!title) {
+        this.errors.push('Event title is required');
+      }
+
+      if (this.feedback) {
+        if (!this.$refs.eventQuestion.value) {
+          this.errors.push('Feedback Question is required');
+        }
+
+        if (!this.$refs.eventQuestion.value) {
+          this.errors.push('Feedback Format is required');
+        }
+      }
+
+      if (this.errors.length == 0) {
+        this.adding = true;
+        this.addEvent();
+      }
+    },
+    addEvent: function addEvent() {
+      var formdata = new FormData();
+      formdata.append('programmeId', this.programmeId);
+      formdata.append('startdate', this.$refs.eventStartDate.value);
+      formdata.append('title', this.$refs.eventTitle.value);
+      formdata.append('enddate', this.$refs.eventEndDate.value);
+      formdata.append('useFeedback', this.feedback);
+
+      if (this.feedback) {
+        formdata.append('question', this.$refs.eventQuestion.value);
+        formdata.append('feedbackType', this.$refs.eventResponse.value);
+      }
+
+      formdata.append('details', this.$refs.eventDetails.value);
+      var vm = this;
+      axios.post('/api/addevent', formdata, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }).then(function (response) {
+        vm.$notify({
+          group: 'foo',
+          title: 'success',
+          text: 'Speaker added',
+          type: 'success',
+          duration: 10000
+        });
+        vm.adding = false;
+      })["catch"](function (e) {
+        vm.adding = false;
+        vm.$notify({
+          type: 'warn',
+          text: 'unable to add speaker'
+        });
+      });
+    }
+  },
+  mounted: function mounted() {
+    var vm = this;
+    _event_bus__WEBPACK_IMPORTED_MODULE_0__["default"].$on('events', function (payLoad) {
+      vm.events = payLoad.event;
+      vm.programmeId = payLoad.progId;
+    });
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/event-manager/Event.vue?vue&type=script&lang=js&":
+/*!******************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/event-manager/Event.vue?vue&type=script&lang=js& ***!
+  \******************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _event_bus__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../event-bus */ "./resources/js/event-bus.js");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+var MAX_SIZE = 1000000;
+var MAX_WIDTH = 720;
+var MAX_HEIGHT = 720;
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['openEvent', 'events'],
+  data: function data() {
+    return {
+      image: {
+        size: '',
+        height: '',
+        width: ''
+      },
+      editEvent: false,
+      errors: [],
+      event: {
+        title: '',
+        details: '',
+        start_date: '',
+        end_date: '',
+        use_feedback: '',
+        question: '',
+        feedback_type: '',
+        id: ''
+      },
+      adding: false
+    };
+  },
+  methods: {
+    close: function close(event) {
+      var payload = {
+        'action': false
+      };
+      _event_bus__WEBPACK_IMPORTED_MODULE_0__["default"].$emit('closeEvents', payload);
+      console.log('emitted');
+    },
+    edit: function edit(item) {
+      this.event = item;
+      this.editEvent = true;
+    },
+    addEvent: function addEvent() {
+      this.adding = true;
+      var formdata = new FormData();
+      formdata.append('eventId', this.event.id);
+      formdata.append('startdate', this.event.start_date);
+      formdata.append('title', this.event.title);
+      formdata.append('enddate', this.event.end_date);
+      formdata.append('useFeedback', this.event.use_feedback);
+      formdata.append('question', this.event.question);
+      formdata.append('feedbackType', this.event.feedback_type);
+      formdata.append('details', this.event.details);
+      var vm = this;
+      axios.post('/api/editevent', formdata, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }).then(function (response) {
+        vm.$notify({
+          group: 'foo',
+          title: 'success',
+          text: 'Event Updated',
+          type: 'success',
+          duration: 10000
+        });
+        vm.adding = false;
+      })["catch"](function (e) {
+        vm.adding = false;
+        vm.$notify({
+          type: 'warn',
+          text: 'unable to update event'
+        });
+      });
+    },
+    copyInviteLink: function copyInviteLink() {
+      var testingCodeToCopy = document.querySelector('#testing-code');
+      testingCodeToCopy.setAttribute('type', 'text');
+      testingCodeToCopy.select();
+      var vm = this;
+
+      try {
+        var successful = document.execCommand('copy');
+        vm.$notify({
+          type: 'success',
+          text: 'invite link is copied to clipboard'
+        });
+      } catch (err) {
+        vm.$notify({
+          type: 'warn',
+          text: 'unable to copy'
+        });
+      }
+      /* unselect the range */
+
+
+      testingCodeToCopy.setAttribute('type', 'hidden');
+      window.getSelection().removeAllRanges();
+    }
+  },
+  computed: {
+    baseurl: function baseurl() {
+      return window.location.origin;
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/event-manager/Speaker.vue?vue&type=script&lang=js&":
+/*!********************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/event-manager/Speaker.vue?vue&type=script&lang=js& ***!
+  \********************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _event_bus__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../event-bus */ "./resources/js/event-bus.js");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+var MAX_SIZE = 1000000;
+var MAX_WIDTH = 720;
+var MAX_HEIGHT = 720;
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['openSpeakers', 'speakers'],
+  data: function data() {
+    return {
+      image: {
+        size: '',
+        height: '',
+        width: ''
+      },
+      editSpeaker: false,
+      inviteLink: '',
+      speakerFileUrl: null,
+      speakerFileError: '',
+      speakerImage: null,
+      speakerId: null,
+      errors: [],
+      speaker: {
+        facebook: '',
+        twitter: '',
+        linkedIn: '',
+        name: '',
+        email: '',
+        organization: '',
+        title: ''
+      },
+      addingSpeaker: false
+    };
+  },
+  methods: {
+    close: function close(event) {
+      var payload = {
+        'action': false
+      };
+      _event_bus__WEBPACK_IMPORTED_MODULE_0__["default"].$emit('closeSpeakers', payload);
+      console.log('emitted');
+    },
+    edit: function edit(item) {
+      this.speaker = item;
+      this.speakerId = item.id;
+      this.speakerFileUrl = '/files/images?filename=' + item.image;
+      this.inviteLink = this.baseurl + '/invite/' + item.invite_id;
+      this.editSpeaker = true;
+    },
+    trigger: function trigger() {
+      this.$refs.speakerFile.click();
+    },
+    speakerFileValidation: function speakerFileValidation() {
+      var _this = this;
+
+      this.speakerFileError = '';
+      var speakerFile = this.$refs.speakerFile.files[0];
+      this.speakerFileUrl = URL.createObjectURL(speakerFile);
+      if (!speakerFile || speakerFile.type.indexOf('image/') !== 0) return;
+      this.image.size = speakerFile.size;
+
+      if (this.image.size > MAX_SIZE) {
+        this.speakerFileError = "The image size (".concat(this.image.size, ") is too much (max is ").concat(MAX_SIZE, ").");
+        return;
+      }
+
+      var reader = new FileReader();
+      reader.readAsDataURL(speakerFile);
+
+      reader.onload = function (evt) {
+        var img = new Image();
+
+        img.onload = function () {
+          _this.image.width = img.width;
+          _this.image.height = img.height;
+          console.log(_this.image);
+
+          if (_this.image.width > MAX_WIDTH) {
+            _this.speakerFileError = "The image width (".concat(_this.image.width, ") is too much (max is ").concat(MAX_WIDTH, ").");
+            return;
+          }
+
+          if (_this.image.height > MAX_HEIGHT) {
+            _this.speakerFileError = "The image height (".concat(_this.image.height, ") is too much (max is ").concat(MAX_HEIGHT, ").");
+            return;
+          }
+        };
+
+        img.src = evt.target.result;
+      };
+
+      this.speakerImage = speakerFile;
+
+      reader.onerror = function (evt) {
+        console.error(evt);
+      };
+    },
+    ValidateEmail: function ValidateEmail(mail) {
+      if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)) {
+        return true;
+      }
+
+      return false;
+    },
+    validURL: function validURL(str) {
+      var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+      '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+      '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+      '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+
+      return !!pattern.test(str);
+    },
+    checkSpeakerForm: function checkSpeakerForm(e) {
+      this.errors = [];
+
+      if (!this.speaker.title) {
+        this.errors.push('Speaker\'s Title is required.');
+      }
+
+      if (!this.speaker.name || this.speaker.name.length < 5) {
+        this.errors.push('Enter a valid name.');
+      }
+
+      if (!this.speaker.organization) {
+        this.errors.push('Speaker organization cannot be empty');
+      }
+
+      if (this.speaker.facebook) {
+        var url = this.validURL(this.speaker.facebook);
+        url ? true : this.errors.push('The facebook URL is invalid');
+      }
+
+      if (this.speaker.twitter) {
+        var _url = this.validURL(this.speaker.twitter);
+
+        _url ? true : this.errors.push('The Twitter URL is invalid');
+      }
+
+      if (this.speaker.linkedIn) {
+        var _url2 = this.validURL(this.speaker.linkedIn);
+
+        _url2 ? true : this.errors.push('The speaker linkedIn URL is invalid');
+      }
+
+      if (!this.speaker.email || !this.speaker.email) {
+        var email = this.ValidateEmail(this.speaker.email);
+        email ? true : this.errors.push('The speaker email is invalid');
+      }
+
+      if (!this.speakerFileUrl || this.speakerFileError) {
+        this.errors.push('Image field is required.');
+      }
+
+      if (this.errors.length > 0) {
+        this.$notify({
+          group: 'foo',
+          title: 'Errors Found',
+          text: 'Unable to submit form',
+          type: 'warn',
+          duration: 10000
+        });
+      }
+
+      e.preventDefault();
+
+      if (this.errors.length == 0) {
+        this.addSpeaker();
+      }
+    },
+    addSpeaker: function addSpeaker() {
+      this.addingSpeaker = true;
+      var formdata = new FormData();
+      formdata.append('speakerId', this.speakerId);
+      formdata.append('image', this.speakerImage);
+      formdata.append('title', this.speaker.title);
+      formdata.append('name', this.speaker.name);
+      formdata.append('facebook', this.speaker.facebook);
+      formdata.append('twitter', this.speaker.twitter);
+      formdata.append('linkedin', this.speaker.linkedIn);
+      formdata.append('organization', this.speaker.organization);
+      formdata.append('email', this.speaker.email);
+      var vm = this;
+      axios.post('/api/updatespeaker', formdata, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }).then(function (response) {
+        vm.$notify({
+          group: 'foo',
+          title: 'success',
+          text: 'Speaker Updated',
+          type: 'success',
+          duration: 10000
+        });
+        vm.editSpeaker = false;
+        vm.addingSpeaker = false;
+      })["catch"](function (e) {
+        vm.addingSpeaker = false;
+        vm.$notify({
+          type: 'warn',
+          text: 'unable to update speaker'
+        });
+      });
+    },
+    copyInviteLink: function copyInviteLink() {
+      var testingCodeToCopy = document.querySelector('#testing-code');
+      testingCodeToCopy.setAttribute('type', 'text');
+      testingCodeToCopy.select();
+      var vm = this;
+
+      try {
+        var successful = document.execCommand('copy');
+        vm.$notify({
+          type: 'success',
+          text: 'invite link is copied to clipboard'
+        });
+      } catch (err) {
+        vm.$notify({
+          type: 'warn',
+          text: 'unable to copy'
+        });
+      }
+      /* unselect the range */
+
+
+      testingCodeToCopy.setAttribute('type', 'hidden');
+      window.getSelection().removeAllRanges();
+    }
+  },
+  computed: {
+    baseurl: function baseurl() {
+      return window.location.origin;
+    }
   }
 });
 
@@ -6459,6 +8798,150 @@ __webpack_require__.r(__webpack_exports__);
 
 })));
 //# sourceMappingURL=bootstrap.js.map
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/DashboardComponent.vue?vue&type=style&index=0&lang=css&":
+/*!************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/DashboardComponent.vue?vue&type=style&index=0&lang=css& ***!
+  \************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, ".dropdown:hover .dropdown-menu {\n  display: block;\n}\n.flip-list-move{\n  transition: transform 30s;\n}\n.slide-fade-enter-active{\n  transition: all .3s ease;\n}\n.slide-fade-leave-active{\n  transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);\n}\n.slide-fade-enter, .slide-fade-leave-to {\n  transform: translateX(100px);\n  opacity: 0;\n}\n\n", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/EditProgramme.vue?vue&type=style&index=0&lang=css&":
+/*!*******************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/EditProgramme.vue?vue&type=style&index=0&lang=css& ***!
+  \*******************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "#preview img {\n  max-width: 200px;\n  max-height: 200px;\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/PostComponent.vue?vue&type=style&index=0&lang=css&":
+/*!*******************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/PostComponent.vue?vue&type=style&index=0&lang=css& ***!
+  \*******************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "#preview img {\n  max-width: 200px;\n  max-height: 200px;\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/lib/css-base.js":
+/*!*************************************************!*\
+  !*** ./node_modules/css-loader/lib/css-base.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+// css base code, injected by the css-loader
+module.exports = function(useSourceMap) {
+	var list = [];
+
+	// return the list of modules as css string
+	list.toString = function toString() {
+		return this.map(function (item) {
+			var content = cssWithMappingToString(item, useSourceMap);
+			if(item[2]) {
+				return "@media " + item[2] + "{" + content + "}";
+			} else {
+				return content;
+			}
+		}).join("");
+	};
+
+	// import a list of modules into the list
+	list.i = function(modules, mediaQuery) {
+		if(typeof modules === "string")
+			modules = [[null, modules, ""]];
+		var alreadyImportedModules = {};
+		for(var i = 0; i < this.length; i++) {
+			var id = this[i][0];
+			if(typeof id === "number")
+				alreadyImportedModules[id] = true;
+		}
+		for(i = 0; i < modules.length; i++) {
+			var item = modules[i];
+			// skip already imported module
+			// this implementation is not 100% perfect for weird media query combinations
+			//  when a module is imported multiple times with different media queries.
+			//  I hope this will never occur (Hey this way we have smaller bundles)
+			if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+				if(mediaQuery && !item[2]) {
+					item[2] = mediaQuery;
+				} else if(mediaQuery) {
+					item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+				}
+				list.push(item);
+			}
+		}
+	};
+	return list;
+};
+
+function cssWithMappingToString(item, useSourceMap) {
+	var content = item[1] || '';
+	var cssMapping = item[3];
+	if (!cssMapping) {
+		return content;
+	}
+
+	if (useSourceMap && typeof btoa === 'function') {
+		var sourceMapping = toComment(cssMapping);
+		var sourceURLs = cssMapping.sources.map(function (source) {
+			return '/*# sourceURL=' + cssMapping.sourceRoot + source + ' */'
+		});
+
+		return [content].concat(sourceURLs).concat([sourceMapping]).join('\n');
+	}
+
+	return [content].join('\n');
+}
+
+// Adapted from convert-source-map (MIT)
+function toComment(sourceMap) {
+	// eslint-disable-next-line no-undef
+	var base64 = btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap))));
+	var data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;
+
+	return '/*# ' + data + ' */';
+}
 
 
 /***/ }),
@@ -37486,6 +39969,605 @@ process.umask = function() { return 0; };
 
 /***/ }),
 
+/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/DashboardComponent.vue?vue&type=style&index=0&lang=css&":
+/*!****************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/DashboardComponent.vue?vue&type=style&index=0&lang=css& ***!
+  \****************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../../node_modules/css-loader??ref--6-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--6-2!../../../node_modules/vue-loader/lib??vue-loader-options!./DashboardComponent.vue?vue&type=style&index=0&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/DashboardComponent.vue?vue&type=style&index=0&lang=css&");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {}
+
+/***/ }),
+
+/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/EditProgramme.vue?vue&type=style&index=0&lang=css&":
+/*!***********************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/EditProgramme.vue?vue&type=style&index=0&lang=css& ***!
+  \***********************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../../node_modules/css-loader??ref--6-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--6-2!../../../node_modules/vue-loader/lib??vue-loader-options!./EditProgramme.vue?vue&type=style&index=0&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/EditProgramme.vue?vue&type=style&index=0&lang=css&");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {}
+
+/***/ }),
+
+/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/PostComponent.vue?vue&type=style&index=0&lang=css&":
+/*!***********************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/PostComponent.vue?vue&type=style&index=0&lang=css& ***!
+  \***********************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../../node_modules/css-loader??ref--6-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--6-2!../../../node_modules/vue-loader/lib??vue-loader-options!./PostComponent.vue?vue&type=style&index=0&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/PostComponent.vue?vue&type=style&index=0&lang=css&");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {}
+
+/***/ }),
+
+/***/ "./node_modules/style-loader/lib/addStyles.js":
+/*!****************************************************!*\
+  !*** ./node_modules/style-loader/lib/addStyles.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+
+var stylesInDom = {};
+
+var	memoize = function (fn) {
+	var memo;
+
+	return function () {
+		if (typeof memo === "undefined") memo = fn.apply(this, arguments);
+		return memo;
+	};
+};
+
+var isOldIE = memoize(function () {
+	// Test for IE <= 9 as proposed by Browserhacks
+	// @see http://browserhacks.com/#hack-e71d8692f65334173fee715c222cb805
+	// Tests for existence of standard globals is to allow style-loader
+	// to operate correctly into non-standard environments
+	// @see https://github.com/webpack-contrib/style-loader/issues/177
+	return window && document && document.all && !window.atob;
+});
+
+var getTarget = function (target, parent) {
+  if (parent){
+    return parent.querySelector(target);
+  }
+  return document.querySelector(target);
+};
+
+var getElement = (function (fn) {
+	var memo = {};
+
+	return function(target, parent) {
+                // If passing function in options, then use it for resolve "head" element.
+                // Useful for Shadow Root style i.e
+                // {
+                //   insertInto: function () { return document.querySelector("#foo").shadowRoot }
+                // }
+                if (typeof target === 'function') {
+                        return target();
+                }
+                if (typeof memo[target] === "undefined") {
+			var styleTarget = getTarget.call(this, target, parent);
+			// Special case to return head of iframe instead of iframe itself
+			if (window.HTMLIFrameElement && styleTarget instanceof window.HTMLIFrameElement) {
+				try {
+					// This will throw an exception if access to iframe is blocked
+					// due to cross-origin restrictions
+					styleTarget = styleTarget.contentDocument.head;
+				} catch(e) {
+					styleTarget = null;
+				}
+			}
+			memo[target] = styleTarget;
+		}
+		return memo[target]
+	};
+})();
+
+var singleton = null;
+var	singletonCounter = 0;
+var	stylesInsertedAtTop = [];
+
+var	fixUrls = __webpack_require__(/*! ./urls */ "./node_modules/style-loader/lib/urls.js");
+
+module.exports = function(list, options) {
+	if (typeof DEBUG !== "undefined" && DEBUG) {
+		if (typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
+	}
+
+	options = options || {};
+
+	options.attrs = typeof options.attrs === "object" ? options.attrs : {};
+
+	// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+	// tags it will allow on a page
+	if (!options.singleton && typeof options.singleton !== "boolean") options.singleton = isOldIE();
+
+	// By default, add <style> tags to the <head> element
+        if (!options.insertInto) options.insertInto = "head";
+
+	// By default, add <style> tags to the bottom of the target
+	if (!options.insertAt) options.insertAt = "bottom";
+
+	var styles = listToStyles(list, options);
+
+	addStylesToDom(styles, options);
+
+	return function update (newList) {
+		var mayRemove = [];
+
+		for (var i = 0; i < styles.length; i++) {
+			var item = styles[i];
+			var domStyle = stylesInDom[item.id];
+
+			domStyle.refs--;
+			mayRemove.push(domStyle);
+		}
+
+		if(newList) {
+			var newStyles = listToStyles(newList, options);
+			addStylesToDom(newStyles, options);
+		}
+
+		for (var i = 0; i < mayRemove.length; i++) {
+			var domStyle = mayRemove[i];
+
+			if(domStyle.refs === 0) {
+				for (var j = 0; j < domStyle.parts.length; j++) domStyle.parts[j]();
+
+				delete stylesInDom[domStyle.id];
+			}
+		}
+	};
+};
+
+function addStylesToDom (styles, options) {
+	for (var i = 0; i < styles.length; i++) {
+		var item = styles[i];
+		var domStyle = stylesInDom[item.id];
+
+		if(domStyle) {
+			domStyle.refs++;
+
+			for(var j = 0; j < domStyle.parts.length; j++) {
+				domStyle.parts[j](item.parts[j]);
+			}
+
+			for(; j < item.parts.length; j++) {
+				domStyle.parts.push(addStyle(item.parts[j], options));
+			}
+		} else {
+			var parts = [];
+
+			for(var j = 0; j < item.parts.length; j++) {
+				parts.push(addStyle(item.parts[j], options));
+			}
+
+			stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
+		}
+	}
+}
+
+function listToStyles (list, options) {
+	var styles = [];
+	var newStyles = {};
+
+	for (var i = 0; i < list.length; i++) {
+		var item = list[i];
+		var id = options.base ? item[0] + options.base : item[0];
+		var css = item[1];
+		var media = item[2];
+		var sourceMap = item[3];
+		var part = {css: css, media: media, sourceMap: sourceMap};
+
+		if(!newStyles[id]) styles.push(newStyles[id] = {id: id, parts: [part]});
+		else newStyles[id].parts.push(part);
+	}
+
+	return styles;
+}
+
+function insertStyleElement (options, style) {
+	var target = getElement(options.insertInto)
+
+	if (!target) {
+		throw new Error("Couldn't find a style target. This probably means that the value for the 'insertInto' parameter is invalid.");
+	}
+
+	var lastStyleElementInsertedAtTop = stylesInsertedAtTop[stylesInsertedAtTop.length - 1];
+
+	if (options.insertAt === "top") {
+		if (!lastStyleElementInsertedAtTop) {
+			target.insertBefore(style, target.firstChild);
+		} else if (lastStyleElementInsertedAtTop.nextSibling) {
+			target.insertBefore(style, lastStyleElementInsertedAtTop.nextSibling);
+		} else {
+			target.appendChild(style);
+		}
+		stylesInsertedAtTop.push(style);
+	} else if (options.insertAt === "bottom") {
+		target.appendChild(style);
+	} else if (typeof options.insertAt === "object" && options.insertAt.before) {
+		var nextSibling = getElement(options.insertAt.before, target);
+		target.insertBefore(style, nextSibling);
+	} else {
+		throw new Error("[Style Loader]\n\n Invalid value for parameter 'insertAt' ('options.insertAt') found.\n Must be 'top', 'bottom', or Object.\n (https://github.com/webpack-contrib/style-loader#insertat)\n");
+	}
+}
+
+function removeStyleElement (style) {
+	if (style.parentNode === null) return false;
+	style.parentNode.removeChild(style);
+
+	var idx = stylesInsertedAtTop.indexOf(style);
+	if(idx >= 0) {
+		stylesInsertedAtTop.splice(idx, 1);
+	}
+}
+
+function createStyleElement (options) {
+	var style = document.createElement("style");
+
+	if(options.attrs.type === undefined) {
+		options.attrs.type = "text/css";
+	}
+
+	if(options.attrs.nonce === undefined) {
+		var nonce = getNonce();
+		if (nonce) {
+			options.attrs.nonce = nonce;
+		}
+	}
+
+	addAttrs(style, options.attrs);
+	insertStyleElement(options, style);
+
+	return style;
+}
+
+function createLinkElement (options) {
+	var link = document.createElement("link");
+
+	if(options.attrs.type === undefined) {
+		options.attrs.type = "text/css";
+	}
+	options.attrs.rel = "stylesheet";
+
+	addAttrs(link, options.attrs);
+	insertStyleElement(options, link);
+
+	return link;
+}
+
+function addAttrs (el, attrs) {
+	Object.keys(attrs).forEach(function (key) {
+		el.setAttribute(key, attrs[key]);
+	});
+}
+
+function getNonce() {
+	if (false) {}
+
+	return __webpack_require__.nc;
+}
+
+function addStyle (obj, options) {
+	var style, update, remove, result;
+
+	// If a transform function was defined, run it on the css
+	if (options.transform && obj.css) {
+	    result = typeof options.transform === 'function'
+		 ? options.transform(obj.css) 
+		 : options.transform.default(obj.css);
+
+	    if (result) {
+	    	// If transform returns a value, use that instead of the original css.
+	    	// This allows running runtime transformations on the css.
+	    	obj.css = result;
+	    } else {
+	    	// If the transform function returns a falsy value, don't add this css.
+	    	// This allows conditional loading of css
+	    	return function() {
+	    		// noop
+	    	};
+	    }
+	}
+
+	if (options.singleton) {
+		var styleIndex = singletonCounter++;
+
+		style = singleton || (singleton = createStyleElement(options));
+
+		update = applyToSingletonTag.bind(null, style, styleIndex, false);
+		remove = applyToSingletonTag.bind(null, style, styleIndex, true);
+
+	} else if (
+		obj.sourceMap &&
+		typeof URL === "function" &&
+		typeof URL.createObjectURL === "function" &&
+		typeof URL.revokeObjectURL === "function" &&
+		typeof Blob === "function" &&
+		typeof btoa === "function"
+	) {
+		style = createLinkElement(options);
+		update = updateLink.bind(null, style, options);
+		remove = function () {
+			removeStyleElement(style);
+
+			if(style.href) URL.revokeObjectURL(style.href);
+		};
+	} else {
+		style = createStyleElement(options);
+		update = applyToTag.bind(null, style);
+		remove = function () {
+			removeStyleElement(style);
+		};
+	}
+
+	update(obj);
+
+	return function updateStyle (newObj) {
+		if (newObj) {
+			if (
+				newObj.css === obj.css &&
+				newObj.media === obj.media &&
+				newObj.sourceMap === obj.sourceMap
+			) {
+				return;
+			}
+
+			update(obj = newObj);
+		} else {
+			remove();
+		}
+	};
+}
+
+var replaceText = (function () {
+	var textStore = [];
+
+	return function (index, replacement) {
+		textStore[index] = replacement;
+
+		return textStore.filter(Boolean).join('\n');
+	};
+})();
+
+function applyToSingletonTag (style, index, remove, obj) {
+	var css = remove ? "" : obj.css;
+
+	if (style.styleSheet) {
+		style.styleSheet.cssText = replaceText(index, css);
+	} else {
+		var cssNode = document.createTextNode(css);
+		var childNodes = style.childNodes;
+
+		if (childNodes[index]) style.removeChild(childNodes[index]);
+
+		if (childNodes.length) {
+			style.insertBefore(cssNode, childNodes[index]);
+		} else {
+			style.appendChild(cssNode);
+		}
+	}
+}
+
+function applyToTag (style, obj) {
+	var css = obj.css;
+	var media = obj.media;
+
+	if(media) {
+		style.setAttribute("media", media)
+	}
+
+	if(style.styleSheet) {
+		style.styleSheet.cssText = css;
+	} else {
+		while(style.firstChild) {
+			style.removeChild(style.firstChild);
+		}
+
+		style.appendChild(document.createTextNode(css));
+	}
+}
+
+function updateLink (link, options, obj) {
+	var css = obj.css;
+	var sourceMap = obj.sourceMap;
+
+	/*
+		If convertToAbsoluteUrls isn't defined, but sourcemaps are enabled
+		and there is no publicPath defined then lets turn convertToAbsoluteUrls
+		on by default.  Otherwise default to the convertToAbsoluteUrls option
+		directly
+	*/
+	var autoFixUrls = options.convertToAbsoluteUrls === undefined && sourceMap;
+
+	if (options.convertToAbsoluteUrls || autoFixUrls) {
+		css = fixUrls(css);
+	}
+
+	if (sourceMap) {
+		// http://stackoverflow.com/a/26603875
+		css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
+	}
+
+	var blob = new Blob([css], { type: "text/css" });
+
+	var oldSrc = link.href;
+
+	link.href = URL.createObjectURL(blob);
+
+	if(oldSrc) URL.revokeObjectURL(oldSrc);
+}
+
+
+/***/ }),
+
+/***/ "./node_modules/style-loader/lib/urls.js":
+/*!***********************************************!*\
+  !*** ./node_modules/style-loader/lib/urls.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+
+/**
+ * When source maps are enabled, `style-loader` uses a link element with a data-uri to
+ * embed the css on the page. This breaks all relative urls because now they are relative to a
+ * bundle instead of the current page.
+ *
+ * One solution is to only use full urls, but that may be impossible.
+ *
+ * Instead, this function "fixes" the relative urls to be absolute according to the current page location.
+ *
+ * A rudimentary test suite is located at `test/fixUrls.js` and can be run via the `npm test` command.
+ *
+ */
+
+module.exports = function (css) {
+  // get current location
+  var location = typeof window !== "undefined" && window.location;
+
+  if (!location) {
+    throw new Error("fixUrls requires window.location");
+  }
+
+	// blank or null?
+	if (!css || typeof css !== "string") {
+	  return css;
+  }
+
+  var baseUrl = location.protocol + "//" + location.host;
+  var currentDir = baseUrl + location.pathname.replace(/\/[^\/]*$/, "/");
+
+	// convert each url(...)
+	/*
+	This regular expression is just a way to recursively match brackets within
+	a string.
+
+	 /url\s*\(  = Match on the word "url" with any whitespace after it and then a parens
+	   (  = Start a capturing group
+	     (?:  = Start a non-capturing group
+	         [^)(]  = Match anything that isn't a parentheses
+	         |  = OR
+	         \(  = Match a start parentheses
+	             (?:  = Start another non-capturing groups
+	                 [^)(]+  = Match anything that isn't a parentheses
+	                 |  = OR
+	                 \(  = Match a start parentheses
+	                     [^)(]*  = Match anything that isn't a parentheses
+	                 \)  = Match a end parentheses
+	             )  = End Group
+              *\) = Match anything and then a close parens
+          )  = Close non-capturing group
+          *  = Match anything
+       )  = Close capturing group
+	 \)  = Match a close parens
+
+	 /gi  = Get all matches, not the first.  Be case insensitive.
+	 */
+	var fixedCss = css.replace(/url\s*\(((?:[^)(]|\((?:[^)(]+|\([^)(]*\))*\))*)\)/gi, function(fullMatch, origUrl) {
+		// strip quotes (if they exist)
+		var unquotedOrigUrl = origUrl
+			.trim()
+			.replace(/^"(.*)"$/, function(o, $1){ return $1; })
+			.replace(/^'(.*)'$/, function(o, $1){ return $1; });
+
+		// already a full url? no change
+		if (/^(#|data:|http:\/\/|https:\/\/|file:\/\/\/|\s*$)/i.test(unquotedOrigUrl)) {
+		  return fullMatch;
+		}
+
+		// convert the url to a full url
+		var newUrl;
+
+		if (unquotedOrigUrl.indexOf("//") === 0) {
+		  	//TODO: should we add protocol?
+			newUrl = unquotedOrigUrl;
+		} else if (unquotedOrigUrl.indexOf("/") === 0) {
+			// path should be relative to the base url
+			newUrl = baseUrl + unquotedOrigUrl; // already starts with '/'
+		} else {
+			// path should be relative to current directory
+			newUrl = currentDir + unquotedOrigUrl.replace(/^\.\//, ""); // Strip leading './'
+		}
+
+		// send back the fixed url(...)
+		return "url(" + JSON.stringify(newUrl) + ")";
+	});
+
+	// send back the fixed css
+	return fixedCss;
+};
+
+
+/***/ }),
+
 /***/ "./node_modules/timers-browserify/main.js":
 /*!************************************************!*\
   !*** ./node_modules/timers-browserify/main.js ***!
@@ -37561,10 +40643,10 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/ExampleComponent.vue?vue&type=template&id=299e239e&":
-/*!*******************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/ExampleComponent.vue?vue&type=template&id=299e239e& ***!
-  \*******************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/DashboardComponent.vue?vue&type=template&id=01ab55f4&":
+/*!*********************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/DashboardComponent.vue?vue&type=template&id=01ab55f4& ***!
+  \*********************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -37576,29 +40658,5522 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return _c(
+    "div",
+    { staticClass: "bg-gray-300 flex flex-row xs:flex-col pt-20 xs:px-0 px-6" },
+    [
+      _c("notifications", { attrs: { group: "foo" } }),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          staticClass:
+            "flex-none flex xs:w-full flex-col xs:flex-row items-center rounded-md w-2/12 p-3 xs:m-0 m-3 bg-white"
+        },
+        [
+          _c(
+            "div",
+            { staticClass: "h-24 w-24 xs:hidden rounded-full mt-8 mb-5" },
+            [
+              _c("img", {
+                staticClass: "object-fit rounded-full h-24 w-24 mt-8 mb-5",
+                attrs: {
+                  src: "/files/images?filename=" + _vm.user.avatar,
+                  alt: "",
+                  srcset: ""
+                }
+              })
+            ]
+          ),
+          _vm._v(" "),
+          _c("div", { staticClass: "xs:flex-1 p-4 xs:hidden" }, [
+            _c("h3", { staticClass: "font-bold" }, [
+              _c("span", [_vm._v(_vm._s(_vm.user.first_name))]),
+              _vm._v(" "),
+              _c("span", [_vm._v(_vm._s(_vm.user.last_name))])
+            ]),
+            _vm._v(" "),
+            _c("h3", [_vm._v(_vm._s(_vm.user.email))])
+          ]),
+          _vm._v(" "),
+          _c(
+            "div",
+            {
+              staticClass:
+                "flex-col flex xs:flex-row flex-wrap items-center justify-center"
+            },
+            [
+              _vm._m(0),
+              _vm._v(" "),
+              _c("div", { staticClass: "p-4" }, [
+                _c("div", { staticClass: "dropdown inline-block relative" }, [
+                  _c(
+                    "button",
+                    {
+                      staticClass:
+                        "bg-gray-300 text-gray-700 font-semibold py-2 xs:py-1 xs:p-4 xs:text-sm px-8 rounded inline-flex items-center",
+                      attrs: { id: "programmes" },
+                      on: {
+                        click: function($event) {
+                          return _vm.fetchStories("/api/programmes/all")
+                        }
+                      }
+                    },
+                    [
+                      _c("span", { staticClass: "mr-1" }, [
+                        _vm._v("Programmes")
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "svg",
+                        {
+                          staticClass: "fill-current h-4 w-4",
+                          attrs: {
+                            xmlns: "http://www.w3.org/2000/svg",
+                            viewBox: "0 0 20 20"
+                          }
+                        },
+                        [
+                          _c("path", {
+                            attrs: {
+                              d:
+                                "M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+                            }
+                          })
+                        ]
+                      )
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "ul",
+                    {
+                      staticClass:
+                        "dropdown-menu absolute hidden text-gray-700 pt-1"
+                    },
+                    [
+                      _c(
+                        "li",
+                        {
+                          on: {
+                            click: function($event) {
+                              return _vm.fetchStories("/api/programmes/mine")
+                            }
+                          }
+                        },
+                        [
+                          _c(
+                            "button",
+                            {
+                              staticClass:
+                                "rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-10 block whitespace-no-wrap"
+                            },
+                            [_vm._v("Hosted")]
+                          )
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "li",
+                        {
+                          on: {
+                            click: function($event) {
+                              return _vm.fetchStories(
+                                "/api/programmes/attended"
+                              )
+                            }
+                          }
+                        },
+                        [
+                          _c(
+                            "button",
+                            {
+                              staticClass:
+                                "bg-gray-200 hover:bg-gray-400 py-2 px-8 block whitespace-no-wrap"
+                            },
+                            [_vm._v("Attended")]
+                          )
+                        ]
+                      )
+                    ]
+                  )
+                ])
+              ]),
+              _vm._v(" "),
+              _vm.hasProgram
+                ? _c("div", { staticClass: "p-4" }, [_vm._m(1)])
+                : _vm._e()
+            ]
+          )
+        ]
+      ),
+      _vm._v(" "),
+      _c("transition", { attrs: { name: "flip-list", mode: "out-in" } }, [
+        _vm.details == true && _vm.manager == false
+          ? _c(
+              "div",
+              {
+                key: "overview",
+                staticClass:
+                  "flex-1 z-10 xs:m-0 xs:mt-5 m-3 p-6 flex xs:flex-col rounded-lg bg-white"
+              },
+              [
+                _vm.isloading
+                  ? _c(
+                      "div",
+                      { staticClass: "flex w-full justify-center text-center" },
+                      [
+                        _c("span", { staticClass: "text-xl" }, [
+                          _vm._v("Loading...")
+                        ])
+                      ]
+                    )
+                  : _c(
+                      "div",
+                      {
+                        staticClass:
+                          "w-full flex xs:flex-col rounded-lg bg-white"
+                      },
+                      [
+                        _c(
+                          "div",
+                          {
+                            staticClass:
+                              "w-3/12 hover:w-2/12 rounded-md flex xs:flex-none xs:w-full items-center flex-col bg-gray-500",
+                            style: {
+                              backgroundImage:
+                                "url('/files/images?filename=" +
+                                _vm.programme.programme.featured +
+                                "')",
+                              backgroundSize: "cover",
+                              backgroundRepeat: "no-repeat",
+                              backgroundPosition: "center"
+                            }
+                          },
+                          [
+                            _c(
+                              "p",
+                              {
+                                staticClass:
+                                  "font-extrabold bg-orange-400 pb-4 w-full pt-2 text-lg text-center"
+                              },
+                              [_vm._v("Event")]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "p",
+                              {
+                                staticClass:
+                                  "text-center bg-gray-100 rounded w-full text-black font-bold"
+                              },
+                              [_vm._v(_vm._s(_vm.programme.programme.title))]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "div",
+                              {
+                                staticClass:
+                                  "flex flex-col w-full xs:space-x-4 h-64 flex-wrap xs:flex-no-wrap"
+                              },
+                              [
+                                _c(
+                                  "p",
+                                  {
+                                    staticClass: "text-lg  w-full text-center",
+                                    on: {
+                                      click: function($event) {
+                                        _vm.viewFacilitators = true
+                                      }
+                                    }
+                                  },
+                                  [
+                                    _c(
+                                      "span",
+                                      {
+                                        staticClass:
+                                          "hover:shadow-2xl text-sm hover:bg-yellow-600 cursor-pointer shadow-lg p-1 px-3 rounded-md bg-yellow-700 text-white"
+                                      },
+                                      [
+                                        _vm._v(
+                                          "Facilitators (" +
+                                            _vm._s(
+                                              _vm.programme.programme.speakers
+                                                .length + 1
+                                            ) +
+                                            ") "
+                                        ),
+                                        _c("i", { staticClass: "fa fa-eye" })
+                                      ]
+                                    )
+                                  ]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "a",
+                                  {
+                                    staticClass: "text-lg text-center",
+                                    attrs: {
+                                      href:
+                                        "/programme/calendar/" +
+                                        _vm.programme.programme.id
+                                    }
+                                  },
+                                  [
+                                    _c(
+                                      "span",
+                                      {
+                                        staticClass:
+                                          "hover:shadow-2xl text-sm hover:bg-yellow-600 shadow-lg p-1 px-3 rounded-md bg-yellow-700 text-white"
+                                      },
+                                      [
+                                        _vm._v(" View Calendar "),
+                                        _c("i", {
+                                          staticClass: "fa fa-calendar-alt"
+                                        })
+                                      ]
+                                    )
+                                  ]
+                                ),
+                                _vm._v(" "),
+                                !_vm.programme.requested &&
+                                _vm.programme.confirmed == false
+                                  ? _c(
+                                      "div",
+                                      {
+                                        staticClass:
+                                          "text-lg flex justify-center text-center",
+                                        on: {
+                                          click: function($event) {
+                                            return _vm.joinProgram(
+                                              _vm.programme.programme.id
+                                            )
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _c("div", [
+                                          _vm.requesting == "sending"
+                                            ? _c("p", [
+                                                _vm._v("Sending request...")
+                                              ])
+                                            : _vm.requesting == "sent"
+                                            ? _c(
+                                                "p",
+                                                {
+                                                  staticClass:
+                                                    "hover:shadow-2xl text-sm hover:bg-yellow-600 cursor-pointer shadow-lg p-1 px-3 rounded-md bg-yellow-700 text-white"
+                                                },
+                                                [_vm._v("Request Sent")]
+                                              )
+                                            : _c(
+                                                "p",
+                                                {
+                                                  staticClass:
+                                                    "hover:shadow-2xl text-sm hover:bg-yellow-600 cursor-pointer shadow-lg p-1 px-3 rounded-md bg-yellow-700 text-white"
+                                                },
+                                                [_vm._v("Join Programme")]
+                                              ),
+                                          _c("p")
+                                        ])
+                                      ]
+                                    )
+                                  : _vm.programme.requested &&
+                                    _vm.programme.confirmed == true
+                                  ? _c(
+                                      "a",
+                                      {
+                                        staticClass: "text-lg text-center",
+                                        attrs: { href: "#" }
+                                      },
+                                      [
+                                        _c(
+                                          "span",
+                                          {
+                                            staticClass:
+                                              "hover:shadow-2xl text-sm hover:bg-yellow-600 shadow-lg p-1 px-3 rounded-md bg-yellow-700 text-white"
+                                          },
+                                          [
+                                            _c("i", {
+                                              staticClass: "fa fa-info"
+                                            }),
+                                            _vm._v(" You are attending")
+                                          ]
+                                        )
+                                      ]
+                                    )
+                                  : _vm.programme.requested
+                                  ? _c(
+                                      "a",
+                                      {
+                                        staticClass:
+                                          "text-lg w-full text-center",
+                                        attrs: { href: "#" }
+                                      },
+                                      [
+                                        _c(
+                                          "span",
+                                          {
+                                            staticClass:
+                                              "hover:shadow-2xl text-sm hover:bg-green-600 shadow-lg p-1 px-3 rounded-md bg-green-700 text-white"
+                                          },
+                                          [_vm._v("Awaiting Confirmation")]
+                                        )
+                                      ]
+                                    )
+                                  : _vm._e()
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "div",
+                              {
+                                staticClass:
+                                  "flex flex-col xs:flex-row justify-center "
+                              },
+                              [
+                                _c(
+                                  "span",
+                                  { staticClass: "text-lg text-center" },
+                                  [
+                                    _c(
+                                      "span",
+                                      {
+                                        staticClass:
+                                          "hover:shadow-2xl text-sm hover:bg-yellow-600 shadow-lg p-1 px-3 rounded-md bg-yellow-700 text-white"
+                                      },
+                                      [
+                                        _vm._v(
+                                          _vm._s(
+                                            _vm.programme.programme.users.length
+                                          ) + " "
+                                        ),
+                                        _c("i", {
+                                          staticClass: "fa fa-user-plus"
+                                        })
+                                      ]
+                                    )
+                                  ]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  {
+                                    staticClass:
+                                      "flex-row justify-around w-full"
+                                  },
+                                  [
+                                    _c(
+                                      "span",
+                                      {
+                                        staticClass:
+                                          "flex-1 text-lg text-center  bg-white"
+                                      },
+                                      [
+                                        _c(
+                                          "span",
+                                          {
+                                            staticClass:
+                                              "hover:shadow-2xl text-sm  shadow-lg p-1  rounded-md text-blue-700"
+                                          },
+                                          [
+                                            _c("i", {
+                                              staticClass:
+                                                "fab fa-facebook-square"
+                                            })
+                                          ]
+                                        )
+                                      ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "span",
+                                      {
+                                        staticClass:
+                                          "flex-1 text-lg text-center  bg-white"
+                                      },
+                                      [
+                                        _c(
+                                          "span",
+                                          {
+                                            staticClass:
+                                              "hover:shadow-2xl text-sm  shadow-lg p-1  rounded-md text-blue-500"
+                                          },
+                                          [
+                                            _c("i", {
+                                              staticClass:
+                                                "fab fa-twitter-square"
+                                            })
+                                          ]
+                                        )
+                                      ]
+                                    )
+                                  ]
+                                )
+                              ]
+                            )
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "div",
+                          {
+                            staticClass:
+                              "w-9/12 xs:w-full flex-col h-auto text-gray-800 bg-white"
+                          },
+                          [
+                            _c("div", { staticClass: "p-2 text-center" }, [
+                              _c(
+                                "p",
+                                { staticClass: "px-16 text-lg font-extrabold" },
+                                [_vm._v(_vm._s(_vm.programme.programme.title))]
+                              ),
+                              _vm._v(" "),
+                              _c("h1", { staticClass: "font-bold text-lg" }, [
+                                _vm._v("Programme Overview")
+                              ])
+                            ]),
+                            _vm._v(" "),
+                            _c("p", { staticClass: "p-6 text-justify" }, [
+                              _c("span", [
+                                _c("i", { staticClass: "fa fa-info" })
+                              ]),
+                              _vm._v(
+                                " " + _vm._s(_vm.programme.programme.overview)
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c(
+                              "p",
+                              { staticClass: " px-6 font-bold text-lg" },
+                              [_vm._v("Key Features")]
+                            ),
+                            _vm._v(" "),
+                            _c("hr", { staticClass: "w-full bg-gray-300" }),
+                            _vm._v(" "),
+                            _c(
+                              "ul",
+                              { staticClass: "p-2 pl-4 text-left" },
+                              _vm._l(_vm.programme.keyFeatures, function(
+                                item,
+                                index
+                              ) {
+                                return _c("li", { key: index }, [
+                                  _c("i", {
+                                    staticClass: "fa fa-star",
+                                    staticStyle: { "font-size": "10px" }
+                                  }),
+                                  _vm._v(" " + _vm._s(item))
+                                ])
+                              }),
+                              0
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "p",
+                              {
+                                staticClass:
+                                  " px-6 text-center font-bold text-xl"
+                              },
+                              [
+                                _c("span", [
+                                  _c("i", {
+                                    staticClass: "fa fa-calendar-check"
+                                  })
+                                ]),
+                                _vm._v(" Programme Events")
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _vm.programme.events != null
+                              ? _c(
+                                  "table",
+                                  { staticClass: "p-6 table-fixed w-full " },
+                                  [
+                                    _c("thead", [
+                                      _c("th", { staticClass: "border py-2" }, [
+                                        _vm._v("Title")
+                                      ]),
+                                      _vm._v(" "),
+                                      _c(
+                                        "th",
+                                        { staticClass: "border py-2 " },
+                                        [_vm._v("Start Date")]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "th",
+                                        { staticClass: "border py-2 " },
+                                        [_vm._v("Due Date")]
+                                      )
+                                    ]),
+                                    _vm._v(" "),
+                                    _c(
+                                      "tbody",
+                                      _vm._l(_vm.programme.events, function(
+                                        item,
+                                        index
+                                      ) {
+                                        return _c("tr", { key: index }, [
+                                          _c(
+                                            "td",
+                                            {
+                                              staticClass:
+                                                "text-black py-2 px-6"
+                                            },
+                                            [
+                                              _vm._v(
+                                                "\n                    " +
+                                                  _vm._s(item.title) +
+                                                  "\n                    "
+                                              )
+                                            ]
+                                          ),
+                                          _vm._v(" "),
+                                          _c("td", [
+                                            _vm._v(
+                                              "\n                      " +
+                                                _vm._s(item.start_date) +
+                                                "\n                    "
+                                            )
+                                          ]),
+                                          _vm._v(" "),
+                                          _c("td", [
+                                            _vm._v(
+                                              "\n                   " +
+                                                _vm._s(item.end_date) +
+                                                "\n                    "
+                                            )
+                                          ])
+                                        ])
+                                      }),
+                                      0
+                                    )
+                                  ]
+                                )
+                              : _c("p", [_vm._v("No Events Scheduled")])
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c("facilitator-component", {
+                          attrs: {
+                            view: _vm.viewFacilitators,
+                            facilitators: _vm.programme.programme.speakers,
+                            creator: _vm.programme.programme.creator
+                          },
+                          on: {
+                            close: function($event) {
+                              _vm.viewFacilitators = !_vm.viewFacilitators
+                            }
+                          }
+                        }),
+                        _vm._v(" "),
+                        _c(
+                          "a",
+                          {
+                            staticClass:
+                              "flex-1 float-left right-0 justify-end",
+                            attrs: { href: "#" },
+                            on: {
+                              click: function($event) {
+                                _vm.details = false
+                              }
+                            }
+                          },
+                          [
+                            _c(
+                              "span",
+                              {
+                                staticClass:
+                                  "px-3 py-2 bg-red-600 text-white rounded-full font-bold"
+                              },
+                              [_vm._v("X")]
+                            )
+                          ]
+                        )
+                      ],
+                      1
+                    )
+              ]
+            )
+          : _vm._e(),
+        _vm._v(" "),
+        _vm.details == false && _vm.manager == false
+          ? _c(
+              "div",
+              {
+                key: "programmeTiles",
+                staticClass:
+                  "flex-1 xs:m-0 xs:mt-5 m-3 flex-col flex xs:flex-col rounded-lg bg-white"
+              },
+              [
+                _c("div", { staticClass: "flex-1 text-lg font-bold" }, [
+                  _c("span", [
+                    _c("i", { staticClass: "fa fa-calendar-alt" }),
+                    _vm._v(" Programmes")
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "absolute right-0 pr-12" }, [
+                  _c(
+                    "a",
+                    {
+                      staticClass:
+                        "bg-green-600 shadow-lg text-white font-semibold py-2 xs:py-1 text-sm xs:px-10 px-16 rounded inline-flex items-center",
+                      attrs: { href: "#" },
+                      on: {
+                        click: function($event) {
+                          _vm.create = true
+                        }
+                      }
+                    },
+                    [
+                      _c("span", { staticClass: "mr-1" }, [
+                        _vm._v("Create Programme")
+                      ])
+                    ]
+                  )
+                ]),
+                _vm._v(" "),
+                _c(
+                  "transition-group",
+                  {
+                    staticClass:
+                      "flex flex-wrap xs:flex-col justify-evenly items-center",
+                    attrs: { name: "slide-fade" }
+                  },
+                  _vm._l(_vm.programmes, function(item) {
+                    return _c(
+                      "div",
+                      {
+                        key: item.id,
+                        staticClass: "flex flex-col xs:w-full px-6 py-2 w-1/3"
+                      },
+                      [
+                        item.type == "free"
+                          ? _c(
+                              "div",
+                              {
+                                staticClass:
+                                  "absolute border bg-green-600 h-10 w-10 justify-center",
+                                staticStyle: {
+                                  "border-bottom-right-radius": "50%"
+                                }
+                              },
+                              [
+                                _c(
+                                  "div",
+                                  {
+                                    staticClass:
+                                      "flex items-center text-white pt-2 text-center justify-center"
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\n                          " +
+                                        _vm._s(item.type) +
+                                        "\n                        "
+                                    )
+                                  ]
+                                )
+                              ]
+                            )
+                          : _c(
+                              "div",
+                              {
+                                staticClass:
+                                  "absolute border h-10 w-10 bg-orange-600 justify-center",
+                                staticStyle: {
+                                  "border-bottom-right-radius": "50%"
+                                }
+                              },
+                              [
+                                _c(
+                                  "div",
+                                  {
+                                    staticClass:
+                                      "flex items-center pt-2 text-white text-center justify-center"
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\n                           " +
+                                        _vm._s(item.type) +
+                                        "\n                        "
+                                    )
+                                  ]
+                                )
+                              ]
+                            ),
+                        _vm._v(" "),
+                        _c(
+                          "div",
+                          {
+                            staticClass: "flex-1 h-20",
+                            on: {
+                              click: function($event) {
+                                return _vm.fetchDetails(item.id)
+                              }
+                            }
+                          },
+                          [
+                            _c("img", {
+                              staticClass: "object-cover h-40 w-full",
+                              attrs: {
+                                src: "/files/images?filename=" + item.featured,
+                                alt: "",
+                                srcset: ""
+                              }
+                            })
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "div",
+                          {
+                            staticClass: "h-20 max-h-full pb-6 mb-8 w-full",
+                            staticStyle: { "text-overflow": "ellipsis" }
+                          },
+                          [
+                            _c(
+                              "p",
+                              {
+                                staticClass: "font-bold cursor-pointer",
+                                on: {
+                                  click: function($event) {
+                                    return _vm.fetchDetails(item.id)
+                                  }
+                                }
+                              },
+                              [_vm._v(_vm._s(item.title))]
+                            ),
+                            _vm._v(" "),
+                            _c("p", { staticClass: "text-sm" }, [
+                              _vm._v(
+                                _vm._s(
+                                  _vm._f("truncate")(item.overview, 90, "...")
+                                )
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "flex justify-between" }, [
+                              _c(
+                                "span",
+                                {
+                                  staticClass:
+                                    "text-blue-700 shadow-xs cursor-pointer",
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.fetchDetails(item.id)
+                                    }
+                                  }
+                                },
+                                [_vm._v("Show more >>")]
+                              ),
+                              _vm._v(" "),
+                              item.createdBy === _vm.user.id
+                                ? _c(
+                                    "span",
+                                    {
+                                      staticClass:
+                                        "cursor-pointer hover:bg-blue-800 hover:text-white text-black px-6 rounded shadow-sm bg-gray-300",
+                                      on: {
+                                        click: function($event) {
+                                          return _vm.editEvents(item.id)
+                                        }
+                                      }
+                                    },
+                                    [_vm._v(" Edit")]
+                                  )
+                                : _vm._e()
+                            ])
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c("edit-component", {
+                          attrs: { edit: _vm.edit, programme: _vm.programme },
+                          on: {
+                            close: function($event) {
+                              _vm.edit = !_vm.edit
+                            }
+                          }
+                        })
+                      ],
+                      1
+                    )
+                  }),
+                  0
+                ),
+                _vm._v(" "),
+                _c("div", { staticClass: "pagination" }, [
+                  _c(
+                    "button",
+                    {
+                      staticClass:
+                        "text-gray-700 text-center bg-gray-400 px-4 py-2 m-2 disabled",
+                      attrs: { disabled: !_vm.pagination.prev_page_url },
+                      on: {
+                        click: function($event) {
+                          return _vm.fetchStories(_vm.pagination.prev_page_url)
+                        }
+                      }
+                    },
+                    [_vm._v("\n                Previous\n            ")]
+                  ),
+                  _vm._v(" "),
+                  _c("span", [
+                    _vm._v(
+                      "Page " +
+                        _vm._s(_vm.pagination.current_page) +
+                        " of " +
+                        _vm._s(_vm.pagination.last_page)
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "button",
+                    {
+                      staticClass:
+                        "text-gray-700 text-center bg-gray-400 px-4 py-2 m-2",
+                      attrs: { disabled: !_vm.pagination.next_page_url },
+                      on: {
+                        click: function($event) {
+                          return _vm.fetchStories(_vm.pagination.next_page_url)
+                        }
+                      }
+                    },
+                    [_vm._v("Next\n            ")]
+                  )
+                ])
+              ],
+              1
+            )
+          : _vm._e(),
+        _vm._v(" "),
+        _vm.manager == true
+          ? _c(
+              "div",
+              {
+                key: "manager",
+                staticClass:
+                  "flex-1 xs:m-0 xs:mt-5 m-3 flex-col flex xs:flex-col rounded-lg bg-white"
+              },
+              [
+                _c("manager", {
+                  staticClass:
+                    "w-full p-2 flex xs:flex-col rounded-lg bg-white",
+                  attrs: { myprogrammes: _vm.myprogrammes }
+                })
+              ],
+              1
+            )
+          : _vm._e()
+      ]),
+      _vm._v(" "),
+      _c("post-component", {
+        attrs: { create: _vm.create },
+        on: {
+          close: function($event) {
+            _vm.create = !_vm.create
+          }
+        }
+      })
+    ],
+    1
+  )
 }
 var staticRenderFns = [
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "container" }, [
-      _c("div", { staticClass: "row justify-content-center" }, [
-        _c("div", { staticClass: "col-md-8" }, [
-          _c("div", { staticClass: "card" }, [
-            _c("div", { staticClass: "card-header" }, [
-              _vm._v("Example Component")
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "card-body" }, [
-              _vm._v(
-                "\n                    I'm an example component.\n                "
+    return _c("div", { staticClass: "p-4" }, [
+      _c(
+        "a",
+        {
+          staticClass:
+            "bg-gray-300 text-gray-700 font-semibold py-2 xs:py-1 xs:px-10 px-16 rounded inline-flex items-center",
+          attrs: { href: "#" }
+        },
+        [_c("span", { staticClass: "mr-1" }, [_vm._v("Forum")])]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "inline-block" }, [
+      _c(
+        "button",
+        {
+          staticClass:
+            "bg-gray-300 text-gray-700 font-semibold py-2 xs:py-1 xs:p-4 xs:text-sm px-8 rounded inline-flex items-center",
+          attrs: { id: "users" }
+        },
+        [_c("span", { staticClass: "mr-1" }, [_vm._v("Events Manager")])]
+      )
+    ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/EditProgramme.vue?vue&type=template&id=e915aa52&":
+/*!****************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/EditProgramme.vue?vue&type=template&id=e915aa52& ***!
+  \****************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "h-full" }, [
+    _vm.edit == true
+      ? _c(
+          "div",
+          {
+            staticClass:
+              "absolute inset-0 z-40 flex items-center justify-center"
+          },
+          [
+            _c(
+              "div",
+              {
+                staticClass:
+                  "bg-white w-9/12 xs:w-full h-screen opacity-100 overflow-y-auto md:max-w-md mx-auto rounded shadow-lg py-4 mt-20 text-left pt-10 pb-40 px-6",
+                staticStyle: { top: "30px" }
+              },
+              [
+                _c(
+                  "div",
+                  { staticClass: "flex justify-between items-center pb-3" },
+                  [
+                    _c("p", { staticClass: "text-2xl font-bold" }, [
+                      _vm._v(_vm._s(_vm.programme.programme.title))
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "p",
+                      {
+                        staticClass:
+                          "text-base bg-yellow-600 rounded cursor-pointer px-3 shadow-md font-bold",
+                        on: { click: _vm.openEventForm }
+                      },
+                      [_vm._v("Add Events and Speakers")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        staticClass: "cursor-pointer z-50",
+                        on: {
+                          click: function($event) {
+                            return _vm.hide()
+                          }
+                        }
+                      },
+                      [
+                        _c(
+                          "svg",
+                          {
+                            staticClass: "fill-current text-black",
+                            attrs: {
+                              xmlns: "http://www.w3.org/2000/svg",
+                              width: "18",
+                              height: "18",
+                              viewBox: "0 0 18 18"
+                            }
+                          },
+                          [
+                            _c("path", {
+                              attrs: {
+                                d:
+                                  "M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"
+                              }
+                            })
+                          ]
+                        )
+                      ]
+                    )
+                  ]
+                ),
+                _vm._v(" "),
+                _vm.errors.length
+                  ? _c("p", [
+                      _vm._m(0),
+                      _vm._v(" "),
+                      _c(
+                        "ul",
+                        _vm._l(_vm.errors, function(error, index) {
+                          return _c(
+                            "li",
+                            { key: index, staticClass: "text-red-600" },
+                            [_vm._v(_vm._s(error))]
+                          )
+                        }),
+                        0
+                      )
+                    ])
+                  : _vm._e(),
+                _vm._v(" "),
+                _c(
+                  "form",
+                  {
+                    attrs: {
+                      action: "#",
+                      method: "post",
+                      enctype: "multipart/form-data"
+                    },
+                    on: {
+                      submit: function($event) {
+                        return _vm.checkForm($event)
+                      }
+                    }
+                  },
+                  [
+                    _c("div", { staticClass: "flex" }, [
+                      _c("div", { staticClass: "flex-col w-full" }, [
+                        _c(
+                          "label",
+                          {
+                            staticClass:
+                              "block text-gray-700 text-sm font-bold m-2"
+                          },
+                          [
+                            _vm._v(
+                              "\n                                Programme title\n                              "
+                            )
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c("input", {
+                          ref: "title",
+                          staticClass:
+                            "shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline",
+                          attrs: {
+                            required: "",
+                            type: "text",
+                            placeholder: "Enter Programme title"
+                          },
+                          domProps: { value: _vm.programme.programme.title }
+                        })
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "flex-col w-full" }, [
+                        _c(
+                          "label",
+                          {
+                            staticClass:
+                              "block text-gray-700 text-sm font-bold m-2"
+                          },
+                          [
+                            _vm._v(
+                              "\n                                Programme Duration\n                              "
+                            )
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c("input", {
+                          ref: "duration",
+                          staticClass:
+                            "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline",
+                          attrs: {
+                            required: "",
+                            type: "number",
+                            placeholder: "Enter duration in days"
+                          },
+                          domProps: { value: _vm.programme.programme.duration }
+                        })
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "flex" }, [
+                      _c("div", { staticClass: "flex-col w-full" }, [
+                        _c(
+                          "label",
+                          {
+                            staticClass:
+                              "block text-gray-700 text-sm font-bold m-2"
+                          },
+                          [
+                            _vm._v(
+                              "\n                            Start Date\n                          "
+                            )
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c("input", {
+                          ref: "startdate",
+                          staticClass:
+                            "shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline",
+                          attrs: { required: "", type: "datetime-local" },
+                          domProps: { value: _vm.programme.programme.startdate }
+                        })
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "flex-col w-full" }, [
+                        _c(
+                          "label",
+                          {
+                            staticClass:
+                              "block text-gray-700 text-sm font-bold m-2"
+                          },
+                          [
+                            _vm._v(
+                              "\n                            Event Entry Fee\n                          "
+                            )
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c("input", {
+                          ref: "fee",
+                          staticClass:
+                            "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline",
+                          attrs: {
+                            required: "",
+                            type: "number",
+                            placeholder: "Enter Amount per attendee"
+                          },
+                          domProps: { value: _vm.programme.programme.fee }
+                        })
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "flex" }, [
+                      _c("div", { staticClass: "flex-col w-full" }, [
+                        _c(
+                          "label",
+                          {
+                            staticClass:
+                              "block text-gray-700 text-sm font-bold m-2"
+                          },
+                          [
+                            _vm._v(
+                              "\n                            Venue\n                          "
+                            )
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c("input", {
+                          ref: "venue",
+                          staticClass:
+                            "shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline",
+                          attrs: {
+                            required: "",
+                            type: "text",
+                            placeholder: "Enter Venue"
+                          },
+                          domProps: { value: _vm.programme.programme.venue }
+                        })
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "flex-col w-full" }, [
+                        _c(
+                          "label",
+                          {
+                            staticClass:
+                              "block text-gray-700 text-sm font-bold m-2"
+                          },
+                          [
+                            _vm._v(
+                              "\n                            Maximum number of attendees\n                          "
+                            )
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c("input", {
+                          ref: "attendee",
+                          staticClass:
+                            "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline",
+                          attrs: {
+                            required: "",
+                            type: "number",
+                            placeholder: "Enter number of Attendees expected"
+                          },
+                          domProps: { value: _vm.programme.programme.attendee }
+                        })
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("label", [_vm._v("Choose Event Type")]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "flex" }, [
+                      _c("div", { staticClass: "flex-col border" }, [
+                        _c(
+                          "label",
+                          {
+                            staticClass:
+                              "block text-gray-700 text-sm font-bold m-2",
+                            attrs: { for: "" }
+                          },
+                          [_vm._v("Free Event")]
+                        ),
+                        _vm._v(" "),
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.type,
+                              expression: "type"
+                            }
+                          ],
+                          staticClass: "shadow",
+                          attrs: { type: "radio", value: "free" },
+                          domProps: { checked: _vm._q(_vm.type, "free") },
+                          on: {
+                            change: function($event) {
+                              _vm.type = "free"
+                            }
+                          }
+                        })
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "flex-col border" }, [
+                        _c(
+                          "label",
+                          {
+                            staticClass:
+                              "block text-gray-700 text-sm font-bold m-2",
+                            attrs: { for: "" }
+                          },
+                          [_vm._v("Paid Event")]
+                        ),
+                        _vm._v(" "),
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.type,
+                              expression: "type"
+                            }
+                          ],
+                          staticClass: "shadow",
+                          attrs: { type: "radio", value: "paid" },
+                          domProps: { checked: _vm._q(_vm.type, "paid") },
+                          on: {
+                            change: function($event) {
+                              _vm.type = "paid"
+                            }
+                          }
+                        })
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "flex-col w-full" }, [
+                      _c(
+                        "label",
+                        {
+                          staticClass:
+                            "block text-gray-700 text-lg font-bold m-2"
+                        },
+                        [
+                          _vm._v(
+                            "\n                            Five key features of the event you wish to highlight to your target audience\n                          "
+                          )
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c("input", {
+                        ref: "highlight1",
+                        staticClass:
+                          "shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline",
+                        attrs: {
+                          required: "",
+                          type: "text",
+                          placeholder: "1."
+                        },
+                        domProps: {
+                          value: JSON.parse(
+                            _vm.programme.programme.key_features
+                          )[0]
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c("input", {
+                        ref: "highlight2",
+                        staticClass:
+                          "shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline",
+                        attrs: {
+                          required: "",
+                          type: "text",
+                          placeholder: "2."
+                        },
+                        domProps: {
+                          value: JSON.parse(
+                            _vm.programme.programme.key_features
+                          )[1]
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c("input", {
+                        ref: "highlight3",
+                        staticClass:
+                          "shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline",
+                        attrs: {
+                          required: "",
+                          type: "text",
+                          placeholder: "3."
+                        },
+                        domProps: {
+                          value: JSON.parse(
+                            _vm.programme.programme.key_features
+                          )[2]
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c("input", {
+                        ref: "highlight4",
+                        staticClass:
+                          "shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline",
+                        attrs: {
+                          required: "",
+                          type: "text",
+                          placeholder: "4."
+                        },
+                        domProps: {
+                          value: JSON.parse(
+                            _vm.programme.programme.key_features
+                          )[3]
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c("input", {
+                        ref: "highlight5",
+                        staticClass:
+                          "shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline",
+                        attrs: {
+                          required: "",
+                          type: "text",
+                          placeholder: "5."
+                        },
+                        domProps: {
+                          value: JSON.parse(
+                            _vm.programme.programme.key_features
+                          )[4]
+                        }
+                      })
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "label",
+                      {
+                        staticClass: "block text-gray-700 text-sm font-bold m-2"
+                      },
+                      [
+                        _vm._v(
+                          "\n                       Detailed Overview of the programme\n                    "
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c("textarea", {
+                      ref: "overview",
+                      staticClass:
+                        "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline",
+                      attrs: { required: "", cols: "30", rows: "10" },
+                      domProps: { value: _vm.programme.programme.overview }
+                    }),
+                    _vm._v(" "),
+                    _c("div", { attrs: { id: "preview" } }, [
+                      _vm.imageUrl
+                        ? _c("img", { attrs: { src: _vm.imageUrl } })
+                        : _c("img", {
+                            attrs: {
+                              src:
+                                "/files/images?filename=" +
+                                _vm.programme.programme.featured
+                            }
+                          })
+                    ]),
+                    _vm._v(" "),
+                    _c("input", {
+                      ref: "myFile",
+                      staticClass:
+                        "shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight flex-none w-auto focus:outline-none focus:shadow-outline",
+                      attrs: {
+                        type: "file",
+                        accept: "image/*",
+                        name: "featured",
+                        required: ""
+                      },
+                      on: { change: _vm.selectedFile }
+                    }),
+                    _vm._v(" "),
+                    _vm.imageError
+                      ? _c("div", { staticClass: "imageError" }, [
+                          _vm._v(
+                            "\n                        " +
+                              _vm._s(_vm.imageError) +
+                              "\n                    "
+                          )
+                        ])
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _c(
+                      "button",
+                      {
+                        staticClass:
+                          "font-semibold px-10 py-3 rounded-t bg-yellow-600",
+                        class: { disabled: _vm.addingSpeaker },
+                        on: {
+                          click: function($event) {
+                            return _vm.checkForm($event)
+                          }
+                        }
+                      },
+                      [
+                        _vm.addingSpeaker
+                          ? _c("p", [_vm._v("Proccessing...")])
+                          : _c("p", [_vm._v("Update and Add Speakers")])
+                      ]
+                    )
+                  ]
+                )
+              ]
+            )
+          ]
+        )
+      : _vm._e(),
+    _vm._v(" "),
+    _vm.speakers == true
+      ? _c(
+          "div",
+          {
+            staticClass:
+              "absolute inset-0 mt-12 xs:pt-64 z-50 flex items-center justify-center"
+          },
+          [
+            _c(
+              "div",
+              {
+                staticClass:
+                  "bg-white w-9/12 xs:w-full h-auto md:max-w-md mx-auto rounded shadow-lg pb-32 xs:pt-64 pt-56 text-left p-4 px-6",
+                staticStyle: { top: "60px" }
+              },
+              [
+                _c(
+                  "div",
+                  { staticClass: "flex justify-between items-center pb-3" },
+                  [
+                    _c("p", { staticClass: "text-2xl font-bold" }, [
+                      _vm._v("Add speaker(s)")
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        staticClass: "cursor-pointer z-50",
+                        on: {
+                          click: function($event) {
+                            _vm.speakers = false
+                          }
+                        }
+                      },
+                      [
+                        _c(
+                          "svg",
+                          {
+                            staticClass: "fill-current text-black",
+                            attrs: {
+                              xmlns: "http://www.w3.org/2000/svg",
+                              width: "18",
+                              height: "18",
+                              viewBox: "0 0 18 18"
+                            }
+                          },
+                          [
+                            _c("path", {
+                              attrs: {
+                                d:
+                                  "M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"
+                              }
+                            })
+                          ]
+                        )
+                      ]
+                    )
+                  ]
+                ),
+                _vm._v(" "),
+                _c(
+                  "form",
+                  {
+                    attrs: {
+                      action: "#",
+                      method: "post",
+                      enctype: "multipart/form-data"
+                    },
+                    on: {
+                      submit: function($event) {
+                        return _vm.checkSpeakerForm($event)
+                      }
+                    }
+                  },
+                  [
+                    _c(
+                      "div",
+                      {
+                        staticClass:
+                          "xl:flex lg:flex md:flex xs:flex-none  sm:flex-none"
+                      },
+                      [
+                        _c(
+                          "div",
+                          { staticClass: "flex-row w-1/2 xs:w-full sm:w-full" },
+                          [
+                            _c(
+                              "label",
+                              {
+                                staticClass:
+                                  "block text-gray-700 text-sm font-bold m-2"
+                              },
+                              [
+                                _vm._v(
+                                  "\n                                Speaker Name\n                              "
+                                )
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.speaker.name,
+                                  expression: "speaker.name"
+                                }
+                              ],
+                              staticClass:
+                                "shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline",
+                              attrs: {
+                                required: "",
+                                value: "",
+                                type: "text",
+                                placeholder: "Enter Speaker Name"
+                              },
+                              domProps: { value: _vm.speaker.name },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.speaker,
+                                    "name",
+                                    $event.target.value
+                                  )
+                                }
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c(
+                              "label",
+                              {
+                                staticClass:
+                                  "block text-gray-700 text-sm font-bold m-2"
+                              },
+                              [
+                                _vm._v(
+                                  "\n                                Speaker Email\n                              "
+                                )
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.speaker.email,
+                                  expression: "speaker.email"
+                                }
+                              ],
+                              staticClass:
+                                "shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline",
+                              attrs: {
+                                required: "",
+                                value: "",
+                                type: "text",
+                                placeholder: "Enter Speaker Name"
+                              },
+                              domProps: { value: _vm.speaker.email },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.speaker,
+                                    "email",
+                                    $event.target.value
+                                  )
+                                }
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c(
+                              "label",
+                              {
+                                staticClass:
+                                  "block text-gray-700 text-sm font-bold m-2"
+                              },
+                              [
+                                _vm._v(
+                                  "\n                               Organization\n                              "
+                                )
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.speaker.organization,
+                                  expression: "speaker.organization"
+                                }
+                              ],
+                              staticClass:
+                                "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline",
+                              attrs: {
+                                required: "",
+                                type: "text",
+                                placeholder: "Example: LiftHub, Amazon"
+                              },
+                              domProps: { value: _vm.speaker.organization },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.speaker,
+                                    "organization",
+                                    $event.target.value
+                                  )
+                                }
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c(
+                              "label",
+                              {
+                                staticClass:
+                                  "block text-gray-700 text-sm font-bold m-2"
+                              },
+                              [
+                                _vm._v(
+                                  "\n                                Title\n                            "
+                                )
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.speaker.title,
+                                  expression: "speaker.title"
+                                }
+                              ],
+                              staticClass:
+                                "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline",
+                              attrs: {
+                                required: "",
+                                type: "text",
+                                placeholder: "CEO, Manager"
+                              },
+                              domProps: { value: _vm.speaker.title },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.speaker,
+                                    "title",
+                                    $event.target.value
+                                  )
+                                }
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c(
+                              "label",
+                              {
+                                staticClass:
+                                  "block text-gray-700 text-sm font-bold m-2"
+                              },
+                              [
+                                _vm._v(
+                                  "\n                                Facebook Profile\n                              "
+                                )
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.speaker.facebook,
+                                  expression: "speaker.facebook"
+                                }
+                              ],
+                              ref: "facebook",
+                              staticClass:
+                                "shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline",
+                              attrs: {
+                                value: "",
+                                type: "text",
+                                placeholder:
+                                  "Link to speaker's facebook profile (optional)"
+                              },
+                              domProps: { value: _vm.speaker.facebook },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.speaker,
+                                    "facebook",
+                                    $event.target.value
+                                  )
+                                }
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c(
+                              "label",
+                              {
+                                staticClass:
+                                  "block text-gray-700 text-sm font-bold m-2"
+                              },
+                              [
+                                _vm._v(
+                                  "\n                                Twitter\n                              "
+                                )
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.speaker.twitter,
+                                  expression: "speaker.twitter"
+                                }
+                              ],
+                              ref: "twitter",
+                              staticClass:
+                                "shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline",
+                              attrs: {
+                                value: "",
+                                type: "text",
+                                placeholder:
+                                  "Link to speaker's twitter handle (optional)"
+                              },
+                              domProps: { value: _vm.speaker.twitter },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.speaker,
+                                    "twitter",
+                                    $event.target.value
+                                  )
+                                }
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c(
+                              "label",
+                              {
+                                staticClass:
+                                  "block text-gray-700 text-sm font-bold m-2"
+                              },
+                              [
+                                _vm._v(
+                                  "\n                                linkedIn\n                              "
+                                )
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.speaker.linkedIn,
+                                  expression: "speaker.linkedIn"
+                                }
+                              ],
+                              staticClass:
+                                "shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline",
+                              attrs: {
+                                value: "",
+                                type: "text",
+                                placeholder:
+                                  "Link to speaker's linkedIn (optional)"
+                              },
+                              domProps: { value: _vm.speaker.linkedIn },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.speaker,
+                                    "linkedIn",
+                                    $event.target.value
+                                  )
+                                }
+                              }
+                            })
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "div",
+                          {
+                            staticClass:
+                              "p-16 flex-col w-1/2 xs:flex-row sm:w-full sm:flex-row xs:w-full"
+                          },
+                          [
+                            _c(
+                              "div",
+                              {
+                                staticClass:
+                                  "border hover:shadow-lg flex flex-row justify-center items-center h-64 w-64",
+                                style: {
+                                  backgroundImage:
+                                    "url( " + _vm.speakerFileUrl + " )",
+                                  backgroundSize: "cover",
+                                  backgroundSize: "no-repeat",
+                                  backgroundPosition: "center"
+                                },
+                                on: { click: _vm.trigger }
+                              },
+                              [
+                                _vm.speakerImage == null
+                                  ? _c("p", { staticClass: "text-black" }, [
+                                      _vm._v("Click to add Image")
+                                    ])
+                                  : _vm._e(),
+                                _vm._v(" "),
+                                _c("input", {
+                                  ref: "speakerFile",
+                                  attrs: { hidden: "", type: "file" },
+                                  on: { change: _vm.speakerFileValidation }
+                                })
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _vm.speakerFileError
+                              ? _c("span", { staticClass: "text-gray-700" }, [
+                                  _vm._m(1),
+                                  _vm._v(
+                                    " " +
+                                      _vm._s(_vm.speakerFileError) +
+                                      "\n                            "
+                                  )
+                                ])
+                              : _vm._e(),
+                            _vm._v(" "),
+                            _vm.errors.length
+                              ? _c("p", [
+                                  _vm._m(2),
+                                  _vm._v(" "),
+                                  _c(
+                                    "ul",
+                                    _vm._l(_vm.errors, function(error, index) {
+                                      return _c(
+                                        "li",
+                                        {
+                                          key: index,
+                                          staticClass: "text-red-600"
+                                        },
+                                        [_vm._v(_vm._s(error))]
+                                      )
+                                    }),
+                                    0
+                                  )
+                                ])
+                              : _vm._e()
+                          ]
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "flex" }, [
+                      _c("div", { staticClass: "flex-col w-full" }, [
+                        _c("span", { staticClass: "title" }, [
+                          _vm._v("Speaker Invite Link:")
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "span",
+                          {
+                            staticClass:
+                              "code shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline text-red"
+                          },
+                          [_vm._v(_vm._s(_vm.inviteLink))]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "span",
+                          {
+                            staticClass: "bg-blue-500 text-white ml-auto",
+                            on: {
+                              click: function($event) {
+                                $event.stopPropagation()
+                                $event.preventDefault()
+                                return _vm.copyInviteLink($event)
+                              }
+                            }
+                          },
+                          [
+                            _vm._v(
+                              "\n                                        Copy\n                            "
+                            )
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c("input", {
+                          attrs: { type: "hidden", id: "testing-code" },
+                          domProps: { value: _vm.inviteLink }
+                        })
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "button",
+                      {
+                        staticClass:
+                          "font-semibold px-10 py-3 mt-5 rounded-t bg-yellow-600",
+                        class: { disabled: _vm.addingSpeaker },
+                        on: {
+                          click: function($event) {
+                            return _vm.checkSpeakerForm($event)
+                          }
+                        }
+                      },
+                      [
+                        _vm.addingSpeaker == true
+                          ? _c("b", [_vm._v("Proccessing...")])
+                          : _c("b", [_vm._v("Add Speaker")])
+                      ]
+                    )
+                  ]
+                )
+              ]
+            )
+          ]
+        )
+      : _vm._e()
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("b", [
+      _c("i", { staticClass: "fa fa-exclamation-triangle" }),
+      _vm._v("Please correct the following error(s):")
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("span", { staticClass: "text-yellow-500" }, [
+      _c("i", { staticClass: "fa fa-exclamation-triangle" })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("b", [
+      _c("i", { staticClass: "fa fa-exclamation-triangle" }),
+      _vm._v("Please correct the following error(s):")
+    ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/EventManager.vue?vue&type=template&id=4f88561e&":
+/*!***************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/EventManager.vue?vue&type=template&id=4f88561e& ***!
+  \***************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    { staticClass: "flex-col relative shadow-2xl overflow-x-auto" },
+    [
+      _vm._m(0),
+      _vm._v(" "),
+      _c("div", { staticClass: "table w-full" }, [
+        _vm._m(1),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "table-row-group" },
+          _vm._l(_vm.myprogrammes, function(item, index) {
+            return _c("div", { key: index, staticClass: "table-row" }, [
+              _c(
+                "div",
+                {
+                  staticClass:
+                    "table-cell bg-gray-400 text-gray-700 px-4 py-2 text-sm"
+                },
+                [_vm._v(_vm._s(item.title))]
+              ),
+              _vm._v(" "),
+              _c(
+                "div",
+                {
+                  staticClass:
+                    "table-cell bg-gray-200 text-gray-700 px-4 py-2 text-sm"
+                },
+                [
+                  _vm._v(
+                    _vm._s(_vm._f("moment")(item.startdate, "MMMM Do YYYY")) +
+                      " - " +
+                      _vm._s(_vm._f("moment")(item.enddate, "MMMM Do YYYY"))
+                  )
+                ]
+              ),
+              _vm._v(" "),
+              _c(
+                "div",
+                {
+                  staticClass:
+                    "table-cell bg-gray-400 text-gray-700 px-4 py-2 text-sm"
+                },
+                [
+                  _c(
+                    "span",
+                    {
+                      staticClass:
+                        "bg-green-700 hover:shadow-lg w-full rounded px-3 py-1 text-white",
+                      on: {
+                        click: function($event) {
+                          return _vm.loadEvents(item.events)
+                        }
+                      }
+                    },
+                    [
+                      _vm._v(_vm._s(item.events.length) + " "),
+                      _c("i", { staticClass: "fa fa-eye" })
+                    ]
+                  )
+                ]
+              ),
+              _vm._v(" "),
+              _c(
+                "div",
+                {
+                  staticClass:
+                    "table-cell bg-gray-200 text-gray-700 px-4 py-2 text-sm"
+                },
+                [
+                  _c(
+                    "span",
+                    {
+                      staticClass:
+                        "bg-yellow-700 hover:shadow-lg w-full rounded px-3 py-1 text-white"
+                    },
+                    [
+                      _vm._v(_vm._s(item.users.length)),
+                      _c("i", { staticClass: "fa fa-eye" })
+                    ]
+                  )
+                ]
+              ),
+              _vm._v(" "),
+              _c(
+                "div",
+                {
+                  staticClass:
+                    "table-cell bg-gray-400 text-gray-700 px-4 py-2 text-sm"
+                },
+                [
+                  _c(
+                    "span",
+                    {
+                      staticClass:
+                        "bg-purple-700 hover:shadow-lg w-full rounded px-3 py-1 text-white",
+                      on: {
+                        click: function($event) {
+                          return _vm.loadSpeakers(item.speakers)
+                        }
+                      }
+                    },
+                    [
+                      _vm._v(_vm._s(item.speakers.length)),
+                      _c("i", { staticClass: "fa fa-eye" })
+                    ]
+                  )
+                ]
+              ),
+              _vm._v(" "),
+              _c(
+                "div",
+                {
+                  staticClass:
+                    "table-cell bg-gray-200 text-gray-700 px-4 py-2 text-sm"
+                },
+                [
+                  _c(
+                    "span",
+                    {
+                      staticClass:
+                        "bg-red-700 px-2\n                cursor-pointer py-1 rounded text-white",
+                      on: {
+                        click: function($event) {
+                          return _vm.loadList(item.waitinglist)
+                        }
+                      }
+                    },
+                    [_vm._v("(0) Waiting List")]
+                  ),
+                  _vm._v(" "),
+                  _c("i", { staticClass: "fa fa-edit" }),
+                  _vm._v(" "),
+                  _c("i", { staticClass: "fa fa-trash-alt" })
+                ]
               )
             ])
-          ])
-        ])
+          }),
+          0
+        )
+      ]),
+      _vm._v(" "),
+      _c("speaker", {
+        staticClass:
+          "absolute w-full p-2 min-h-full flex xs:flex-col rounded-lg bg-white top-0",
+        attrs: { openSpeakers: _vm.openSpeakers, speakers: _vm.eventSpeakers }
+      }),
+      _vm._v(" "),
+      _c("event", {
+        staticClass:
+          "absolute w-full p-2 min-h-full flex xs:flex-col rounded-lg bg-white top-0",
+        attrs: { openEvent: _vm.openEvent, events: _vm.eventDetails }
+      }),
+      _vm._v(" "),
+      _c("waiting-list", {
+        staticClass:
+          "absolute w-full p-2 min-h-full flex xs:flex-col rounded-lg bg-white top-0",
+        attrs: { openList: _vm.waiting, waitingList: _vm.waitingList }
+      })
+    ],
+    1
+  )
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "text-lg font-bold" }, [
+      _c("span", [
+        _c("i", { staticClass: "fa fa-calendar-alt" }),
+        _vm._v("Programme Manager")
       ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "table-header-group border" }, [
+      _c("div", { staticClass: "table-row table-caption font-bold" }, [
+        _c(
+          "div",
+          {
+            staticClass:
+              "table-cell bg-gray-400 text-gray-700 px-4 py-2 text-sm"
+          },
+          [_vm._v("Title")]
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            staticClass:
+              "table-cell bg-gray-400 text-gray-700 px-4 py-2 text-sm"
+          },
+          [_vm._v("Date")]
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            staticClass:
+              "table-cell bg-gray-400 text-gray-700 px-4 py-2 text-sm"
+          },
+          [_vm._v("No. of Events")]
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            staticClass:
+              "table-cell bg-gray-400 text-gray-700 px-4 py-2 text-sm"
+          },
+          [_vm._v("No. of "), _c("br"), _vm._v(" Participants")]
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            staticClass:
+              "table-cell bg-gray-400 text-gray-700 px-4 py-2 text-sm"
+          },
+          [_vm._v("Invited "), _c("br"), _vm._v("Speakers")]
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            staticClass:
+              "table-cell bg-gray-400 text-gray-700 px-4 py-2 text-sm"
+          },
+          [_vm._v("Actions")]
+        )
+      ])
+    ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Facilitator.vue?vue&type=template&id=0899305e&":
+/*!**************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Facilitator.vue?vue&type=template&id=0899305e& ***!
+  \**************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _vm.view == true
+    ? _c(
+        "div",
+        {
+          staticClass:
+            "absolute transition-transform transform origin-left ease-in-out duration-1000  right-0 flex-1 w-8/12 xs:w-full z-20 xs:m-0 xs:mt-5 m-3 p-6 flex rounded-lg bg-white"
+        },
+        [
+          _c(
+            "div",
+            {
+              staticClass: "w-full flex xs:flex-col h-full flex-wrap rounded-lg"
+            },
+            [
+              _c(
+                "div",
+                {
+                  staticClass:
+                    "flex-1 flex flex-col h-auto p-3 justify-center items-center shadow-md"
+                },
+                [
+                  _c("div", {
+                    staticClass: "flex-none rounded-full h-56 w-56",
+                    style: {
+                      backgroundImage:
+                        "url('/files/images?filename=" +
+                        _vm.creator.avatar +
+                        "')",
+                      backgroundSize: "cover",
+                      backgroundRepeat: "no-repeat",
+                      backgroundPosition: "center"
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "flex-none text-lg font-bold" }, [
+                    _vm._v(
+                      _vm._s(_vm.creator.first_name) +
+                        " " +
+                        _vm._s(_vm.creator.last_name)
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _vm._m(0),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "flex-none" }, [
+                    _c("span", { staticClass: "text-gray-500" }, [
+                      _c("i", { staticClass: "fa fa-envelope" }),
+                      _vm._v(_vm._s(_vm.creator.email))
+                    ])
+                  ])
+                ]
+              ),
+              _vm._v(" "),
+              _vm._l(_vm.facilitators, function(item, index) {
+                return _c(
+                  "div",
+                  {
+                    key: index,
+                    staticClass:
+                      "flex-1 flex flex-col h-auto p-3 justify-center items-center shadow-md"
+                  },
+                  [
+                    _c("div", {
+                      staticClass: "flex-none rounded-full h-56 w-56",
+                      style: {
+                        backgroundImage:
+                          "url('/files/images?filename=" + item.image + "')",
+                        backgroundSize: "cover",
+                        backgroundRepeat: "no-repeat",
+                        backgroundPosition: "center"
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "flex-none text-lg font-bold" }, [
+                      _vm._v(_vm._s(item.name))
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "flex-none font-bold" }, [
+                      _c("span", [_vm._v(_vm._s(item.title))]),
+                      _vm._v(", " + _vm._s(item.organization))
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "flex-none" }, [
+                      _c("a", { attrs: { href: item.facebook } }, [
+                        _vm._m(1, true)
+                      ]),
+                      _vm._v(" "),
+                      _c("a", { attrs: { href: item.facebook } }, [
+                        _vm._m(2, true)
+                      ]),
+                      _vm._v(" "),
+                      _c("a", { attrs: { href: item.linkedIn } }, [
+                        _vm._m(3, true)
+                      ])
+                    ])
+                  ]
+                )
+              })
+            ],
+            2
+          ),
+          _vm._v(" "),
+          _c(
+            "a",
+            {
+              staticClass: "flex-1 float-left right-0 justify-end",
+              attrs: { href: "#" },
+              on: {
+                click: function($event) {
+                  return _vm.close()
+                }
+              }
+            },
+            [
+              _c(
+                "span",
+                {
+                  staticClass:
+                    "px-3 py-2 bg-red-600 text-white rounded-full font-bold"
+                },
+                [_vm._v("X")]
+              )
+            ]
+          )
+        ]
+      )
+    : _vm._e()
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "flex-none font-bold" }, [
+      _c("span", [_vm._v("Host")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("span", { staticClass: "text-blue-800" }, [
+      _c("i", { staticClass: "fab fa-facebook-square" })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("span", { staticClass: "text-blue-600" }, [
+      _c("i", { staticClass: "fab fa-twitter-square" })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("span", { staticClass: "text-blue-600" }, [
+      _c("i", { staticClass: "fab fa-linkedin" })
+    ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/PostComponent.vue?vue&type=template&id=54a00d62&":
+/*!****************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/PostComponent.vue?vue&type=template&id=54a00d62& ***!
+  \****************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "h-full" }, [
+    _vm.create == true
+      ? _c(
+          "div",
+          {
+            staticClass:
+              "absolute inset-0 z-40 flex items-center justify-center",
+            staticStyle: { "background-color": "rgba(0,0,0,0.5)" }
+          },
+          [
+            _c(
+              "div",
+              {
+                staticClass:
+                  "bg-white w-9/12 xs:w-full h-screen overflow-y-auto md:max-w-md mx-auto rounded shadow-lg py-4 mt-20 text-left pt-20 pb-40 px-6",
+                staticStyle: { top: "30px" }
+              },
+              [
+                _c(
+                  "div",
+                  { staticClass: "flex justify-between items-center pb-3" },
+                  [
+                    _c("p", { staticClass: "text-2xl font-bold" }, [
+                      _vm._v("Create Programme")
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        staticClass: "cursor-pointer z-50",
+                        on: {
+                          click: function($event) {
+                            return _vm.hide()
+                          }
+                        }
+                      },
+                      [
+                        _c(
+                          "svg",
+                          {
+                            staticClass: "fill-current text-black",
+                            attrs: {
+                              xmlns: "http://www.w3.org/2000/svg",
+                              width: "18",
+                              height: "18",
+                              viewBox: "0 0 18 18"
+                            }
+                          },
+                          [
+                            _c("path", {
+                              attrs: {
+                                d:
+                                  "M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"
+                              }
+                            })
+                          ]
+                        )
+                      ]
+                    )
+                  ]
+                ),
+                _vm._v(" "),
+                _vm.errors.length
+                  ? _c("p", [
+                      _vm._m(0),
+                      _vm._v(" "),
+                      _c(
+                        "ul",
+                        _vm._l(_vm.errors, function(error, index) {
+                          return _c(
+                            "li",
+                            { key: index, staticClass: "text-red-600" },
+                            [_vm._v(_vm._s(error))]
+                          )
+                        }),
+                        0
+                      )
+                    ])
+                  : _vm._e(),
+                _vm._v(" "),
+                _c(
+                  "form",
+                  {
+                    attrs: {
+                      action: "#",
+                      method: "post",
+                      enctype: "multipart/form-data"
+                    },
+                    on: {
+                      submit: function($event) {
+                        return _vm.checkForm($event)
+                      }
+                    }
+                  },
+                  [
+                    _c("div", { staticClass: "flex xs:flex-col" }, [
+                      _c("div", { staticClass: "flex-col w-full" }, [
+                        _c(
+                          "label",
+                          {
+                            staticClass:
+                              "block text-gray-700 text-sm font-bold m-2"
+                          },
+                          [
+                            _vm._v(
+                              "\n                                Programme title\n                              "
+                            )
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.title,
+                              expression: "title"
+                            }
+                          ],
+                          staticClass:
+                            "shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline",
+                          attrs: {
+                            required: "",
+                            value: "",
+                            type: "text",
+                            placeholder: "Enter Programme title"
+                          },
+                          domProps: { value: _vm.title },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.title = $event.target.value
+                            }
+                          }
+                        })
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "flex-col w-full" }, [
+                        _c(
+                          "label",
+                          {
+                            staticClass:
+                              "block text-gray-700 text-sm font-bold m-2"
+                          },
+                          [
+                            _vm._v(
+                              "\n                                Programme Duration\n                              "
+                            )
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.duration,
+                              expression: "duration"
+                            }
+                          ],
+                          staticClass:
+                            "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline",
+                          attrs: {
+                            required: "",
+                            type: "number",
+                            placeholder: "Enter duration in days"
+                          },
+                          domProps: { value: _vm.duration },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.duration = $event.target.value
+                            }
+                          }
+                        })
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "flex xs:flex-col" }, [
+                      _c("div", { staticClass: "flex-col w-full" }, [
+                        _c(
+                          "label",
+                          {
+                            staticClass:
+                              "block text-gray-700 text-sm font-bold m-2"
+                          },
+                          [
+                            _vm._v(
+                              "\n                            Start Date\n                          "
+                            )
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.startdate,
+                              expression: "startdate"
+                            }
+                          ],
+                          staticClass:
+                            "shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline",
+                          attrs: {
+                            required: "",
+                            value: "",
+                            type: "datetime-local"
+                          },
+                          domProps: { value: _vm.startdate },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.startdate = $event.target.value
+                            }
+                          }
+                        })
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "flex-col w-full" }, [
+                        _c(
+                          "label",
+                          {
+                            staticClass:
+                              "block text-gray-700 text-sm font-bold m-2"
+                          },
+                          [
+                            _vm._v(
+                              "\n                            Event Entry Fee\n                          "
+                            )
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.amount,
+                              expression: "amount"
+                            }
+                          ],
+                          staticClass:
+                            "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline",
+                          attrs: {
+                            required: "",
+                            type: "number",
+                            placeholder: "Enter Amount per attendee"
+                          },
+                          domProps: { value: _vm.amount },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.amount = $event.target.value
+                            }
+                          }
+                        })
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "flex xs:flex-col" }, [
+                      _c("div", { staticClass: "flex-col w-full" }, [
+                        _c(
+                          "label",
+                          {
+                            staticClass:
+                              "block text-gray-700 text-sm font-bold m-2"
+                          },
+                          [
+                            _vm._v(
+                              "\n                            Venue\n                          "
+                            )
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.venue,
+                              expression: "venue"
+                            }
+                          ],
+                          staticClass:
+                            "shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline",
+                          attrs: {
+                            required: "",
+                            value: "",
+                            type: "text",
+                            placeholder: "Enter Venue"
+                          },
+                          domProps: { value: _vm.venue },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.venue = $event.target.value
+                            }
+                          }
+                        })
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "flex-col w-full" }, [
+                        _c(
+                          "label",
+                          {
+                            staticClass:
+                              "block text-gray-700 text-sm font-bold m-2"
+                          },
+                          [
+                            _vm._v(
+                              "\n                            Maximum number of attendees\n                          "
+                            )
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.attendee,
+                              expression: "attendee"
+                            }
+                          ],
+                          staticClass:
+                            "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline",
+                          attrs: {
+                            required: "",
+                            type: "number",
+                            placeholder: "Enter number of Attendees expected"
+                          },
+                          domProps: { value: _vm.attendee },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.attendee = $event.target.value
+                            }
+                          }
+                        })
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("label", { staticClass: "font-bold" }, [
+                      _vm._v("Choose Event Type")
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "flex" }, [
+                      _c("div", { staticClass: "flex-col border" }, [
+                        _c(
+                          "label",
+                          {
+                            staticClass:
+                              "block text-gray-700 text-sm font-bold m-2",
+                            attrs: { for: "" }
+                          },
+                          [_vm._v("Free Event")]
+                        ),
+                        _vm._v(" "),
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.type,
+                              expression: "type"
+                            }
+                          ],
+                          staticClass: "shadow",
+                          attrs: { type: "radio", value: "free" },
+                          domProps: { checked: _vm._q(_vm.type, "free") },
+                          on: {
+                            change: function($event) {
+                              _vm.type = "free"
+                            }
+                          }
+                        })
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "flex-col border" }, [
+                        _c(
+                          "label",
+                          {
+                            staticClass:
+                              "block text-gray-700 text-sm font-bold m-2",
+                            attrs: { for: "" }
+                          },
+                          [_vm._v("Paid Event")]
+                        ),
+                        _vm._v(" "),
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.type,
+                              expression: "type"
+                            }
+                          ],
+                          staticClass: "shadow",
+                          attrs: { type: "radio", value: "paid" },
+                          domProps: { checked: _vm._q(_vm.type, "paid") },
+                          on: {
+                            change: function($event) {
+                              _vm.type = "paid"
+                            }
+                          }
+                        })
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "flex-col w-full" }, [
+                      _c(
+                        "label",
+                        {
+                          staticClass:
+                            "block text-gray-700 text-sm font-bold m-2"
+                        },
+                        [
+                          _vm._v(
+                            "\n                            Five key features of the event you wish to highlight to your target audience\n                          "
+                          )
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.highlight1,
+                            expression: "highlight1"
+                          }
+                        ],
+                        staticClass:
+                          "shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline",
+                        attrs: {
+                          required: "",
+                          value: "",
+                          type: "text",
+                          placeholder: "1."
+                        },
+                        domProps: { value: _vm.highlight1 },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.highlight1 = $event.target.value
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.highlight2,
+                            expression: "highlight2"
+                          }
+                        ],
+                        staticClass:
+                          "shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline",
+                        attrs: {
+                          required: "",
+                          value: "",
+                          type: "text",
+                          placeholder: "2."
+                        },
+                        domProps: { value: _vm.highlight2 },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.highlight2 = $event.target.value
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.highlight3,
+                            expression: "highlight3"
+                          }
+                        ],
+                        staticClass:
+                          "shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline",
+                        attrs: {
+                          required: "",
+                          value: "",
+                          type: "text",
+                          placeholder: "3."
+                        },
+                        domProps: { value: _vm.highlight3 },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.highlight3 = $event.target.value
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.highlight4,
+                            expression: "highlight4"
+                          }
+                        ],
+                        staticClass:
+                          "shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline",
+                        attrs: {
+                          required: "",
+                          value: "",
+                          type: "text",
+                          placeholder: "4."
+                        },
+                        domProps: { value: _vm.highlight4 },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.highlight4 = $event.target.value
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.highlight5,
+                            expression: "highlight5"
+                          }
+                        ],
+                        staticClass:
+                          "shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline",
+                        attrs: {
+                          required: "",
+                          value: "",
+                          type: "text",
+                          placeholder: "5."
+                        },
+                        domProps: { value: _vm.highlight5 },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.highlight5 = $event.target.value
+                          }
+                        }
+                      })
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "label",
+                      {
+                        staticClass: "block text-gray-700 text-sm font-bold m-2"
+                      },
+                      [
+                        _vm._v(
+                          "\n                       Detailed Overview of the programme\n                    "
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c("textarea", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.overview,
+                          expression: "overview"
+                        }
+                      ],
+                      staticClass:
+                        "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline",
+                      attrs: { required: "", cols: "30", rows: "10" },
+                      domProps: { value: _vm.overview },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.overview = $event.target.value
+                        }
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "flex flex-row" }, [
+                      _c("div", { attrs: { id: "preview" } }, [
+                        _vm.imageUrl
+                          ? _c("img", { attrs: { src: _vm.imageUrl } })
+                          : _vm._e()
+                      ]),
+                      _vm._v(" "),
+                      _c("input", {
+                        ref: "myFile",
+                        staticClass:
+                          "shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight flex-none w-auto focus:outline-none focus:shadow-outline",
+                        attrs: {
+                          type: "file",
+                          accept: "image/*",
+                          name: "featured",
+                          required: ""
+                        },
+                        on: { change: _vm.selectedFile }
+                      }),
+                      _vm._v(" "),
+                      _vm.imageError
+                        ? _c("div", { staticClass: "imageError" }, [
+                            _vm._v(
+                              "\n                        " +
+                                _vm._s(_vm.imageError) +
+                                "\n                    "
+                            )
+                          ])
+                        : _vm._e()
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "button",
+                      {
+                        staticClass:
+                          "font-semibold px-10 py-3 rounded-t bg-yellow-600",
+                        class: { disabled: _vm.adding },
+                        on: {
+                          click: function($event) {
+                            return _vm.checkForm($event)
+                          }
+                        }
+                      },
+                      [
+                        _vm.adding
+                          ? _c("p", [_vm._v("Proccessing...")])
+                          : _c("p", [_vm._v("Create Programme")])
+                      ]
+                    )
+                  ]
+                )
+              ]
+            )
+          ]
+        )
+      : _vm._e(),
+    _vm._v(" "),
+    _vm.events == true
+      ? _c(
+          "div",
+          {
+            staticClass:
+              "absolute inset-0 pt-20 mt-16 xs:pt-64 z-40 flex items-center justify-center",
+            on: {
+              events: function($event) {
+                _vm.events = true
+              }
+            }
+          },
+          [
+            _c(
+              "div",
+              {
+                staticClass:
+                  "bg-white w-9/12 xs:w-full h-auto overflow-y-auto md:max-w-md mx-auto rounded shadow py-4 px-8 mt-20 text-left pt-30 pb-40",
+                staticStyle: { top: "60px" }
+              },
+              [
+                _c(
+                  "div",
+                  { staticClass: "flex justify-between items-center pb-3" },
+                  [
+                    _c(
+                      "p",
+                      {
+                        staticClass:
+                          "text-base px-6 bg-gray-200 rounded font-bold"
+                      },
+                      [_vm._v("Add Event(s)")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "p",
+                      {
+                        staticClass:
+                          "text-base cursor-pointer px-6 shadow-md bg-yellow-600 rounded font-bold",
+                        on: {
+                          click: function($event) {
+                            _vm.speakers = true
+                          }
+                        }
+                      },
+                      [_vm._v("Add Speakers")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        staticClass: "cursor-pointer z-50",
+                        on: {
+                          click: function($event) {
+                            _vm.events = false
+                          }
+                        }
+                      },
+                      [
+                        _c(
+                          "svg",
+                          {
+                            staticClass: "fill-current text-black",
+                            attrs: {
+                              xmlns: "http://www.w3.org/2000/svg",
+                              width: "18",
+                              height: "18",
+                              viewBox: "0 0 18 18"
+                            }
+                          },
+                          [
+                            _c("path", {
+                              attrs: {
+                                d:
+                                  "M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"
+                              }
+                            })
+                          ]
+                        )
+                      ]
+                    )
+                  ]
+                ),
+                _vm._v(" "),
+                _vm.errors.length
+                  ? _c("p", [
+                      _vm._m(1),
+                      _vm._v(" "),
+                      _c(
+                        "ul",
+                        _vm._l(_vm.errors, function(error, index) {
+                          return _c(
+                            "li",
+                            { key: index, staticClass: "text-red-600" },
+                            [_vm._v(_vm._s(error))]
+                          )
+                        }),
+                        0
+                      )
+                    ])
+                  : _vm._e(),
+                _vm._v(" "),
+                _c("div", { staticClass: "flex" }, [
+                  _c("div", { staticClass: "flex-none w-full" }, [
+                    _c("input", {
+                      ref: "eventTitle",
+                      staticClass:
+                        "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline",
+                      attrs: {
+                        required: "",
+                        type: "text",
+                        placeholder: "Enter  title"
+                      }
+                    })
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "flex flex-row w-full pb-4" }, [
+                  _c("div", { staticClass: "flex-1" }, [
+                    _c(
+                      "label",
+                      {
+                        staticClass: "block text-gray-700 text-sm font-bold m-2"
+                      },
+                      [_vm._v(" Start Date")]
+                    ),
+                    _vm._v(" "),
+                    _c("input", {
+                      ref: "eventStartDate",
+                      staticClass:
+                        "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline",
+                      attrs: {
+                        required: "",
+                        type: "datetime-local",
+                        placeholder: "Start Date"
+                      }
+                    })
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "flex-1" }, [
+                    _c(
+                      "label",
+                      {
+                        staticClass: "block text-gray-700 text-sm font-bold m-2"
+                      },
+                      [_vm._v("End Date")]
+                    ),
+                    _vm._v(" "),
+                    _c("input", {
+                      ref: "eventEndDate",
+                      staticClass:
+                        "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline",
+                      attrs: {
+                        required: "",
+                        type: "datetime-local",
+                        placeholder: "End Date"
+                      }
+                    })
+                  ])
+                ]),
+                _vm._v(" "),
+                _c(
+                  "label",
+                  { staticClass: "font-bold", attrs: { for: "checkbox" } },
+                  [
+                    _vm._v(
+                      "Tick if this task expects a feedback from attendee(s)"
+                    )
+                  ]
+                ),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.feedback,
+                      expression: "feedback"
+                    }
+                  ],
+                  attrs: { type: "checkbox", id: "checkbox" },
+                  domProps: {
+                    checked: Array.isArray(_vm.feedback)
+                      ? _vm._i(_vm.feedback, null) > -1
+                      : _vm.feedback
+                  },
+                  on: {
+                    change: function($event) {
+                      var $$a = _vm.feedback,
+                        $$el = $event.target,
+                        $$c = $$el.checked ? true : false
+                      if (Array.isArray($$a)) {
+                        var $$v = null,
+                          $$i = _vm._i($$a, $$v)
+                        if ($$el.checked) {
+                          $$i < 0 && (_vm.feedback = $$a.concat([$$v]))
+                        } else {
+                          $$i > -1 &&
+                            (_vm.feedback = $$a
+                              .slice(0, $$i)
+                              .concat($$a.slice($$i + 1)))
+                        }
+                      } else {
+                        _vm.feedback = $$c
+                      }
+                    }
+                  }
+                }),
+                _vm._v(" "),
+                _vm.feedback
+                  ? _c("div", [
+                      _c("div", { staticClass: "flex-none flex-col" }, [
+                        _c(
+                          "label",
+                          {
+                            staticClass: "flex-none flex font-bold",
+                            attrs: { for: "" }
+                          },
+                          [_vm._v("Question")]
+                        ),
+                        _vm._v(" "),
+                        _c("input", {
+                          ref: "eventQuestion",
+                          staticClass:
+                            "px-3 flex shadow w-full py-2 appearance-none border rounded text-gray-700 leading-tight focus:outline-none focus:shadow-outline",
+                          attrs: {
+                            type: "text",
+                            placeholder: "Write a Question"
+                          }
+                        })
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "flex-none flex-col" }, [
+                        _c(
+                          "label",
+                          { staticClass: "flex font-bold", attrs: { for: "" } },
+                          [_vm._v("Response Format")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "select",
+                          {
+                            ref: "eventResponse",
+                            staticClass:
+                              "flex shadow appearance-none border rounded w-1/2 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                          },
+                          [
+                            _c("option", { attrs: { value: "image" } }, [
+                              _vm._v("Image")
+                            ]),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "text" } }, [
+                              _vm._v("Text")
+                            ]),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "video" } }, [
+                              _vm._v("Video")
+                            ]),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "docs" } }, [
+                              _vm._v("Documents")
+                            ])
+                          ]
+                        )
+                      ])
+                    ])
+                  : _vm._e(),
+                _vm._v(" "),
+                _c(
+                  "label",
+                  { staticClass: "block text-gray-700 text-sm font-bold m-2" },
+                  [
+                    _vm._v(
+                      "\n                    Event Task\n                    "
+                    )
+                  ]
+                ),
+                _vm._v(" "),
+                _c("textarea", {
+                  ref: "eventDetails",
+                  staticClass:
+                    "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline",
+                  attrs: {
+                    required: "",
+                    placeholder: "Enter event details here",
+                    cols: "30",
+                    rows: "10"
+                  }
+                }),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass:
+                      "font-semibold px-10 py-3 rounded-t bg-yellow-600",
+                    on: { click: _vm.validateEvent }
+                  },
+                  [
+                    _vm.adding
+                      ? _c("p", [_vm._v("Proccessing...")])
+                      : _c("p", [_vm._v("Add to Calendar")])
+                  ]
+                )
+              ]
+            )
+          ]
+        )
+      : _vm._e(),
+    _vm._v(" "),
+    _vm.speakers == true
+      ? _c(
+          "div",
+          {
+            staticClass:
+              "absolute inset-0 mt-12 xs:pt-64 z-50 flex items-center justify-center"
+          },
+          [
+            _c(
+              "div",
+              {
+                staticClass:
+                  "bg-white w-9/12 xs:w-full h-auto md:max-w-md mx-auto rounded shadow-lg pb-32 xs:pt-64 pt-56 text-left p-4 px-6",
+                staticStyle: { top: "60px" }
+              },
+              [
+                _c(
+                  "div",
+                  { staticClass: "flex justify-between items-center pb-3" },
+                  [
+                    _c("p", { staticClass: "text-2xl font-bold" }, [
+                      _vm._v("Add speaker(s)")
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        staticClass: "cursor-pointer z-50",
+                        on: {
+                          click: function($event) {
+                            _vm.speakers = false
+                          }
+                        }
+                      },
+                      [
+                        _c(
+                          "svg",
+                          {
+                            staticClass: "fill-current text-black",
+                            attrs: {
+                              xmlns: "http://www.w3.org/2000/svg",
+                              width: "18",
+                              height: "18",
+                              viewBox: "0 0 18 18"
+                            }
+                          },
+                          [
+                            _c("path", {
+                              attrs: {
+                                d:
+                                  "M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"
+                              }
+                            })
+                          ]
+                        )
+                      ]
+                    )
+                  ]
+                ),
+                _vm._v(" "),
+                _c(
+                  "form",
+                  {
+                    attrs: {
+                      action: "#",
+                      method: "post",
+                      enctype: "multipart/form-data"
+                    },
+                    on: {
+                      submit: function($event) {
+                        return _vm.checkSpeakerForm($event)
+                      }
+                    }
+                  },
+                  [
+                    _c(
+                      "div",
+                      {
+                        staticClass:
+                          "xl:flex lg:flex md:flex xs:flex-none  sm:flex-none"
+                      },
+                      [
+                        _c(
+                          "div",
+                          { staticClass: "flex-row w-1/2 xs:w-full sm:w-full" },
+                          [
+                            _c(
+                              "label",
+                              {
+                                staticClass:
+                                  "block text-gray-700 text-sm font-bold m-2"
+                              },
+                              [
+                                _vm._v(
+                                  "\n                                Speaker Name\n                              "
+                                )
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.speaker.name,
+                                  expression: "speaker.name"
+                                }
+                              ],
+                              staticClass:
+                                "shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline",
+                              attrs: {
+                                required: "",
+                                value: "",
+                                type: "text",
+                                placeholder: "Enter Speaker Name"
+                              },
+                              domProps: { value: _vm.speaker.name },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.speaker,
+                                    "name",
+                                    $event.target.value
+                                  )
+                                }
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c(
+                              "label",
+                              {
+                                staticClass:
+                                  "block text-gray-700 text-sm font-bold m-2"
+                              },
+                              [
+                                _vm._v(
+                                  "\n                                Speaker Email\n                              "
+                                )
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.speaker.email,
+                                  expression: "speaker.email"
+                                }
+                              ],
+                              staticClass:
+                                "shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline",
+                              attrs: {
+                                required: "",
+                                value: "",
+                                type: "text",
+                                placeholder: "Enter Speaker Name"
+                              },
+                              domProps: { value: _vm.speaker.email },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.speaker,
+                                    "email",
+                                    $event.target.value
+                                  )
+                                }
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c(
+                              "label",
+                              {
+                                staticClass:
+                                  "block text-gray-700 text-sm font-bold m-2"
+                              },
+                              [
+                                _vm._v(
+                                  "\n                               Organization\n                              "
+                                )
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.speaker.organization,
+                                  expression: "speaker.organization"
+                                }
+                              ],
+                              staticClass:
+                                "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline",
+                              attrs: {
+                                required: "",
+                                type: "text",
+                                placeholder: "Example: LiftHub, Amazon"
+                              },
+                              domProps: { value: _vm.speaker.organization },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.speaker,
+                                    "organization",
+                                    $event.target.value
+                                  )
+                                }
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c(
+                              "label",
+                              {
+                                staticClass:
+                                  "block text-gray-700 text-sm font-bold m-2"
+                              },
+                              [
+                                _vm._v(
+                                  "\n                                Title\n                            "
+                                )
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.speaker.title,
+                                  expression: "speaker.title"
+                                }
+                              ],
+                              staticClass:
+                                "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline",
+                              attrs: {
+                                required: "",
+                                type: "text",
+                                placeholder: "CEO, Manager"
+                              },
+                              domProps: { value: _vm.speaker.title },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.speaker,
+                                    "title",
+                                    $event.target.value
+                                  )
+                                }
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c(
+                              "label",
+                              {
+                                staticClass:
+                                  "block text-gray-700 text-sm font-bold m-2"
+                              },
+                              [
+                                _vm._v(
+                                  "\n                                Facebook Profile\n                              "
+                                )
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.speaker.facebook,
+                                  expression: "speaker.facebook"
+                                }
+                              ],
+                              ref: "facebook",
+                              staticClass:
+                                "shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline",
+                              attrs: {
+                                value: "",
+                                type: "text",
+                                placeholder:
+                                  "Link to speaker's facebook profile (optional)"
+                              },
+                              domProps: { value: _vm.speaker.facebook },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.speaker,
+                                    "facebook",
+                                    $event.target.value
+                                  )
+                                }
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c(
+                              "label",
+                              {
+                                staticClass:
+                                  "block text-gray-700 text-sm font-bold m-2"
+                              },
+                              [
+                                _vm._v(
+                                  "\n                                Twitter\n                              "
+                                )
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.speaker.twitter,
+                                  expression: "speaker.twitter"
+                                }
+                              ],
+                              ref: "twitter",
+                              staticClass:
+                                "shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline",
+                              attrs: {
+                                value: "",
+                                type: "text",
+                                placeholder:
+                                  "Link to speaker's twitter handle (optional)"
+                              },
+                              domProps: { value: _vm.speaker.twitter },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.speaker,
+                                    "twitter",
+                                    $event.target.value
+                                  )
+                                }
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c(
+                              "label",
+                              {
+                                staticClass:
+                                  "block text-gray-700 text-sm font-bold m-2"
+                              },
+                              [
+                                _vm._v(
+                                  "\n                                linkedIn\n                              "
+                                )
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.speaker.linkedIn,
+                                  expression: "speaker.linkedIn"
+                                }
+                              ],
+                              staticClass:
+                                "shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline",
+                              attrs: {
+                                value: "",
+                                type: "text",
+                                placeholder:
+                                  "Link to speaker's linkedIn (optional)"
+                              },
+                              domProps: { value: _vm.speaker.linkedIn },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.speaker,
+                                    "linkedIn",
+                                    $event.target.value
+                                  )
+                                }
+                              }
+                            })
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "div",
+                          {
+                            staticClass:
+                              "p-16 flex-col w-1/2 xs:flex-row sm:w-full sm:flex-row xs:w-full"
+                          },
+                          [
+                            _c(
+                              "div",
+                              {
+                                staticClass:
+                                  "border hover:shadow-lg flex flex-row justify-center items-center h-64 w-64",
+                                style: {
+                                  backgroundImage:
+                                    "url( " + _vm.speakerFileUrl + " )",
+                                  backgroundSize: "cover",
+                                  backgroundSize: "no-repeat",
+                                  backgroundPosition: "center"
+                                },
+                                on: { click: _vm.trigger }
+                              },
+                              [
+                                _vm.speakerImage == null
+                                  ? _c("p", { staticClass: "text-black" }, [
+                                      _vm._v("Click to add Image")
+                                    ])
+                                  : _vm._e(),
+                                _vm._v(" "),
+                                _c("input", {
+                                  ref: "speakerFile",
+                                  attrs: { hidden: "", type: "file" },
+                                  on: { change: _vm.speakerFileValidation }
+                                })
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _vm.speakerFileError
+                              ? _c("span", { staticClass: "text-gray-700" }, [
+                                  _vm._m(2),
+                                  _vm._v(
+                                    " " +
+                                      _vm._s(_vm.speakerFileError) +
+                                      "\n                            "
+                                  )
+                                ])
+                              : _vm._e(),
+                            _vm._v(" "),
+                            _vm.errors.length
+                              ? _c("p", [
+                                  _vm._m(3),
+                                  _vm._v(" "),
+                                  _c(
+                                    "ul",
+                                    _vm._l(_vm.errors, function(error, index) {
+                                      return _c(
+                                        "li",
+                                        {
+                                          key: index,
+                                          staticClass: "text-red-600"
+                                        },
+                                        [_vm._v(_vm._s(error))]
+                                      )
+                                    }),
+                                    0
+                                  )
+                                ])
+                              : _vm._e()
+                          ]
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "flex" }, [
+                      _c("div", { staticClass: "flex-col w-full" }, [
+                        _c("label", { attrs: { for: "" } }, [
+                          _vm._v("Copy Unique Invite Link")
+                        ]),
+                        _vm._v(" "),
+                        _c("input", {
+                          attrs: { type: "text" },
+                          domProps: { value: _vm.inviteLink }
+                        })
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "button",
+                      {
+                        staticClass:
+                          "font-semibold px-10 py-3 mt-5 rounded-t bg-yellow-600",
+                        class: { disabled: _vm.adding },
+                        on: {
+                          click: function($event) {
+                            return _vm.checkSpeakerForm($event)
+                          }
+                        }
+                      },
+                      [
+                        _vm.adding == true
+                          ? _c("b", [_vm._v("Proccessing...")])
+                          : _c("b", [_vm._v("Add Speaker")])
+                      ]
+                    )
+                  ]
+                )
+              ]
+            )
+          ]
+        )
+      : _vm._e()
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("b", [
+      _c("i", { staticClass: "fa fa-exclamation-triangle" }),
+      _vm._v("Please correct the following error(s):")
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("b", [
+      _c("i", { staticClass: "fa fa-exclamation-triangle" }),
+      _vm._v("Please correct the following error(s):")
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("span", { staticClass: "text-yellow-500" }, [
+      _c("i", { staticClass: "fa fa-exclamation-triangle" })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("b", [
+      _c("i", { staticClass: "fa fa-exclamation-triangle" }),
+      _vm._v("Please correct the following error(s):")
+    ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/event-manager/Event.vue?vue&type=template&id=762cc9ac&":
+/*!**********************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/event-manager/Event.vue?vue&type=template&id=762cc9ac& ***!
+  \**********************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _vm.openEvent == true
+    ? _c(
+        "div",
+        {
+          staticClass:
+            "flex-col absolute overflow-x-auto shadow-2xl z-10 left-0"
+        },
+        [
+          _vm._m(0),
+          _vm._v(" "),
+          _c(
+            "div",
+            {
+              staticClass: "absolute",
+              staticStyle: { right: "40px", top: "10px" }
+            },
+            [
+              _c(
+                "span",
+                {
+                  staticClass:
+                    "bg-red-700 px-2 py-1 rounded-full cursor-pointer text-white",
+                  on: { click: _vm.close }
+                },
+                [_vm._v("Close")]
+              )
+            ]
+          ),
+          _vm._v(" "),
+          _c("div", { staticClass: "table w-full rounded shadow-2xl" }, [
+            _vm._m(1),
+            _vm._v(" "),
+            _c(
+              "div",
+              { staticClass: "table-row-group" },
+              _vm._l(_vm.events, function(item, index) {
+                return _c("div", { key: index, staticClass: "table-row" }, [
+                  _c(
+                    "div",
+                    {
+                      staticClass:
+                        "table-cell bg-yellow-200 text-gray-700 px-4 py-2 text-sm"
+                    },
+                    [_vm._v(_vm._s(item.title))]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticClass:
+                        "table-cell bg-gray-400 text-gray-700 px-4 w-48 py-2 text-sm"
+                    },
+                    [
+                      _vm._v(
+                        "\n                  " +
+                          _vm._s(item.details) +
+                          "\n              "
+                      )
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticClass:
+                        "table-cell bg-yellow-200 text-gray-700 w-48 px-4 py-2 text-sm"
+                    },
+                    [_vm._v(_vm._s(item.question))]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticClass:
+                        "table-cell bg-gray-400 text-gray-700 px-4 py-2 text-sm"
+                    },
+                    [
+                      item.use_feedback
+                        ? _c("p", [_vm._v("Feedbacks (0)")])
+                        : _c("p", [_vm._v("Not Accepted")])
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticClass:
+                        "table-cell bg-yellow-200 text-gray-700 px-4 w-4 overflow-hidden py-2 text-sm"
+                    },
+                    [
+                      _vm._v(
+                        _vm._s(
+                          _vm.baseurl + "/programme/details?id=" + item.id
+                        ) + " "
+                      )
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticClass:
+                        "table-cell bg-gray-400  text-gray-700 px-4 py-2 w-48 text-sm"
+                    },
+                    [
+                      _vm._v(
+                        " " +
+                          _vm._s(
+                            _vm._f("moment")(item.start_date, "MMMM Do YYYY")
+                          ) +
+                          " - " +
+                          _vm._s(
+                            _vm._f("moment")(item.end_date, "MMMM Do YYYY")
+                          )
+                      )
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticClass:
+                        "table-cell bg-yellow-200 text-gray-700 px-4 py-2 text-sm"
+                    },
+                    [
+                      _c("i", {
+                        staticClass: "fa fa-edit",
+                        on: {
+                          click: function($event) {
+                            return _vm.edit(item)
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c("i", { staticClass: "fa fa-trash-alt" })
+                    ]
+                  )
+                ])
+              }),
+              0
+            )
+          ]),
+          _vm._v(" "),
+          _vm.editEvent
+            ? _c(
+                "div",
+                {
+                  staticClass:
+                    "absolute bg-white w-9/12 xs:w-full h-auto overflow-y-auto md:max-w-md z-30 rounded shadow  px-8 text-left p-6 pb-6",
+                  staticStyle: { top: "60px" }
+                },
+                [
+                  _c(
+                    "div",
+                    { staticClass: "flex justify-between items-center pb-3" },
+                    [
+                      _c(
+                        "p",
+                        {
+                          staticClass:
+                            "text-base px-6 bg-gray-200 rounded font-bold"
+                        },
+                        [_vm._v("Update Event")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        {
+                          staticClass: "cursor-pointer z-50",
+                          on: {
+                            click: function($event) {
+                              _vm.editEvent = false
+                            }
+                          }
+                        },
+                        [
+                          _c(
+                            "svg",
+                            {
+                              staticClass: "fill-current text-black",
+                              attrs: {
+                                xmlns: "http://www.w3.org/2000/svg",
+                                width: "18",
+                                height: "18",
+                                viewBox: "0 0 18 18"
+                              }
+                            },
+                            [
+                              _c("path", {
+                                attrs: {
+                                  d:
+                                    "M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"
+                                }
+                              })
+                            ]
+                          )
+                        ]
+                      )
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _vm.errors.length
+                    ? _c("p", [
+                        _vm._m(2),
+                        _vm._v(" "),
+                        _c(
+                          "ul",
+                          _vm._l(_vm.errors, function(error, index) {
+                            return _c(
+                              "li",
+                              { key: index, staticClass: "text-red-600" },
+                              [_vm._v(_vm._s(error))]
+                            )
+                          }),
+                          0
+                        )
+                      ])
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "flex" }, [
+                    _c("div", { staticClass: "flex-none w-full" }, [
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.event.title,
+                            expression: "event.title"
+                          }
+                        ],
+                        staticClass:
+                          "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline",
+                        attrs: {
+                          required: "",
+                          type: "text",
+                          placeholder: "Enter  title"
+                        },
+                        domProps: { value: _vm.event.title },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(_vm.event, "title", $event.target.value)
+                          }
+                        }
+                      })
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "flex flex-row w-full pb-4" }, [
+                    _c("div", { staticClass: "flex-1" }, [
+                      _c(
+                        "label",
+                        {
+                          staticClass:
+                            "block text-gray-700 text-sm font-bold m-2"
+                        },
+                        [_vm._v(" Start Date")]
+                      ),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.event.start_date,
+                            expression: "event.start_date"
+                          }
+                        ],
+                        staticClass:
+                          "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline",
+                        attrs: {
+                          required: "",
+                          type: "datetime-local",
+                          placeholder: "Start Date"
+                        },
+                        domProps: { value: _vm.event.start_date },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(
+                              _vm.event,
+                              "start_date",
+                              $event.target.value
+                            )
+                          }
+                        }
+                      })
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "flex-1" }, [
+                      _c(
+                        "label",
+                        {
+                          staticClass:
+                            "block text-gray-700 text-sm font-bold m-2"
+                        },
+                        [_vm._v("End Date")]
+                      ),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.event.end_date,
+                            expression: "event.end_date"
+                          }
+                        ],
+                        staticClass:
+                          "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline",
+                        attrs: {
+                          required: "",
+                          type: "datetime-local",
+                          placeholder: "End Date"
+                        },
+                        domProps: { value: _vm.event.end_date },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(_vm.event, "end_date", $event.target.value)
+                          }
+                        }
+                      })
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "label",
+                    { staticClass: "font-bold", attrs: { for: "checkbox" } },
+                    [
+                      _vm._v(
+                        "Tick if this task expects a feedback from attendee(s)"
+                      )
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.event.use_feedback,
+                        expression: "event.use_feedback"
+                      }
+                    ],
+                    attrs: { type: "checkbox", id: "checkbox" },
+                    domProps: {
+                      checked: Array.isArray(_vm.event.use_feedback)
+                        ? _vm._i(_vm.event.use_feedback, null) > -1
+                        : _vm.event.use_feedback
+                    },
+                    on: {
+                      change: function($event) {
+                        var $$a = _vm.event.use_feedback,
+                          $$el = $event.target,
+                          $$c = $$el.checked ? true : false
+                        if (Array.isArray($$a)) {
+                          var $$v = null,
+                            $$i = _vm._i($$a, $$v)
+                          if ($$el.checked) {
+                            $$i < 0 &&
+                              _vm.$set(
+                                _vm.event,
+                                "use_feedback",
+                                $$a.concat([$$v])
+                              )
+                          } else {
+                            $$i > -1 &&
+                              _vm.$set(
+                                _vm.event,
+                                "use_feedback",
+                                $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                              )
+                          }
+                        } else {
+                          _vm.$set(_vm.event, "use_feedback", $$c)
+                        }
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _vm.event.use_feedback
+                    ? _c("div", [
+                        _c("div", { staticClass: "flex-none flex-col" }, [
+                          _c(
+                            "label",
+                            {
+                              staticClass: "flex-none flex font-bold",
+                              attrs: { for: "" }
+                            },
+                            [_vm._v("Question")]
+                          ),
+                          _vm._v(" "),
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.event.question,
+                                expression: "event.question"
+                              }
+                            ],
+                            staticClass:
+                              "px-3 flex shadow w-full py-2 appearance-none border rounded text-gray-700 leading-tight focus:outline-none focus:shadow-outline",
+                            attrs: {
+                              type: "text",
+                              placeholder: "Write a Question"
+                            },
+                            domProps: { value: _vm.event.question },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  _vm.event,
+                                  "question",
+                                  $event.target.value
+                                )
+                              }
+                            }
+                          })
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "flex-none flex-col" }, [
+                          _c(
+                            "label",
+                            {
+                              staticClass: "flex font-bold",
+                              attrs: { for: "" }
+                            },
+                            [_vm._v("Response Format")]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "select",
+                            {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.event.feedback_type,
+                                  expression: "event.feedback_type"
+                                }
+                              ],
+                              staticClass:
+                                "flex shadow appearance-none border rounded w-1/2 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline",
+                              on: {
+                                change: function($event) {
+                                  var $$selectedVal = Array.prototype.filter
+                                    .call($event.target.options, function(o) {
+                                      return o.selected
+                                    })
+                                    .map(function(o) {
+                                      var val =
+                                        "_value" in o ? o._value : o.value
+                                      return val
+                                    })
+                                  _vm.$set(
+                                    _vm.event,
+                                    "feedback_type",
+                                    $event.target.multiple
+                                      ? $$selectedVal
+                                      : $$selectedVal[0]
+                                  )
+                                }
+                              }
+                            },
+                            [
+                              _c("option", { attrs: { value: "image" } }, [
+                                _vm._v("Image")
+                              ]),
+                              _vm._v(" "),
+                              _c("option", { attrs: { value: "text" } }, [
+                                _vm._v("Text")
+                              ]),
+                              _vm._v(" "),
+                              _c("option", { attrs: { value: "video" } }, [
+                                _vm._v("Video")
+                              ]),
+                              _vm._v(" "),
+                              _c("option", { attrs: { value: "docs" } }, [
+                                _vm._v("Documents")
+                              ])
+                            ]
+                          )
+                        ])
+                      ])
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _c(
+                    "label",
+                    {
+                      staticClass: "block text-gray-700 text-sm font-bold m-2"
+                    },
+                    [
+                      _vm._v(
+                        "\n                      Event Details\n                      "
+                      )
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c("textarea", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.event.details,
+                        expression: "event.details"
+                      }
+                    ],
+                    staticClass:
+                      "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline",
+                    attrs: {
+                      required: "",
+                      placeholder: "Enter event details here",
+                      cols: "30",
+                      rows: "10"
+                    },
+                    domProps: { value: _vm.event.details },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.event, "details", $event.target.value)
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "button",
+                    {
+                      staticClass:
+                        "font-semibold px-10 py-3 rounded-t bg-yellow-600",
+                      on: { click: _vm.addEvent }
+                    },
+                    [
+                      _vm.adding
+                        ? _c("p", [_vm._v("Proccessing...")])
+                        : _c("p", [_vm._v("Update Event")])
+                    ]
+                  )
+                ]
+              )
+            : _vm._e()
+        ]
+      )
+    : _vm._e()
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "text-lg font-bold" }, [
+      _c("span", [
+        _c("i", { staticClass: "fa fa-calendar-alt" }),
+        _vm._v("Events")
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "table-header-group border" }, [
+      _c("div", { staticClass: "table-row table-caption font-bold" }, [
+        _c(
+          "div",
+          {
+            staticClass:
+              "table-cell bg-gray-400 text-gray-700 px-4 py-2 text-sm"
+          },
+          [_vm._v("Title")]
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            staticClass:
+              "table-cell bg-gray-400 text-gray-700 px-4 py-2 text-sm"
+          },
+          [_vm._v("Details")]
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            staticClass:
+              "table-cell bg-gray-400 text-gray-700 px-4 py-2 text-sm"
+          },
+          [_vm._v("Task")]
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            staticClass:
+              "table-cell bg-gray-400 text-gray-700 px-4 py-2 text-sm"
+          },
+          [_vm._v("Feed Back")]
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            staticClass:
+              "table-cell bg-gray-400 text-gray-700 px-4 py-2 text-sm"
+          },
+          [_vm._v("Invitation "), _c("br"), _vm._v("Link")]
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            staticClass:
+              "table-cell bg-gray-400 text-gray-700 px-4 py-2 text-sm"
+          },
+          [_vm._v("Duration")]
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            staticClass:
+              "table-cell bg-gray-400 text-gray-700 px-4 py-2 text-sm"
+          },
+          [_vm._v("Actions")]
+        )
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("b", [
+      _c("i", { staticClass: "fa fa-exclamation-triangle" }),
+      _vm._v("Please correct the following error(s):")
+    ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/event-manager/Speaker.vue?vue&type=template&id=52991fe2&":
+/*!************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/event-manager/Speaker.vue?vue&type=template&id=52991fe2& ***!
+  \************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _vm.openSpeakers == true
+    ? _c(
+        "div",
+        {
+          staticClass:
+            "flex-col absolute overflow-x-auto shadow-2xl z-10 left-0"
+        },
+        [
+          _vm._m(0),
+          _vm._v(" "),
+          _c(
+            "div",
+            {
+              staticClass: "absolute",
+              staticStyle: { right: "40px", top: "10px" }
+            },
+            [
+              _c(
+                "span",
+                {
+                  staticClass:
+                    "bg-red-700 px-2 py-1 cursor-pointer rounded-full text-white",
+                  on: { click: _vm.close }
+                },
+                [_vm._v("Close")]
+              )
+            ]
+          ),
+          _vm._v(" "),
+          _c("div", { staticClass: "table shadow-2xl w-full" }, [
+            _vm._m(1),
+            _vm._v(" "),
+            _c(
+              "div",
+              { staticClass: "table-row-group" },
+              _vm._l(_vm.speakers, function(item, index) {
+                return _c("div", { key: index, staticClass: "table-row" }, [
+                  _c(
+                    "div",
+                    {
+                      staticClass:
+                        "table-cell bg-gray-200 text-gray-700 px-4 py-2 text-sm"
+                    },
+                    [_vm._v(_vm._s(item.name))]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticClass:
+                        "table-cell bg-gray-400 text-gray-700 px-4 py-2 text-sm"
+                    },
+                    [
+                      _c("img", {
+                        staticClass: "w-16 h-16 object-center",
+                        attrs: {
+                          src: "/files/images?filename=" + item.image,
+                          alt: ""
+                        }
+                      })
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticClass:
+                        "table-cell bg-gray-200 text-gray-700 px-4 py-2 text-sm"
+                    },
+                    [_vm._v(_vm._s(item.organization))]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticClass:
+                        "table-cell bg-gray-400 text-gray-700 px-4 py-2 text-sm"
+                    },
+                    [
+                      item.invite_accepted
+                        ? _c("p", [_vm._v("Accepted")])
+                        : _c("p", [_vm._v("Not Accepted")])
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticClass:
+                        "table-cell bg-gray-200 text-gray-700 px-4 w-4 overflow-hidden py-2 text-sm"
+                    },
+                    [
+                      _vm._v(
+                        _vm._s(_vm.baseurl + "/invite/" + item.invite_id) + " "
+                      )
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticClass:
+                        "table-cell bg-gray-400  text-gray-700 px-4 py-2 w-4 text-sm"
+                    },
+                    [
+                      _c("i", { staticClass: "fa fa-envelope" }),
+                      _vm._v(" " + _vm._s(item.email))
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticClass:
+                        "table-cell bg-gray-200 text-gray-700 px-4 py-2 text-sm"
+                    },
+                    [
+                      _c("i", {
+                        staticClass: "fa fa-edit",
+                        on: {
+                          click: function($event) {
+                            return _vm.edit(item)
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c("i", { staticClass: "fa fa-trash-alt" })
+                    ]
+                  )
+                ])
+              }),
+              0
+            )
+          ]),
+          _vm._v(" "),
+          _vm.editSpeaker
+            ? _c(
+                "div",
+                {
+                  staticClass:
+                    "absolute z-30 bg-white w-11/12 xs:w-full h-auto md:max-w-md mx-auto rounded shadow-lg pb-3 xs:pt-6 text-left p-4 px-6"
+                },
+                [
+                  _c(
+                    "div",
+                    { staticClass: "flex justify-between items-center pb-3" },
+                    [
+                      _c("p", { staticClass: "text-2xl font-bold" }, [
+                        _vm._v("Add speaker(s)")
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        {
+                          staticClass: "cursor-pointer z-50",
+                          on: {
+                            click: function($event) {
+                              _vm.editSpeaker = false
+                            }
+                          }
+                        },
+                        [
+                          _c(
+                            "svg",
+                            {
+                              staticClass: "fill-current text-black",
+                              attrs: {
+                                xmlns: "http://www.w3.org/2000/svg",
+                                width: "18",
+                                height: "18",
+                                viewBox: "0 0 18 18"
+                              }
+                            },
+                            [
+                              _c("path", {
+                                attrs: {
+                                  d:
+                                    "M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"
+                                }
+                              })
+                            ]
+                          )
+                        ]
+                      )
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "form",
+                    {
+                      attrs: {
+                        action: "#",
+                        method: "post",
+                        enctype: "multipart/form-data"
+                      },
+                      on: {
+                        submit: function($event) {
+                          return _vm.checkSpeakerForm($event)
+                        }
+                      }
+                    },
+                    [
+                      _c(
+                        "div",
+                        {
+                          staticClass:
+                            "xl:flex lg:flex md:flex xs:flex-none  sm:flex-none"
+                        },
+                        [
+                          _c(
+                            "div",
+                            {
+                              staticClass: "flex-row w-1/2 xs:w-full sm:w-full"
+                            },
+                            [
+                              _c(
+                                "label",
+                                {
+                                  staticClass:
+                                    "block text-gray-700 text-sm font-bold m-2"
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                                  Speaker Name\n                                "
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.speaker.name,
+                                    expression: "speaker.name"
+                                  }
+                                ],
+                                staticClass:
+                                  "shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline",
+                                attrs: {
+                                  required: "",
+                                  value: "",
+                                  type: "text",
+                                  placeholder: "Enter Speaker Name"
+                                },
+                                domProps: { value: _vm.speaker.name },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.$set(
+                                      _vm.speaker,
+                                      "name",
+                                      $event.target.value
+                                    )
+                                  }
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c(
+                                "label",
+                                {
+                                  staticClass:
+                                    "block text-gray-700 text-sm font-bold m-2"
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                                  Speaker Email\n                                "
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.speaker.email,
+                                    expression: "speaker.email"
+                                  }
+                                ],
+                                staticClass:
+                                  "shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline",
+                                attrs: {
+                                  required: "",
+                                  value: "",
+                                  type: "text",
+                                  placeholder: "Enter Speaker Name"
+                                },
+                                domProps: { value: _vm.speaker.email },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.$set(
+                                      _vm.speaker,
+                                      "email",
+                                      $event.target.value
+                                    )
+                                  }
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c(
+                                "label",
+                                {
+                                  staticClass:
+                                    "block text-gray-700 text-sm font-bold m-2"
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                                 Organization\n                                "
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.speaker.organization,
+                                    expression: "speaker.organization"
+                                  }
+                                ],
+                                staticClass:
+                                  "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline",
+                                attrs: {
+                                  required: "",
+                                  type: "text",
+                                  placeholder: "Example: LiftHub, Amazon"
+                                },
+                                domProps: { value: _vm.speaker.organization },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.$set(
+                                      _vm.speaker,
+                                      "organization",
+                                      $event.target.value
+                                    )
+                                  }
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c(
+                                "label",
+                                {
+                                  staticClass:
+                                    "block text-gray-700 text-sm font-bold m-2"
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                                  Title\n                              "
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.speaker.title,
+                                    expression: "speaker.title"
+                                  }
+                                ],
+                                staticClass:
+                                  "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline",
+                                attrs: {
+                                  required: "",
+                                  type: "text",
+                                  placeholder: "CEO, Manager"
+                                },
+                                domProps: { value: _vm.speaker.title },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.$set(
+                                      _vm.speaker,
+                                      "title",
+                                      $event.target.value
+                                    )
+                                  }
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c(
+                                "label",
+                                {
+                                  staticClass:
+                                    "block text-gray-700 text-sm font-bold m-2"
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                                  Facebook Profile\n                                "
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.speaker.facebook,
+                                    expression: "speaker.facebook"
+                                  }
+                                ],
+                                ref: "facebook",
+                                staticClass:
+                                  "shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline",
+                                attrs: {
+                                  value: "",
+                                  type: "text",
+                                  placeholder:
+                                    "Link to speaker's facebook profile (optional)"
+                                },
+                                domProps: { value: _vm.speaker.facebook },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.$set(
+                                      _vm.speaker,
+                                      "facebook",
+                                      $event.target.value
+                                    )
+                                  }
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c(
+                                "label",
+                                {
+                                  staticClass:
+                                    "block text-gray-700 text-sm font-bold m-2"
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                                  Twitter\n                                "
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.speaker.twitter,
+                                    expression: "speaker.twitter"
+                                  }
+                                ],
+                                ref: "twitter",
+                                staticClass:
+                                  "shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline",
+                                attrs: {
+                                  value: "",
+                                  type: "text",
+                                  placeholder:
+                                    "Link to speaker's twitter handle (optional)"
+                                },
+                                domProps: { value: _vm.speaker.twitter },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.$set(
+                                      _vm.speaker,
+                                      "twitter",
+                                      $event.target.value
+                                    )
+                                  }
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c(
+                                "label",
+                                {
+                                  staticClass:
+                                    "block text-gray-700 text-sm font-bold m-2"
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                                  linkedIn\n                                "
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.speaker.linkedIn,
+                                    expression: "speaker.linkedIn"
+                                  }
+                                ],
+                                staticClass:
+                                  "shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline",
+                                attrs: {
+                                  value: "",
+                                  type: "text",
+                                  placeholder:
+                                    "Link to speaker's linkedIn (optional)"
+                                },
+                                domProps: { value: _vm.speaker.linkedIn },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.$set(
+                                      _vm.speaker,
+                                      "linkedIn",
+                                      $event.target.value
+                                    )
+                                  }
+                                }
+                              })
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            {
+                              staticClass:
+                                "p-16 flex-col w-1/2 xs:flex-row sm:w-full sm:flex-row xs:w-full"
+                            },
+                            [
+                              _c(
+                                "div",
+                                {
+                                  staticClass:
+                                    "border hover:shadow-lg flex flex-row justify-center items-center h-64 w-64",
+                                  style: {
+                                    backgroundImage:
+                                      "url( " + _vm.speakerFileUrl + " )",
+                                    backgroundSize: "cover",
+                                    backgroundSize: "no-repeat",
+                                    backgroundPosition: "center"
+                                  },
+                                  on: { click: _vm.trigger }
+                                },
+                                [
+                                  _vm.speakerImage == null
+                                    ? _c("p", { staticClass: "text-black" }, [
+                                        _vm._v("Click to add Image")
+                                      ])
+                                    : _vm._e(),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    ref: "speakerFile",
+                                    attrs: { hidden: "", type: "file" },
+                                    on: { change: _vm.speakerFileValidation }
+                                  })
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _vm.speakerFileError
+                                ? _c("span", { staticClass: "text-gray-700" }, [
+                                    _vm._m(2),
+                                    _vm._v(
+                                      " " +
+                                        _vm._s(_vm.speakerFileError) +
+                                        "\n                              "
+                                    )
+                                  ])
+                                : _vm._e(),
+                              _vm._v(" "),
+                              _vm.errors.length
+                                ? _c("p", [
+                                    _vm._m(3),
+                                    _vm._v(" "),
+                                    _c(
+                                      "ul",
+                                      _vm._l(_vm.errors, function(
+                                        error,
+                                        index
+                                      ) {
+                                        return _c(
+                                          "li",
+                                          {
+                                            key: index,
+                                            staticClass: "text-red-600"
+                                          },
+                                          [_vm._v(_vm._s(error))]
+                                        )
+                                      }),
+                                      0
+                                    )
+                                  ])
+                                : _vm._e()
+                            ]
+                          )
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "flex" }, [
+                        _c("div", { staticClass: "flex-col w-full" }, [
+                          _c("span", { staticClass: "title" }, [
+                            _vm._v("Speaker Invite Link:")
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "span",
+                            {
+                              staticClass:
+                                "code shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline text-red"
+                            },
+                            [_vm._v(_vm._s(_vm.inviteLink))]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "span",
+                            {
+                              staticClass: "bg-blue-500 text-white ml-auto",
+                              on: {
+                                click: function($event) {
+                                  $event.stopPropagation()
+                                  $event.preventDefault()
+                                  return _vm.copyInviteLink($event)
+                                }
+                              }
+                            },
+                            [
+                              _vm._v(
+                                "\n                                          Copy\n                              "
+                              )
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _c("input", {
+                            attrs: { type: "hidden", id: "testing-code" },
+                            domProps: { value: _vm.inviteLink }
+                          })
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "button",
+                        {
+                          staticClass:
+                            "font-semibold px-10 py-3 mt-5 rounded-t bg-yellow-600",
+                          class: { disabled: _vm.addingSpeaker },
+                          on: {
+                            click: function($event) {
+                              return _vm.checkSpeakerForm($event)
+                            }
+                          }
+                        },
+                        [
+                          _vm.addingSpeaker == true
+                            ? _c("b", [_vm._v("Proccessing...")])
+                            : _c("b", [_vm._v("Add Speaker")])
+                        ]
+                      )
+                    ]
+                  )
+                ]
+              )
+            : _vm._e()
+        ]
+      )
+    : _vm._e()
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "text-lg font-bold" }, [
+      _c("span", [
+        _c("i", { staticClass: "fa fa-calendar-alt" }),
+        _vm._v("Speakers")
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "table-header-group border" }, [
+      _c("div", { staticClass: "table-row table-caption font-bold" }, [
+        _c(
+          "div",
+          {
+            staticClass:
+              "table-cell bg-gray-400 text-gray-700 px-4 py-2 text-sm"
+          },
+          [_vm._v("Name")]
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            staticClass:
+              "table-cell bg-gray-400 text-gray-700 px-4 py-2 text-sm"
+          },
+          [_vm._v("Picture")]
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            staticClass:
+              "table-cell bg-gray-400 text-gray-700 px-4 py-2 text-sm"
+          },
+          [_vm._v("Company")]
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            staticClass:
+              "table-cell bg-gray-400 text-gray-700 px-4 py-2 text-sm"
+          },
+          [_vm._v("Invitation"), _c("br"), _vm._v(" Status")]
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            staticClass:
+              "table-cell bg-gray-400 text-gray-700 px-4 py-2 text-sm"
+          },
+          [_vm._v("Invitation "), _c("br"), _vm._v("Link")]
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            staticClass:
+              "table-cell bg-gray-400 text-gray-700 px-4 py-2 text-sm"
+          },
+          [_vm._v("Email")]
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            staticClass:
+              "table-cell bg-gray-400 text-gray-700 px-4 py-2 text-sm"
+          },
+          [_vm._v("Actions")]
+        )
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("span", { staticClass: "text-yellow-500" }, [
+      _c("i", { staticClass: "fa fa-exclamation-triangle" })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("b", [
+      _c("i", { staticClass: "fa fa-exclamation-triangle" }),
+      _vm._v("Please correct the following error(s):")
     ])
   }
 ]
@@ -37712,6 +46287,5981 @@ function normalizeComponent (
   }
 }
 
+
+/***/ }),
+
+/***/ "./node_modules/vue-moment/dist/vue-moment.js":
+/*!****************************************************!*\
+  !*** ./node_modules/vue-moment/dist/vue-moment.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(global) {(function (global, factory) {
+	 true ? factory(exports) :
+	undefined;
+}(this, (function (exports) { 'use strict';
+
+var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+
+function commonjsRequire () {
+	throw new Error('Dynamic requires are not currently supported by rollup-plugin-commonjs');
+}
+
+
+
+function createCommonjsModule(fn, module) {
+	return module = { exports: {} }, fn(module, module.exports), module.exports;
+}
+
+var moment = createCommonjsModule(function (module, exports) {
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+//! moment.js
+
+(function (global, factory) {
+    (_typeof(exports)) === 'object' && 'object' !== 'undefined' ? module.exports = factory() :  false ? undefined : global.moment = factory();
+})(commonjsGlobal, function () {
+    var hookCallback;
+
+    function hooks() {
+        return hookCallback.apply(null, arguments);
+    }
+
+    // This is done to register the method called with moment()
+    // without creating circular dependencies.
+    function setHookCallback(callback) {
+        hookCallback = callback;
+    }
+
+    function isArray(input) {
+        return input instanceof Array || Object.prototype.toString.call(input) === '[object Array]';
+    }
+
+    function isObject(input) {
+        // IE8 will treat undefined and null as object if it wasn't for
+        // input != null
+        return input != null && Object.prototype.toString.call(input) === '[object Object]';
+    }
+
+    function isObjectEmpty(obj) {
+        if (Object.getOwnPropertyNames) {
+            return Object.getOwnPropertyNames(obj).length === 0;
+        } else {
+            var k;
+            for (k in obj) {
+                if (obj.hasOwnProperty(k)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    function isUndefined(input) {
+        return input === void 0;
+    }
+
+    function isNumber(input) {
+        return typeof input === 'number' || Object.prototype.toString.call(input) === '[object Number]';
+    }
+
+    function isDate(input) {
+        return input instanceof Date || Object.prototype.toString.call(input) === '[object Date]';
+    }
+
+    function map(arr, fn) {
+        var res = [],
+            i;
+        for (i = 0; i < arr.length; ++i) {
+            res.push(fn(arr[i], i));
+        }
+        return res;
+    }
+
+    function hasOwnProp(a, b) {
+        return Object.prototype.hasOwnProperty.call(a, b);
+    }
+
+    function extend(a, b) {
+        for (var i in b) {
+            if (hasOwnProp(b, i)) {
+                a[i] = b[i];
+            }
+        }
+
+        if (hasOwnProp(b, 'toString')) {
+            a.toString = b.toString;
+        }
+
+        if (hasOwnProp(b, 'valueOf')) {
+            a.valueOf = b.valueOf;
+        }
+
+        return a;
+    }
+
+    function createUTC(input, format, locale, strict) {
+        return createLocalOrUTC(input, format, locale, strict, true).utc();
+    }
+
+    function defaultParsingFlags() {
+        // We need to deep clone this object.
+        return {
+            empty: false,
+            unusedTokens: [],
+            unusedInput: [],
+            overflow: -2,
+            charsLeftOver: 0,
+            nullInput: false,
+            invalidMonth: null,
+            invalidFormat: false,
+            userInvalidated: false,
+            iso: false,
+            parsedDateParts: [],
+            meridiem: null,
+            rfc2822: false,
+            weekdayMismatch: false
+        };
+    }
+
+    function getParsingFlags(m) {
+        if (m._pf == null) {
+            m._pf = defaultParsingFlags();
+        }
+        return m._pf;
+    }
+
+    var some;
+    if (Array.prototype.some) {
+        some = Array.prototype.some;
+    } else {
+        some = function some(fun) {
+            var t = Object(this);
+            var len = t.length >>> 0;
+
+            for (var i = 0; i < len; i++) {
+                if (i in t && fun.call(this, t[i], i, t)) {
+                    return true;
+                }
+            }
+
+            return false;
+        };
+    }
+
+    function isValid(m) {
+        if (m._isValid == null) {
+            var flags = getParsingFlags(m);
+            var parsedParts = some.call(flags.parsedDateParts, function (i) {
+                return i != null;
+            });
+            var isNowValid = !isNaN(m._d.getTime()) && flags.overflow < 0 && !flags.empty && !flags.invalidMonth && !flags.invalidWeekday && !flags.weekdayMismatch && !flags.nullInput && !flags.invalidFormat && !flags.userInvalidated && (!flags.meridiem || flags.meridiem && parsedParts);
+
+            if (m._strict) {
+                isNowValid = isNowValid && flags.charsLeftOver === 0 && flags.unusedTokens.length === 0 && flags.bigHour === undefined;
+            }
+
+            if (Object.isFrozen == null || !Object.isFrozen(m)) {
+                m._isValid = isNowValid;
+            } else {
+                return isNowValid;
+            }
+        }
+        return m._isValid;
+    }
+
+    function createInvalid(flags) {
+        var m = createUTC(NaN);
+        if (flags != null) {
+            extend(getParsingFlags(m), flags);
+        } else {
+            getParsingFlags(m).userInvalidated = true;
+        }
+
+        return m;
+    }
+
+    // Plugins that add properties should also add the key here (null value),
+    // so we can properly clone ourselves.
+    var momentProperties = hooks.momentProperties = [];
+
+    function copyConfig(to, from) {
+        var i, prop, val;
+
+        if (!isUndefined(from._isAMomentObject)) {
+            to._isAMomentObject = from._isAMomentObject;
+        }
+        if (!isUndefined(from._i)) {
+            to._i = from._i;
+        }
+        if (!isUndefined(from._f)) {
+            to._f = from._f;
+        }
+        if (!isUndefined(from._l)) {
+            to._l = from._l;
+        }
+        if (!isUndefined(from._strict)) {
+            to._strict = from._strict;
+        }
+        if (!isUndefined(from._tzm)) {
+            to._tzm = from._tzm;
+        }
+        if (!isUndefined(from._isUTC)) {
+            to._isUTC = from._isUTC;
+        }
+        if (!isUndefined(from._offset)) {
+            to._offset = from._offset;
+        }
+        if (!isUndefined(from._pf)) {
+            to._pf = getParsingFlags(from);
+        }
+        if (!isUndefined(from._locale)) {
+            to._locale = from._locale;
+        }
+
+        if (momentProperties.length > 0) {
+            for (i = 0; i < momentProperties.length; i++) {
+                prop = momentProperties[i];
+                val = from[prop];
+                if (!isUndefined(val)) {
+                    to[prop] = val;
+                }
+            }
+        }
+
+        return to;
+    }
+
+    var updateInProgress = false;
+
+    // Moment prototype object
+    function Moment(config) {
+        copyConfig(this, config);
+        this._d = new Date(config._d != null ? config._d.getTime() : NaN);
+        if (!this.isValid()) {
+            this._d = new Date(NaN);
+        }
+        // Prevent infinite loop in case updateOffset creates new moment
+        // objects.
+        if (updateInProgress === false) {
+            updateInProgress = true;
+            hooks.updateOffset(this);
+            updateInProgress = false;
+        }
+    }
+
+    function isMoment(obj) {
+        return obj instanceof Moment || obj != null && obj._isAMomentObject != null;
+    }
+
+    function absFloor(number) {
+        if (number < 0) {
+            // -0 -> 0
+            return Math.ceil(number) || 0;
+        } else {
+            return Math.floor(number);
+        }
+    }
+
+    function toInt(argumentForCoercion) {
+        var coercedNumber = +argumentForCoercion,
+            value = 0;
+
+        if (coercedNumber !== 0 && isFinite(coercedNumber)) {
+            value = absFloor(coercedNumber);
+        }
+
+        return value;
+    }
+
+    // compare two arrays, return the number of differences
+    function compareArrays(array1, array2, dontConvert) {
+        var len = Math.min(array1.length, array2.length),
+            lengthDiff = Math.abs(array1.length - array2.length),
+            diffs = 0,
+            i;
+        for (i = 0; i < len; i++) {
+            if (dontConvert && array1[i] !== array2[i] || !dontConvert && toInt(array1[i]) !== toInt(array2[i])) {
+                diffs++;
+            }
+        }
+        return diffs + lengthDiff;
+    }
+
+    function warn(msg) {
+        if (hooks.suppressDeprecationWarnings === false && typeof console !== 'undefined' && console.warn) {
+            console.warn('Deprecation warning: ' + msg);
+        }
+    }
+
+    function deprecate(msg, fn) {
+        var firstTime = true;
+
+        return extend(function () {
+            if (hooks.deprecationHandler != null) {
+                hooks.deprecationHandler(null, msg);
+            }
+            if (firstTime) {
+                var args = [];
+                var arg;
+                for (var i = 0; i < arguments.length; i++) {
+                    arg = '';
+                    if (_typeof(arguments[i]) === 'object') {
+                        arg += '\n[' + i + '] ';
+                        for (var key in arguments[0]) {
+                            arg += key + ': ' + arguments[0][key] + ', ';
+                        }
+                        arg = arg.slice(0, -2); // Remove trailing comma and space
+                    } else {
+                        arg = arguments[i];
+                    }
+                    args.push(arg);
+                }
+                warn(msg + '\nArguments: ' + Array.prototype.slice.call(args).join('') + '\n' + new Error().stack);
+                firstTime = false;
+            }
+            return fn.apply(this, arguments);
+        }, fn);
+    }
+
+    var deprecations = {};
+
+    function deprecateSimple(name, msg) {
+        if (hooks.deprecationHandler != null) {
+            hooks.deprecationHandler(name, msg);
+        }
+        if (!deprecations[name]) {
+            warn(msg);
+            deprecations[name] = true;
+        }
+    }
+
+    hooks.suppressDeprecationWarnings = false;
+    hooks.deprecationHandler = null;
+
+    function isFunction(input) {
+        return input instanceof Function || Object.prototype.toString.call(input) === '[object Function]';
+    }
+
+    function set(config) {
+        var prop, i;
+        for (i in config) {
+            prop = config[i];
+            if (isFunction(prop)) {
+                this[i] = prop;
+            } else {
+                this['_' + i] = prop;
+            }
+        }
+        this._config = config;
+        // Lenient ordinal parsing accepts just a number in addition to
+        // number + (possibly) stuff coming from _dayOfMonthOrdinalParse.
+        // TODO: Remove "ordinalParse" fallback in next major release.
+        this._dayOfMonthOrdinalParseLenient = new RegExp((this._dayOfMonthOrdinalParse.source || this._ordinalParse.source) + '|' + /\d{1,2}/.source);
+    }
+
+    function mergeConfigs(parentConfig, childConfig) {
+        var res = extend({}, parentConfig),
+            prop;
+        for (prop in childConfig) {
+            if (hasOwnProp(childConfig, prop)) {
+                if (isObject(parentConfig[prop]) && isObject(childConfig[prop])) {
+                    res[prop] = {};
+                    extend(res[prop], parentConfig[prop]);
+                    extend(res[prop], childConfig[prop]);
+                } else if (childConfig[prop] != null) {
+                    res[prop] = childConfig[prop];
+                } else {
+                    delete res[prop];
+                }
+            }
+        }
+        for (prop in parentConfig) {
+            if (hasOwnProp(parentConfig, prop) && !hasOwnProp(childConfig, prop) && isObject(parentConfig[prop])) {
+                // make sure changes to properties don't modify parent config
+                res[prop] = extend({}, res[prop]);
+            }
+        }
+        return res;
+    }
+
+    function Locale(config) {
+        if (config != null) {
+            this.set(config);
+        }
+    }
+
+    var keys;
+
+    if (Object.keys) {
+        keys = Object.keys;
+    } else {
+        keys = function keys(obj) {
+            var i,
+                res = [];
+            for (i in obj) {
+                if (hasOwnProp(obj, i)) {
+                    res.push(i);
+                }
+            }
+            return res;
+        };
+    }
+
+    var defaultCalendar = {
+        sameDay: '[Today at] LT',
+        nextDay: '[Tomorrow at] LT',
+        nextWeek: 'dddd [at] LT',
+        lastDay: '[Yesterday at] LT',
+        lastWeek: '[Last] dddd [at] LT',
+        sameElse: 'L'
+    };
+
+    function calendar(key, mom, now) {
+        var output = this._calendar[key] || this._calendar['sameElse'];
+        return isFunction(output) ? output.call(mom, now) : output;
+    }
+
+    var defaultLongDateFormat = {
+        LTS: 'h:mm:ss A',
+        LT: 'h:mm A',
+        L: 'MM/DD/YYYY',
+        LL: 'MMMM D, YYYY',
+        LLL: 'MMMM D, YYYY h:mm A',
+        LLLL: 'dddd, MMMM D, YYYY h:mm A'
+    };
+
+    function longDateFormat(key) {
+        var format = this._longDateFormat[key],
+            formatUpper = this._longDateFormat[key.toUpperCase()];
+
+        if (format || !formatUpper) {
+            return format;
+        }
+
+        this._longDateFormat[key] = formatUpper.replace(/MMMM|MM|DD|dddd/g, function (val) {
+            return val.slice(1);
+        });
+
+        return this._longDateFormat[key];
+    }
+
+    var defaultInvalidDate = 'Invalid date';
+
+    function invalidDate() {
+        return this._invalidDate;
+    }
+
+    var defaultOrdinal = '%d';
+    var defaultDayOfMonthOrdinalParse = /\d{1,2}/;
+
+    function ordinal(number) {
+        return this._ordinal.replace('%d', number);
+    }
+
+    var defaultRelativeTime = {
+        future: 'in %s',
+        past: '%s ago',
+        s: 'a few seconds',
+        ss: '%d seconds',
+        m: 'a minute',
+        mm: '%d minutes',
+        h: 'an hour',
+        hh: '%d hours',
+        d: 'a day',
+        dd: '%d days',
+        M: 'a month',
+        MM: '%d months',
+        y: 'a year',
+        yy: '%d years'
+    };
+
+    function relativeTime(number, withoutSuffix, string, isFuture) {
+        var output = this._relativeTime[string];
+        return isFunction(output) ? output(number, withoutSuffix, string, isFuture) : output.replace(/%d/i, number);
+    }
+
+    function pastFuture(diff, output) {
+        var format = this._relativeTime[diff > 0 ? 'future' : 'past'];
+        return isFunction(format) ? format(output) : format.replace(/%s/i, output);
+    }
+
+    var aliases = {};
+
+    function addUnitAlias(unit, shorthand) {
+        var lowerCase = unit.toLowerCase();
+        aliases[lowerCase] = aliases[lowerCase + 's'] = aliases[shorthand] = unit;
+    }
+
+    function normalizeUnits(units) {
+        return typeof units === 'string' ? aliases[units] || aliases[units.toLowerCase()] : undefined;
+    }
+
+    function normalizeObjectUnits(inputObject) {
+        var normalizedInput = {},
+            normalizedProp,
+            prop;
+
+        for (prop in inputObject) {
+            if (hasOwnProp(inputObject, prop)) {
+                normalizedProp = normalizeUnits(prop);
+                if (normalizedProp) {
+                    normalizedInput[normalizedProp] = inputObject[prop];
+                }
+            }
+        }
+
+        return normalizedInput;
+    }
+
+    var priorities = {};
+
+    function addUnitPriority(unit, priority) {
+        priorities[unit] = priority;
+    }
+
+    function getPrioritizedUnits(unitsObj) {
+        var units = [];
+        for (var u in unitsObj) {
+            units.push({ unit: u, priority: priorities[u] });
+        }
+        units.sort(function (a, b) {
+            return a.priority - b.priority;
+        });
+        return units;
+    }
+
+    function zeroFill(number, targetLength, forceSign) {
+        var absNumber = '' + Math.abs(number),
+            zerosToFill = targetLength - absNumber.length,
+            sign = number >= 0;
+        return (sign ? forceSign ? '+' : '' : '-') + Math.pow(10, Math.max(0, zerosToFill)).toString().substr(1) + absNumber;
+    }
+
+    var formattingTokens = /(\[[^\[]*\])|(\\)?([Hh]mm(ss)?|Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|Qo?|YYYYYY|YYYYY|YYYY|YY|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|kk?|mm?|ss?|S{1,9}|x|X|zz?|ZZ?|.)/g;
+
+    var localFormattingTokens = /(\[[^\[]*\])|(\\)?(LTS|LT|LL?L?L?|l{1,4})/g;
+
+    var formatFunctions = {};
+
+    var formatTokenFunctions = {};
+
+    // token:    'M'
+    // padded:   ['MM', 2]
+    // ordinal:  'Mo'
+    // callback: function () { this.month() + 1 }
+    function addFormatToken(token, padded, ordinal, callback) {
+        var func = callback;
+        if (typeof callback === 'string') {
+            func = function func() {
+                return this[callback]();
+            };
+        }
+        if (token) {
+            formatTokenFunctions[token] = func;
+        }
+        if (padded) {
+            formatTokenFunctions[padded[0]] = function () {
+                return zeroFill(func.apply(this, arguments), padded[1], padded[2]);
+            };
+        }
+        if (ordinal) {
+            formatTokenFunctions[ordinal] = function () {
+                return this.localeData().ordinal(func.apply(this, arguments), token);
+            };
+        }
+    }
+
+    function removeFormattingTokens(input) {
+        if (input.match(/\[[\s\S]/)) {
+            return input.replace(/^\[|\]$/g, '');
+        }
+        return input.replace(/\\/g, '');
+    }
+
+    function makeFormatFunction(format) {
+        var array = format.match(formattingTokens),
+            i,
+            length;
+
+        for (i = 0, length = array.length; i < length; i++) {
+            if (formatTokenFunctions[array[i]]) {
+                array[i] = formatTokenFunctions[array[i]];
+            } else {
+                array[i] = removeFormattingTokens(array[i]);
+            }
+        }
+
+        return function (mom) {
+            var output = '',
+                i;
+            for (i = 0; i < length; i++) {
+                output += isFunction(array[i]) ? array[i].call(mom, format) : array[i];
+            }
+            return output;
+        };
+    }
+
+    // format date using native date object
+    function formatMoment(m, format) {
+        if (!m.isValid()) {
+            return m.localeData().invalidDate();
+        }
+
+        format = expandFormat(format, m.localeData());
+        formatFunctions[format] = formatFunctions[format] || makeFormatFunction(format);
+
+        return formatFunctions[format](m);
+    }
+
+    function expandFormat(format, locale) {
+        var i = 5;
+
+        function replaceLongDateFormatTokens(input) {
+            return locale.longDateFormat(input) || input;
+        }
+
+        localFormattingTokens.lastIndex = 0;
+        while (i >= 0 && localFormattingTokens.test(format)) {
+            format = format.replace(localFormattingTokens, replaceLongDateFormatTokens);
+            localFormattingTokens.lastIndex = 0;
+            i -= 1;
+        }
+
+        return format;
+    }
+
+    var match1 = /\d/; //       0 - 9
+    var match2 = /\d\d/; //      00 - 99
+    var match3 = /\d{3}/; //     000 - 999
+    var match4 = /\d{4}/; //    0000 - 9999
+    var match6 = /[+-]?\d{6}/; // -999999 - 999999
+    var match1to2 = /\d\d?/; //       0 - 99
+    var match3to4 = /\d\d\d\d?/; //     999 - 9999
+    var match5to6 = /\d\d\d\d\d\d?/; //   99999 - 999999
+    var match1to3 = /\d{1,3}/; //       0 - 999
+    var match1to4 = /\d{1,4}/; //       0 - 9999
+    var match1to6 = /[+-]?\d{1,6}/; // -999999 - 999999
+
+    var matchUnsigned = /\d+/; //       0 - inf
+    var matchSigned = /[+-]?\d+/; //    -inf - inf
+
+    var matchOffset = /Z|[+-]\d\d:?\d\d/gi; // +00:00 -00:00 +0000 -0000 or Z
+    var matchShortOffset = /Z|[+-]\d\d(?::?\d\d)?/gi; // +00 -00 +00:00 -00:00 +0000 -0000 or Z
+
+    var matchTimestamp = /[+-]?\d+(\.\d{1,3})?/; // 123456789 123456789.123
+
+    // any word (or two) characters or numbers including two/three word month in arabic.
+    // includes scottish gaelic two word and hyphenated months
+    var matchWord = /[0-9]{0,256}['a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFF07\uFF10-\uFFEF]{1,256}|[\u0600-\u06FF\/]{1,256}(\s*?[\u0600-\u06FF]{1,256}){1,2}/i;
+
+    var regexes = {};
+
+    function addRegexToken(token, regex, strictRegex) {
+        regexes[token] = isFunction(regex) ? regex : function (isStrict, localeData) {
+            return isStrict && strictRegex ? strictRegex : regex;
+        };
+    }
+
+    function getParseRegexForToken(token, config) {
+        if (!hasOwnProp(regexes, token)) {
+            return new RegExp(unescapeFormat(token));
+        }
+
+        return regexes[token](config._strict, config._locale);
+    }
+
+    // Code from http://stackoverflow.com/questions/3561493/is-there-a-regexp-escape-function-in-javascript
+    function unescapeFormat(s) {
+        return regexEscape(s.replace('\\', '').replace(/\\(\[)|\\(\])|\[([^\]\[]*)\]|\\(.)/g, function (matched, p1, p2, p3, p4) {
+            return p1 || p2 || p3 || p4;
+        }));
+    }
+
+    function regexEscape(s) {
+        return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    }
+
+    var tokens = {};
+
+    function addParseToken(token, callback) {
+        var i,
+            func = callback;
+        if (typeof token === 'string') {
+            token = [token];
+        }
+        if (isNumber(callback)) {
+            func = function func(input, array) {
+                array[callback] = toInt(input);
+            };
+        }
+        for (i = 0; i < token.length; i++) {
+            tokens[token[i]] = func;
+        }
+    }
+
+    function addWeekParseToken(token, callback) {
+        addParseToken(token, function (input, array, config, token) {
+            config._w = config._w || {};
+            callback(input, config._w, config, token);
+        });
+    }
+
+    function addTimeToArrayFromToken(token, input, config) {
+        if (input != null && hasOwnProp(tokens, token)) {
+            tokens[token](input, config._a, config, token);
+        }
+    }
+
+    var YEAR = 0;
+    var MONTH = 1;
+    var DATE = 2;
+    var HOUR = 3;
+    var MINUTE = 4;
+    var SECOND = 5;
+    var MILLISECOND = 6;
+    var WEEK = 7;
+    var WEEKDAY = 8;
+
+    // FORMATTING
+
+    addFormatToken('Y', 0, 0, function () {
+        var y = this.year();
+        return y <= 9999 ? '' + y : '+' + y;
+    });
+
+    addFormatToken(0, ['YY', 2], 0, function () {
+        return this.year() % 100;
+    });
+
+    addFormatToken(0, ['YYYY', 4], 0, 'year');
+    addFormatToken(0, ['YYYYY', 5], 0, 'year');
+    addFormatToken(0, ['YYYYYY', 6, true], 0, 'year');
+
+    // ALIASES
+
+    addUnitAlias('year', 'y');
+
+    // PRIORITIES
+
+    addUnitPriority('year', 1);
+
+    // PARSING
+
+    addRegexToken('Y', matchSigned);
+    addRegexToken('YY', match1to2, match2);
+    addRegexToken('YYYY', match1to4, match4);
+    addRegexToken('YYYYY', match1to6, match6);
+    addRegexToken('YYYYYY', match1to6, match6);
+
+    addParseToken(['YYYYY', 'YYYYYY'], YEAR);
+    addParseToken('YYYY', function (input, array) {
+        array[YEAR] = input.length === 2 ? hooks.parseTwoDigitYear(input) : toInt(input);
+    });
+    addParseToken('YY', function (input, array) {
+        array[YEAR] = hooks.parseTwoDigitYear(input);
+    });
+    addParseToken('Y', function (input, array) {
+        array[YEAR] = parseInt(input, 10);
+    });
+
+    // HELPERS
+
+    function daysInYear(year) {
+        return isLeapYear(year) ? 366 : 365;
+    }
+
+    function isLeapYear(year) {
+        return year % 4 === 0 && year % 100 !== 0 || year % 400 === 0;
+    }
+
+    // HOOKS
+
+    hooks.parseTwoDigitYear = function (input) {
+        return toInt(input) + (toInt(input) > 68 ? 1900 : 2000);
+    };
+
+    // MOMENTS
+
+    var getSetYear = makeGetSet('FullYear', true);
+
+    function getIsLeapYear() {
+        return isLeapYear(this.year());
+    }
+
+    function makeGetSet(unit, keepTime) {
+        return function (value) {
+            if (value != null) {
+                set$1(this, unit, value);
+                hooks.updateOffset(this, keepTime);
+                return this;
+            } else {
+                return get(this, unit);
+            }
+        };
+    }
+
+    function get(mom, unit) {
+        return mom.isValid() ? mom._d['get' + (mom._isUTC ? 'UTC' : '') + unit]() : NaN;
+    }
+
+    function set$1(mom, unit, value) {
+        if (mom.isValid() && !isNaN(value)) {
+            if (unit === 'FullYear' && isLeapYear(mom.year()) && mom.month() === 1 && mom.date() === 29) {
+                mom._d['set' + (mom._isUTC ? 'UTC' : '') + unit](value, mom.month(), daysInMonth(value, mom.month()));
+            } else {
+                mom._d['set' + (mom._isUTC ? 'UTC' : '') + unit](value);
+            }
+        }
+    }
+
+    // MOMENTS
+
+    function stringGet(units) {
+        units = normalizeUnits(units);
+        if (isFunction(this[units])) {
+            return this[units]();
+        }
+        return this;
+    }
+
+    function stringSet(units, value) {
+        if ((typeof units === 'undefined' ? 'undefined' : _typeof(units)) === 'object') {
+            units = normalizeObjectUnits(units);
+            var prioritized = getPrioritizedUnits(units);
+            for (var i = 0; i < prioritized.length; i++) {
+                this[prioritized[i].unit](units[prioritized[i].unit]);
+            }
+        } else {
+            units = normalizeUnits(units);
+            if (isFunction(this[units])) {
+                return this[units](value);
+            }
+        }
+        return this;
+    }
+
+    function mod(n, x) {
+        return (n % x + x) % x;
+    }
+
+    var indexOf;
+
+    if (Array.prototype.indexOf) {
+        indexOf = Array.prototype.indexOf;
+    } else {
+        indexOf = function indexOf(o) {
+            // I know
+            var i;
+            for (i = 0; i < this.length; ++i) {
+                if (this[i] === o) {
+                    return i;
+                }
+            }
+            return -1;
+        };
+    }
+
+    function daysInMonth(year, month) {
+        if (isNaN(year) || isNaN(month)) {
+            return NaN;
+        }
+        var modMonth = mod(month, 12);
+        year += (month - modMonth) / 12;
+        return modMonth === 1 ? isLeapYear(year) ? 29 : 28 : 31 - modMonth % 7 % 2;
+    }
+
+    // FORMATTING
+
+    addFormatToken('M', ['MM', 2], 'Mo', function () {
+        return this.month() + 1;
+    });
+
+    addFormatToken('MMM', 0, 0, function (format) {
+        return this.localeData().monthsShort(this, format);
+    });
+
+    addFormatToken('MMMM', 0, 0, function (format) {
+        return this.localeData().months(this, format);
+    });
+
+    // ALIASES
+
+    addUnitAlias('month', 'M');
+
+    // PRIORITY
+
+    addUnitPriority('month', 8);
+
+    // PARSING
+
+    addRegexToken('M', match1to2);
+    addRegexToken('MM', match1to2, match2);
+    addRegexToken('MMM', function (isStrict, locale) {
+        return locale.monthsShortRegex(isStrict);
+    });
+    addRegexToken('MMMM', function (isStrict, locale) {
+        return locale.monthsRegex(isStrict);
+    });
+
+    addParseToken(['M', 'MM'], function (input, array) {
+        array[MONTH] = toInt(input) - 1;
+    });
+
+    addParseToken(['MMM', 'MMMM'], function (input, array, config, token) {
+        var month = config._locale.monthsParse(input, token, config._strict);
+        // if we didn't find a month name, mark the date as invalid.
+        if (month != null) {
+            array[MONTH] = month;
+        } else {
+            getParsingFlags(config).invalidMonth = input;
+        }
+    });
+
+    // LOCALES
+
+    var MONTHS_IN_FORMAT = /D[oD]?(\[[^\[\]]*\]|\s)+MMMM?/;
+    var defaultLocaleMonths = 'January_February_March_April_May_June_July_August_September_October_November_December'.split('_');
+    function localeMonths(m, format) {
+        if (!m) {
+            return isArray(this._months) ? this._months : this._months['standalone'];
+        }
+        return isArray(this._months) ? this._months[m.month()] : this._months[(this._months.isFormat || MONTHS_IN_FORMAT).test(format) ? 'format' : 'standalone'][m.month()];
+    }
+
+    var defaultLocaleMonthsShort = 'Jan_Feb_Mar_Apr_May_Jun_Jul_Aug_Sep_Oct_Nov_Dec'.split('_');
+    function localeMonthsShort(m, format) {
+        if (!m) {
+            return isArray(this._monthsShort) ? this._monthsShort : this._monthsShort['standalone'];
+        }
+        return isArray(this._monthsShort) ? this._monthsShort[m.month()] : this._monthsShort[MONTHS_IN_FORMAT.test(format) ? 'format' : 'standalone'][m.month()];
+    }
+
+    function handleStrictParse(monthName, format, strict) {
+        var i,
+            ii,
+            mom,
+            llc = monthName.toLocaleLowerCase();
+        if (!this._monthsParse) {
+            // this is not used
+            this._monthsParse = [];
+            this._longMonthsParse = [];
+            this._shortMonthsParse = [];
+            for (i = 0; i < 12; ++i) {
+                mom = createUTC([2000, i]);
+                this._shortMonthsParse[i] = this.monthsShort(mom, '').toLocaleLowerCase();
+                this._longMonthsParse[i] = this.months(mom, '').toLocaleLowerCase();
+            }
+        }
+
+        if (strict) {
+            if (format === 'MMM') {
+                ii = indexOf.call(this._shortMonthsParse, llc);
+                return ii !== -1 ? ii : null;
+            } else {
+                ii = indexOf.call(this._longMonthsParse, llc);
+                return ii !== -1 ? ii : null;
+            }
+        } else {
+            if (format === 'MMM') {
+                ii = indexOf.call(this._shortMonthsParse, llc);
+                if (ii !== -1) {
+                    return ii;
+                }
+                ii = indexOf.call(this._longMonthsParse, llc);
+                return ii !== -1 ? ii : null;
+            } else {
+                ii = indexOf.call(this._longMonthsParse, llc);
+                if (ii !== -1) {
+                    return ii;
+                }
+                ii = indexOf.call(this._shortMonthsParse, llc);
+                return ii !== -1 ? ii : null;
+            }
+        }
+    }
+
+    function localeMonthsParse(monthName, format, strict) {
+        var i, mom, regex;
+
+        if (this._monthsParseExact) {
+            return handleStrictParse.call(this, monthName, format, strict);
+        }
+
+        if (!this._monthsParse) {
+            this._monthsParse = [];
+            this._longMonthsParse = [];
+            this._shortMonthsParse = [];
+        }
+
+        // TODO: add sorting
+        // Sorting makes sure if one month (or abbr) is a prefix of another
+        // see sorting in computeMonthsParse
+        for (i = 0; i < 12; i++) {
+            // make the regex if we don't have it already
+            mom = createUTC([2000, i]);
+            if (strict && !this._longMonthsParse[i]) {
+                this._longMonthsParse[i] = new RegExp('^' + this.months(mom, '').replace('.', '') + '$', 'i');
+                this._shortMonthsParse[i] = new RegExp('^' + this.monthsShort(mom, '').replace('.', '') + '$', 'i');
+            }
+            if (!strict && !this._monthsParse[i]) {
+                regex = '^' + this.months(mom, '') + '|^' + this.monthsShort(mom, '');
+                this._monthsParse[i] = new RegExp(regex.replace('.', ''), 'i');
+            }
+            // test the regex
+            if (strict && format === 'MMMM' && this._longMonthsParse[i].test(monthName)) {
+                return i;
+            } else if (strict && format === 'MMM' && this._shortMonthsParse[i].test(monthName)) {
+                return i;
+            } else if (!strict && this._monthsParse[i].test(monthName)) {
+                return i;
+            }
+        }
+    }
+
+    // MOMENTS
+
+    function setMonth(mom, value) {
+        var dayOfMonth;
+
+        if (!mom.isValid()) {
+            // No op
+            return mom;
+        }
+
+        if (typeof value === 'string') {
+            if (/^\d+$/.test(value)) {
+                value = toInt(value);
+            } else {
+                value = mom.localeData().monthsParse(value);
+                // TODO: Another silent failure?
+                if (!isNumber(value)) {
+                    return mom;
+                }
+            }
+        }
+
+        dayOfMonth = Math.min(mom.date(), daysInMonth(mom.year(), value));
+        mom._d['set' + (mom._isUTC ? 'UTC' : '') + 'Month'](value, dayOfMonth);
+        return mom;
+    }
+
+    function getSetMonth(value) {
+        if (value != null) {
+            setMonth(this, value);
+            hooks.updateOffset(this, true);
+            return this;
+        } else {
+            return get(this, 'Month');
+        }
+    }
+
+    function getDaysInMonth() {
+        return daysInMonth(this.year(), this.month());
+    }
+
+    var defaultMonthsShortRegex = matchWord;
+    function monthsShortRegex(isStrict) {
+        if (this._monthsParseExact) {
+            if (!hasOwnProp(this, '_monthsRegex')) {
+                computeMonthsParse.call(this);
+            }
+            if (isStrict) {
+                return this._monthsShortStrictRegex;
+            } else {
+                return this._monthsShortRegex;
+            }
+        } else {
+            if (!hasOwnProp(this, '_monthsShortRegex')) {
+                this._monthsShortRegex = defaultMonthsShortRegex;
+            }
+            return this._monthsShortStrictRegex && isStrict ? this._monthsShortStrictRegex : this._monthsShortRegex;
+        }
+    }
+
+    var defaultMonthsRegex = matchWord;
+    function monthsRegex(isStrict) {
+        if (this._monthsParseExact) {
+            if (!hasOwnProp(this, '_monthsRegex')) {
+                computeMonthsParse.call(this);
+            }
+            if (isStrict) {
+                return this._monthsStrictRegex;
+            } else {
+                return this._monthsRegex;
+            }
+        } else {
+            if (!hasOwnProp(this, '_monthsRegex')) {
+                this._monthsRegex = defaultMonthsRegex;
+            }
+            return this._monthsStrictRegex && isStrict ? this._monthsStrictRegex : this._monthsRegex;
+        }
+    }
+
+    function computeMonthsParse() {
+        function cmpLenRev(a, b) {
+            return b.length - a.length;
+        }
+
+        var shortPieces = [],
+            longPieces = [],
+            mixedPieces = [],
+            i,
+            mom;
+        for (i = 0; i < 12; i++) {
+            // make the regex if we don't have it already
+            mom = createUTC([2000, i]);
+            shortPieces.push(this.monthsShort(mom, ''));
+            longPieces.push(this.months(mom, ''));
+            mixedPieces.push(this.months(mom, ''));
+            mixedPieces.push(this.monthsShort(mom, ''));
+        }
+        // Sorting makes sure if one month (or abbr) is a prefix of another it
+        // will match the longer piece.
+        shortPieces.sort(cmpLenRev);
+        longPieces.sort(cmpLenRev);
+        mixedPieces.sort(cmpLenRev);
+        for (i = 0; i < 12; i++) {
+            shortPieces[i] = regexEscape(shortPieces[i]);
+            longPieces[i] = regexEscape(longPieces[i]);
+        }
+        for (i = 0; i < 24; i++) {
+            mixedPieces[i] = regexEscape(mixedPieces[i]);
+        }
+
+        this._monthsRegex = new RegExp('^(' + mixedPieces.join('|') + ')', 'i');
+        this._monthsShortRegex = this._monthsRegex;
+        this._monthsStrictRegex = new RegExp('^(' + longPieces.join('|') + ')', 'i');
+        this._monthsShortStrictRegex = new RegExp('^(' + shortPieces.join('|') + ')', 'i');
+    }
+
+    function createDate(y, m, d, h, M, s, ms) {
+        // can't just apply() to create a date:
+        // https://stackoverflow.com/q/181348
+        var date;
+        // the date constructor remaps years 0-99 to 1900-1999
+        if (y < 100 && y >= 0) {
+            // preserve leap years using a full 400 year cycle, then reset
+            date = new Date(y + 400, m, d, h, M, s, ms);
+            if (isFinite(date.getFullYear())) {
+                date.setFullYear(y);
+            }
+        } else {
+            date = new Date(y, m, d, h, M, s, ms);
+        }
+
+        return date;
+    }
+
+    function createUTCDate(y) {
+        var date;
+        // the Date.UTC function remaps years 0-99 to 1900-1999
+        if (y < 100 && y >= 0) {
+            var args = Array.prototype.slice.call(arguments);
+            // preserve leap years using a full 400 year cycle, then reset
+            args[0] = y + 400;
+            date = new Date(Date.UTC.apply(null, args));
+            if (isFinite(date.getUTCFullYear())) {
+                date.setUTCFullYear(y);
+            }
+        } else {
+            date = new Date(Date.UTC.apply(null, arguments));
+        }
+
+        return date;
+    }
+
+    // start-of-first-week - start-of-year
+    function firstWeekOffset(year, dow, doy) {
+        var // first-week day -- which january is always in the first week (4 for iso, 1 for other)
+        fwd = 7 + dow - doy,
+
+        // first-week day local weekday -- which local weekday is fwd
+        fwdlw = (7 + createUTCDate(year, 0, fwd).getUTCDay() - dow) % 7;
+
+        return -fwdlw + fwd - 1;
+    }
+
+    // https://en.wikipedia.org/wiki/ISO_week_date#Calculating_a_date_given_the_year.2C_week_number_and_weekday
+    function dayOfYearFromWeeks(year, week, weekday, dow, doy) {
+        var localWeekday = (7 + weekday - dow) % 7,
+            weekOffset = firstWeekOffset(year, dow, doy),
+            dayOfYear = 1 + 7 * (week - 1) + localWeekday + weekOffset,
+            resYear,
+            resDayOfYear;
+
+        if (dayOfYear <= 0) {
+            resYear = year - 1;
+            resDayOfYear = daysInYear(resYear) + dayOfYear;
+        } else if (dayOfYear > daysInYear(year)) {
+            resYear = year + 1;
+            resDayOfYear = dayOfYear - daysInYear(year);
+        } else {
+            resYear = year;
+            resDayOfYear = dayOfYear;
+        }
+
+        return {
+            year: resYear,
+            dayOfYear: resDayOfYear
+        };
+    }
+
+    function weekOfYear(mom, dow, doy) {
+        var weekOffset = firstWeekOffset(mom.year(), dow, doy),
+            week = Math.floor((mom.dayOfYear() - weekOffset - 1) / 7) + 1,
+            resWeek,
+            resYear;
+
+        if (week < 1) {
+            resYear = mom.year() - 1;
+            resWeek = week + weeksInYear(resYear, dow, doy);
+        } else if (week > weeksInYear(mom.year(), dow, doy)) {
+            resWeek = week - weeksInYear(mom.year(), dow, doy);
+            resYear = mom.year() + 1;
+        } else {
+            resYear = mom.year();
+            resWeek = week;
+        }
+
+        return {
+            week: resWeek,
+            year: resYear
+        };
+    }
+
+    function weeksInYear(year, dow, doy) {
+        var weekOffset = firstWeekOffset(year, dow, doy),
+            weekOffsetNext = firstWeekOffset(year + 1, dow, doy);
+        return (daysInYear(year) - weekOffset + weekOffsetNext) / 7;
+    }
+
+    // FORMATTING
+
+    addFormatToken('w', ['ww', 2], 'wo', 'week');
+    addFormatToken('W', ['WW', 2], 'Wo', 'isoWeek');
+
+    // ALIASES
+
+    addUnitAlias('week', 'w');
+    addUnitAlias('isoWeek', 'W');
+
+    // PRIORITIES
+
+    addUnitPriority('week', 5);
+    addUnitPriority('isoWeek', 5);
+
+    // PARSING
+
+    addRegexToken('w', match1to2);
+    addRegexToken('ww', match1to2, match2);
+    addRegexToken('W', match1to2);
+    addRegexToken('WW', match1to2, match2);
+
+    addWeekParseToken(['w', 'ww', 'W', 'WW'], function (input, week, config, token) {
+        week[token.substr(0, 1)] = toInt(input);
+    });
+
+    // HELPERS
+
+    // LOCALES
+
+    function localeWeek(mom) {
+        return weekOfYear(mom, this._week.dow, this._week.doy).week;
+    }
+
+    var defaultLocaleWeek = {
+        dow: 0, // Sunday is the first day of the week.
+        doy: 6 // The week that contains Jan 6th is the first week of the year.
+    };
+
+    function localeFirstDayOfWeek() {
+        return this._week.dow;
+    }
+
+    function localeFirstDayOfYear() {
+        return this._week.doy;
+    }
+
+    // MOMENTS
+
+    function getSetWeek(input) {
+        var week = this.localeData().week(this);
+        return input == null ? week : this.add((input - week) * 7, 'd');
+    }
+
+    function getSetISOWeek(input) {
+        var week = weekOfYear(this, 1, 4).week;
+        return input == null ? week : this.add((input - week) * 7, 'd');
+    }
+
+    // FORMATTING
+
+    addFormatToken('d', 0, 'do', 'day');
+
+    addFormatToken('dd', 0, 0, function (format) {
+        return this.localeData().weekdaysMin(this, format);
+    });
+
+    addFormatToken('ddd', 0, 0, function (format) {
+        return this.localeData().weekdaysShort(this, format);
+    });
+
+    addFormatToken('dddd', 0, 0, function (format) {
+        return this.localeData().weekdays(this, format);
+    });
+
+    addFormatToken('e', 0, 0, 'weekday');
+    addFormatToken('E', 0, 0, 'isoWeekday');
+
+    // ALIASES
+
+    addUnitAlias('day', 'd');
+    addUnitAlias('weekday', 'e');
+    addUnitAlias('isoWeekday', 'E');
+
+    // PRIORITY
+    addUnitPriority('day', 11);
+    addUnitPriority('weekday', 11);
+    addUnitPriority('isoWeekday', 11);
+
+    // PARSING
+
+    addRegexToken('d', match1to2);
+    addRegexToken('e', match1to2);
+    addRegexToken('E', match1to2);
+    addRegexToken('dd', function (isStrict, locale) {
+        return locale.weekdaysMinRegex(isStrict);
+    });
+    addRegexToken('ddd', function (isStrict, locale) {
+        return locale.weekdaysShortRegex(isStrict);
+    });
+    addRegexToken('dddd', function (isStrict, locale) {
+        return locale.weekdaysRegex(isStrict);
+    });
+
+    addWeekParseToken(['dd', 'ddd', 'dddd'], function (input, week, config, token) {
+        var weekday = config._locale.weekdaysParse(input, token, config._strict);
+        // if we didn't get a weekday name, mark the date as invalid
+        if (weekday != null) {
+            week.d = weekday;
+        } else {
+            getParsingFlags(config).invalidWeekday = input;
+        }
+    });
+
+    addWeekParseToken(['d', 'e', 'E'], function (input, week, config, token) {
+        week[token] = toInt(input);
+    });
+
+    // HELPERS
+
+    function parseWeekday(input, locale) {
+        if (typeof input !== 'string') {
+            return input;
+        }
+
+        if (!isNaN(input)) {
+            return parseInt(input, 10);
+        }
+
+        input = locale.weekdaysParse(input);
+        if (typeof input === 'number') {
+            return input;
+        }
+
+        return null;
+    }
+
+    function parseIsoWeekday(input, locale) {
+        if (typeof input === 'string') {
+            return locale.weekdaysParse(input) % 7 || 7;
+        }
+        return isNaN(input) ? null : input;
+    }
+
+    // LOCALES
+    function shiftWeekdays(ws, n) {
+        return ws.slice(n, 7).concat(ws.slice(0, n));
+    }
+
+    var defaultLocaleWeekdays = 'Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday'.split('_');
+    function localeWeekdays(m, format) {
+        var weekdays = isArray(this._weekdays) ? this._weekdays : this._weekdays[m && m !== true && this._weekdays.isFormat.test(format) ? 'format' : 'standalone'];
+        return m === true ? shiftWeekdays(weekdays, this._week.dow) : m ? weekdays[m.day()] : weekdays;
+    }
+
+    var defaultLocaleWeekdaysShort = 'Sun_Mon_Tue_Wed_Thu_Fri_Sat'.split('_');
+    function localeWeekdaysShort(m) {
+        return m === true ? shiftWeekdays(this._weekdaysShort, this._week.dow) : m ? this._weekdaysShort[m.day()] : this._weekdaysShort;
+    }
+
+    var defaultLocaleWeekdaysMin = 'Su_Mo_Tu_We_Th_Fr_Sa'.split('_');
+    function localeWeekdaysMin(m) {
+        return m === true ? shiftWeekdays(this._weekdaysMin, this._week.dow) : m ? this._weekdaysMin[m.day()] : this._weekdaysMin;
+    }
+
+    function handleStrictParse$1(weekdayName, format, strict) {
+        var i,
+            ii,
+            mom,
+            llc = weekdayName.toLocaleLowerCase();
+        if (!this._weekdaysParse) {
+            this._weekdaysParse = [];
+            this._shortWeekdaysParse = [];
+            this._minWeekdaysParse = [];
+
+            for (i = 0; i < 7; ++i) {
+                mom = createUTC([2000, 1]).day(i);
+                this._minWeekdaysParse[i] = this.weekdaysMin(mom, '').toLocaleLowerCase();
+                this._shortWeekdaysParse[i] = this.weekdaysShort(mom, '').toLocaleLowerCase();
+                this._weekdaysParse[i] = this.weekdays(mom, '').toLocaleLowerCase();
+            }
+        }
+
+        if (strict) {
+            if (format === 'dddd') {
+                ii = indexOf.call(this._weekdaysParse, llc);
+                return ii !== -1 ? ii : null;
+            } else if (format === 'ddd') {
+                ii = indexOf.call(this._shortWeekdaysParse, llc);
+                return ii !== -1 ? ii : null;
+            } else {
+                ii = indexOf.call(this._minWeekdaysParse, llc);
+                return ii !== -1 ? ii : null;
+            }
+        } else {
+            if (format === 'dddd') {
+                ii = indexOf.call(this._weekdaysParse, llc);
+                if (ii !== -1) {
+                    return ii;
+                }
+                ii = indexOf.call(this._shortWeekdaysParse, llc);
+                if (ii !== -1) {
+                    return ii;
+                }
+                ii = indexOf.call(this._minWeekdaysParse, llc);
+                return ii !== -1 ? ii : null;
+            } else if (format === 'ddd') {
+                ii = indexOf.call(this._shortWeekdaysParse, llc);
+                if (ii !== -1) {
+                    return ii;
+                }
+                ii = indexOf.call(this._weekdaysParse, llc);
+                if (ii !== -1) {
+                    return ii;
+                }
+                ii = indexOf.call(this._minWeekdaysParse, llc);
+                return ii !== -1 ? ii : null;
+            } else {
+                ii = indexOf.call(this._minWeekdaysParse, llc);
+                if (ii !== -1) {
+                    return ii;
+                }
+                ii = indexOf.call(this._weekdaysParse, llc);
+                if (ii !== -1) {
+                    return ii;
+                }
+                ii = indexOf.call(this._shortWeekdaysParse, llc);
+                return ii !== -1 ? ii : null;
+            }
+        }
+    }
+
+    function localeWeekdaysParse(weekdayName, format, strict) {
+        var i, mom, regex;
+
+        if (this._weekdaysParseExact) {
+            return handleStrictParse$1.call(this, weekdayName, format, strict);
+        }
+
+        if (!this._weekdaysParse) {
+            this._weekdaysParse = [];
+            this._minWeekdaysParse = [];
+            this._shortWeekdaysParse = [];
+            this._fullWeekdaysParse = [];
+        }
+
+        for (i = 0; i < 7; i++) {
+            // make the regex if we don't have it already
+
+            mom = createUTC([2000, 1]).day(i);
+            if (strict && !this._fullWeekdaysParse[i]) {
+                this._fullWeekdaysParse[i] = new RegExp('^' + this.weekdays(mom, '').replace('.', '\\.?') + '$', 'i');
+                this._shortWeekdaysParse[i] = new RegExp('^' + this.weekdaysShort(mom, '').replace('.', '\\.?') + '$', 'i');
+                this._minWeekdaysParse[i] = new RegExp('^' + this.weekdaysMin(mom, '').replace('.', '\\.?') + '$', 'i');
+            }
+            if (!this._weekdaysParse[i]) {
+                regex = '^' + this.weekdays(mom, '') + '|^' + this.weekdaysShort(mom, '') + '|^' + this.weekdaysMin(mom, '');
+                this._weekdaysParse[i] = new RegExp(regex.replace('.', ''), 'i');
+            }
+            // test the regex
+            if (strict && format === 'dddd' && this._fullWeekdaysParse[i].test(weekdayName)) {
+                return i;
+            } else if (strict && format === 'ddd' && this._shortWeekdaysParse[i].test(weekdayName)) {
+                return i;
+            } else if (strict && format === 'dd' && this._minWeekdaysParse[i].test(weekdayName)) {
+                return i;
+            } else if (!strict && this._weekdaysParse[i].test(weekdayName)) {
+                return i;
+            }
+        }
+    }
+
+    // MOMENTS
+
+    function getSetDayOfWeek(input) {
+        if (!this.isValid()) {
+            return input != null ? this : NaN;
+        }
+        var day = this._isUTC ? this._d.getUTCDay() : this._d.getDay();
+        if (input != null) {
+            input = parseWeekday(input, this.localeData());
+            return this.add(input - day, 'd');
+        } else {
+            return day;
+        }
+    }
+
+    function getSetLocaleDayOfWeek(input) {
+        if (!this.isValid()) {
+            return input != null ? this : NaN;
+        }
+        var weekday = (this.day() + 7 - this.localeData()._week.dow) % 7;
+        return input == null ? weekday : this.add(input - weekday, 'd');
+    }
+
+    function getSetISODayOfWeek(input) {
+        if (!this.isValid()) {
+            return input != null ? this : NaN;
+        }
+
+        // behaves the same as moment#day except
+        // as a getter, returns 7 instead of 0 (1-7 range instead of 0-6)
+        // as a setter, sunday should belong to the previous week.
+
+        if (input != null) {
+            var weekday = parseIsoWeekday(input, this.localeData());
+            return this.day(this.day() % 7 ? weekday : weekday - 7);
+        } else {
+            return this.day() || 7;
+        }
+    }
+
+    var defaultWeekdaysRegex = matchWord;
+    function weekdaysRegex(isStrict) {
+        if (this._weekdaysParseExact) {
+            if (!hasOwnProp(this, '_weekdaysRegex')) {
+                computeWeekdaysParse.call(this);
+            }
+            if (isStrict) {
+                return this._weekdaysStrictRegex;
+            } else {
+                return this._weekdaysRegex;
+            }
+        } else {
+            if (!hasOwnProp(this, '_weekdaysRegex')) {
+                this._weekdaysRegex = defaultWeekdaysRegex;
+            }
+            return this._weekdaysStrictRegex && isStrict ? this._weekdaysStrictRegex : this._weekdaysRegex;
+        }
+    }
+
+    var defaultWeekdaysShortRegex = matchWord;
+    function weekdaysShortRegex(isStrict) {
+        if (this._weekdaysParseExact) {
+            if (!hasOwnProp(this, '_weekdaysRegex')) {
+                computeWeekdaysParse.call(this);
+            }
+            if (isStrict) {
+                return this._weekdaysShortStrictRegex;
+            } else {
+                return this._weekdaysShortRegex;
+            }
+        } else {
+            if (!hasOwnProp(this, '_weekdaysShortRegex')) {
+                this._weekdaysShortRegex = defaultWeekdaysShortRegex;
+            }
+            return this._weekdaysShortStrictRegex && isStrict ? this._weekdaysShortStrictRegex : this._weekdaysShortRegex;
+        }
+    }
+
+    var defaultWeekdaysMinRegex = matchWord;
+    function weekdaysMinRegex(isStrict) {
+        if (this._weekdaysParseExact) {
+            if (!hasOwnProp(this, '_weekdaysRegex')) {
+                computeWeekdaysParse.call(this);
+            }
+            if (isStrict) {
+                return this._weekdaysMinStrictRegex;
+            } else {
+                return this._weekdaysMinRegex;
+            }
+        } else {
+            if (!hasOwnProp(this, '_weekdaysMinRegex')) {
+                this._weekdaysMinRegex = defaultWeekdaysMinRegex;
+            }
+            return this._weekdaysMinStrictRegex && isStrict ? this._weekdaysMinStrictRegex : this._weekdaysMinRegex;
+        }
+    }
+
+    function computeWeekdaysParse() {
+        function cmpLenRev(a, b) {
+            return b.length - a.length;
+        }
+
+        var minPieces = [],
+            shortPieces = [],
+            longPieces = [],
+            mixedPieces = [],
+            i,
+            mom,
+            minp,
+            shortp,
+            longp;
+        for (i = 0; i < 7; i++) {
+            // make the regex if we don't have it already
+            mom = createUTC([2000, 1]).day(i);
+            minp = this.weekdaysMin(mom, '');
+            shortp = this.weekdaysShort(mom, '');
+            longp = this.weekdays(mom, '');
+            minPieces.push(minp);
+            shortPieces.push(shortp);
+            longPieces.push(longp);
+            mixedPieces.push(minp);
+            mixedPieces.push(shortp);
+            mixedPieces.push(longp);
+        }
+        // Sorting makes sure if one weekday (or abbr) is a prefix of another it
+        // will match the longer piece.
+        minPieces.sort(cmpLenRev);
+        shortPieces.sort(cmpLenRev);
+        longPieces.sort(cmpLenRev);
+        mixedPieces.sort(cmpLenRev);
+        for (i = 0; i < 7; i++) {
+            shortPieces[i] = regexEscape(shortPieces[i]);
+            longPieces[i] = regexEscape(longPieces[i]);
+            mixedPieces[i] = regexEscape(mixedPieces[i]);
+        }
+
+        this._weekdaysRegex = new RegExp('^(' + mixedPieces.join('|') + ')', 'i');
+        this._weekdaysShortRegex = this._weekdaysRegex;
+        this._weekdaysMinRegex = this._weekdaysRegex;
+
+        this._weekdaysStrictRegex = new RegExp('^(' + longPieces.join('|') + ')', 'i');
+        this._weekdaysShortStrictRegex = new RegExp('^(' + shortPieces.join('|') + ')', 'i');
+        this._weekdaysMinStrictRegex = new RegExp('^(' + minPieces.join('|') + ')', 'i');
+    }
+
+    // FORMATTING
+
+    function hFormat() {
+        return this.hours() % 12 || 12;
+    }
+
+    function kFormat() {
+        return this.hours() || 24;
+    }
+
+    addFormatToken('H', ['HH', 2], 0, 'hour');
+    addFormatToken('h', ['hh', 2], 0, hFormat);
+    addFormatToken('k', ['kk', 2], 0, kFormat);
+
+    addFormatToken('hmm', 0, 0, function () {
+        return '' + hFormat.apply(this) + zeroFill(this.minutes(), 2);
+    });
+
+    addFormatToken('hmmss', 0, 0, function () {
+        return '' + hFormat.apply(this) + zeroFill(this.minutes(), 2) + zeroFill(this.seconds(), 2);
+    });
+
+    addFormatToken('Hmm', 0, 0, function () {
+        return '' + this.hours() + zeroFill(this.minutes(), 2);
+    });
+
+    addFormatToken('Hmmss', 0, 0, function () {
+        return '' + this.hours() + zeroFill(this.minutes(), 2) + zeroFill(this.seconds(), 2);
+    });
+
+    function meridiem(token, lowercase) {
+        addFormatToken(token, 0, 0, function () {
+            return this.localeData().meridiem(this.hours(), this.minutes(), lowercase);
+        });
+    }
+
+    meridiem('a', true);
+    meridiem('A', false);
+
+    // ALIASES
+
+    addUnitAlias('hour', 'h');
+
+    // PRIORITY
+    addUnitPriority('hour', 13);
+
+    // PARSING
+
+    function matchMeridiem(isStrict, locale) {
+        return locale._meridiemParse;
+    }
+
+    addRegexToken('a', matchMeridiem);
+    addRegexToken('A', matchMeridiem);
+    addRegexToken('H', match1to2);
+    addRegexToken('h', match1to2);
+    addRegexToken('k', match1to2);
+    addRegexToken('HH', match1to2, match2);
+    addRegexToken('hh', match1to2, match2);
+    addRegexToken('kk', match1to2, match2);
+
+    addRegexToken('hmm', match3to4);
+    addRegexToken('hmmss', match5to6);
+    addRegexToken('Hmm', match3to4);
+    addRegexToken('Hmmss', match5to6);
+
+    addParseToken(['H', 'HH'], HOUR);
+    addParseToken(['k', 'kk'], function (input, array, config) {
+        var kInput = toInt(input);
+        array[HOUR] = kInput === 24 ? 0 : kInput;
+    });
+    addParseToken(['a', 'A'], function (input, array, config) {
+        config._isPm = config._locale.isPM(input);
+        config._meridiem = input;
+    });
+    addParseToken(['h', 'hh'], function (input, array, config) {
+        array[HOUR] = toInt(input);
+        getParsingFlags(config).bigHour = true;
+    });
+    addParseToken('hmm', function (input, array, config) {
+        var pos = input.length - 2;
+        array[HOUR] = toInt(input.substr(0, pos));
+        array[MINUTE] = toInt(input.substr(pos));
+        getParsingFlags(config).bigHour = true;
+    });
+    addParseToken('hmmss', function (input, array, config) {
+        var pos1 = input.length - 4;
+        var pos2 = input.length - 2;
+        array[HOUR] = toInt(input.substr(0, pos1));
+        array[MINUTE] = toInt(input.substr(pos1, 2));
+        array[SECOND] = toInt(input.substr(pos2));
+        getParsingFlags(config).bigHour = true;
+    });
+    addParseToken('Hmm', function (input, array, config) {
+        var pos = input.length - 2;
+        array[HOUR] = toInt(input.substr(0, pos));
+        array[MINUTE] = toInt(input.substr(pos));
+    });
+    addParseToken('Hmmss', function (input, array, config) {
+        var pos1 = input.length - 4;
+        var pos2 = input.length - 2;
+        array[HOUR] = toInt(input.substr(0, pos1));
+        array[MINUTE] = toInt(input.substr(pos1, 2));
+        array[SECOND] = toInt(input.substr(pos2));
+    });
+
+    // LOCALES
+
+    function localeIsPM(input) {
+        // IE8 Quirks Mode & IE7 Standards Mode do not allow accessing strings like arrays
+        // Using charAt should be more compatible.
+        return (input + '').toLowerCase().charAt(0) === 'p';
+    }
+
+    var defaultLocaleMeridiemParse = /[ap]\.?m?\.?/i;
+    function localeMeridiem(hours, minutes, isLower) {
+        if (hours > 11) {
+            return isLower ? 'pm' : 'PM';
+        } else {
+            return isLower ? 'am' : 'AM';
+        }
+    }
+
+    // MOMENTS
+
+    // Setting the hour should keep the time, because the user explicitly
+    // specified which hour they want. So trying to maintain the same hour (in
+    // a new timezone) makes sense. Adding/subtracting hours does not follow
+    // this rule.
+    var getSetHour = makeGetSet('Hours', true);
+
+    var baseConfig = {
+        calendar: defaultCalendar,
+        longDateFormat: defaultLongDateFormat,
+        invalidDate: defaultInvalidDate,
+        ordinal: defaultOrdinal,
+        dayOfMonthOrdinalParse: defaultDayOfMonthOrdinalParse,
+        relativeTime: defaultRelativeTime,
+
+        months: defaultLocaleMonths,
+        monthsShort: defaultLocaleMonthsShort,
+
+        week: defaultLocaleWeek,
+
+        weekdays: defaultLocaleWeekdays,
+        weekdaysMin: defaultLocaleWeekdaysMin,
+        weekdaysShort: defaultLocaleWeekdaysShort,
+
+        meridiemParse: defaultLocaleMeridiemParse
+    };
+
+    // internal storage for locale config files
+    var locales = {};
+    var localeFamilies = {};
+    var globalLocale;
+
+    function normalizeLocale(key) {
+        return key ? key.toLowerCase().replace('_', '-') : key;
+    }
+
+    // pick the locale from the array
+    // try ['en-au', 'en-gb'] as 'en-au', 'en-gb', 'en', as in move through the list trying each
+    // substring from most specific to least, but move to the next array item if it's a more specific variant than the current root
+    function chooseLocale(names) {
+        var i = 0,
+            j,
+            next,
+            locale,
+            split;
+
+        while (i < names.length) {
+            split = normalizeLocale(names[i]).split('-');
+            j = split.length;
+            next = normalizeLocale(names[i + 1]);
+            next = next ? next.split('-') : null;
+            while (j > 0) {
+                locale = loadLocale(split.slice(0, j).join('-'));
+                if (locale) {
+                    return locale;
+                }
+                if (next && next.length >= j && compareArrays(split, next, true) >= j - 1) {
+                    //the next array item is better than a shallower substring of this one
+                    break;
+                }
+                j--;
+            }
+            i++;
+        }
+        return globalLocale;
+    }
+
+    function loadLocale(name) {
+        var oldLocale = null;
+        // TODO: Find a better way to register and load all the locales in Node
+        if (!locales[name] && 'object' !== 'undefined' && module && module.exports) {
+            try {
+                oldLocale = globalLocale._abbr;
+                var aliasedRequire = commonjsRequire;
+                aliasedRequire('./locale/' + name);
+                getSetGlobalLocale(oldLocale);
+            } catch (e) {}
+        }
+        return locales[name];
+    }
+
+    // This function will load locale and then set the global locale.  If
+    // no arguments are passed in, it will simply return the current global
+    // locale key.
+    function getSetGlobalLocale(key, values) {
+        var data;
+        if (key) {
+            if (isUndefined(values)) {
+                data = getLocale(key);
+            } else {
+                data = defineLocale(key, values);
+            }
+
+            if (data) {
+                // moment.duration._locale = moment._locale = data;
+                globalLocale = data;
+            } else {
+                if (typeof console !== 'undefined' && console.warn) {
+                    //warn user if arguments are passed but the locale could not be set
+                    console.warn('Locale ' + key + ' not found. Did you forget to load it?');
+                }
+            }
+        }
+
+        return globalLocale._abbr;
+    }
+
+    function defineLocale(name, config) {
+        if (config !== null) {
+            var locale,
+                parentConfig = baseConfig;
+            config.abbr = name;
+            if (locales[name] != null) {
+                deprecateSimple('defineLocaleOverride', 'use moment.updateLocale(localeName, config) to change ' + 'an existing locale. moment.defineLocale(localeName, ' + 'config) should only be used for creating a new locale ' + 'See http://momentjs.com/guides/#/warnings/define-locale/ for more info.');
+                parentConfig = locales[name]._config;
+            } else if (config.parentLocale != null) {
+                if (locales[config.parentLocale] != null) {
+                    parentConfig = locales[config.parentLocale]._config;
+                } else {
+                    locale = loadLocale(config.parentLocale);
+                    if (locale != null) {
+                        parentConfig = locale._config;
+                    } else {
+                        if (!localeFamilies[config.parentLocale]) {
+                            localeFamilies[config.parentLocale] = [];
+                        }
+                        localeFamilies[config.parentLocale].push({
+                            name: name,
+                            config: config
+                        });
+                        return null;
+                    }
+                }
+            }
+            locales[name] = new Locale(mergeConfigs(parentConfig, config));
+
+            if (localeFamilies[name]) {
+                localeFamilies[name].forEach(function (x) {
+                    defineLocale(x.name, x.config);
+                });
+            }
+
+            // backwards compat for now: also set the locale
+            // make sure we set the locale AFTER all child locales have been
+            // created, so we won't end up with the child locale set.
+            getSetGlobalLocale(name);
+
+            return locales[name];
+        } else {
+            // useful for testing
+            delete locales[name];
+            return null;
+        }
+    }
+
+    function updateLocale(name, config) {
+        if (config != null) {
+            var locale,
+                tmpLocale,
+                parentConfig = baseConfig;
+            // MERGE
+            tmpLocale = loadLocale(name);
+            if (tmpLocale != null) {
+                parentConfig = tmpLocale._config;
+            }
+            config = mergeConfigs(parentConfig, config);
+            locale = new Locale(config);
+            locale.parentLocale = locales[name];
+            locales[name] = locale;
+
+            // backwards compat for now: also set the locale
+            getSetGlobalLocale(name);
+        } else {
+            // pass null for config to unupdate, useful for tests
+            if (locales[name] != null) {
+                if (locales[name].parentLocale != null) {
+                    locales[name] = locales[name].parentLocale;
+                } else if (locales[name] != null) {
+                    delete locales[name];
+                }
+            }
+        }
+        return locales[name];
+    }
+
+    // returns locale data
+    function getLocale(key) {
+        var locale;
+
+        if (key && key._locale && key._locale._abbr) {
+            key = key._locale._abbr;
+        }
+
+        if (!key) {
+            return globalLocale;
+        }
+
+        if (!isArray(key)) {
+            //short-circuit everything else
+            locale = loadLocale(key);
+            if (locale) {
+                return locale;
+            }
+            key = [key];
+        }
+
+        return chooseLocale(key);
+    }
+
+    function listLocales() {
+        return keys(locales);
+    }
+
+    function checkOverflow(m) {
+        var overflow;
+        var a = m._a;
+
+        if (a && getParsingFlags(m).overflow === -2) {
+            overflow = a[MONTH] < 0 || a[MONTH] > 11 ? MONTH : a[DATE] < 1 || a[DATE] > daysInMonth(a[YEAR], a[MONTH]) ? DATE : a[HOUR] < 0 || a[HOUR] > 24 || a[HOUR] === 24 && (a[MINUTE] !== 0 || a[SECOND] !== 0 || a[MILLISECOND] !== 0) ? HOUR : a[MINUTE] < 0 || a[MINUTE] > 59 ? MINUTE : a[SECOND] < 0 || a[SECOND] > 59 ? SECOND : a[MILLISECOND] < 0 || a[MILLISECOND] > 999 ? MILLISECOND : -1;
+
+            if (getParsingFlags(m)._overflowDayOfYear && (overflow < YEAR || overflow > DATE)) {
+                overflow = DATE;
+            }
+            if (getParsingFlags(m)._overflowWeeks && overflow === -1) {
+                overflow = WEEK;
+            }
+            if (getParsingFlags(m)._overflowWeekday && overflow === -1) {
+                overflow = WEEKDAY;
+            }
+
+            getParsingFlags(m).overflow = overflow;
+        }
+
+        return m;
+    }
+
+    // Pick the first defined of two or three arguments.
+    function defaults(a, b, c) {
+        if (a != null) {
+            return a;
+        }
+        if (b != null) {
+            return b;
+        }
+        return c;
+    }
+
+    function currentDateArray(config) {
+        // hooks is actually the exported moment object
+        var nowValue = new Date(hooks.now());
+        if (config._useUTC) {
+            return [nowValue.getUTCFullYear(), nowValue.getUTCMonth(), nowValue.getUTCDate()];
+        }
+        return [nowValue.getFullYear(), nowValue.getMonth(), nowValue.getDate()];
+    }
+
+    // convert an array to a date.
+    // the array should mirror the parameters below
+    // note: all values past the year are optional and will default to the lowest possible value.
+    // [year, month, day , hour, minute, second, millisecond]
+    function configFromArray(config) {
+        var i,
+            date,
+            input = [],
+            currentDate,
+            expectedWeekday,
+            yearToUse;
+
+        if (config._d) {
+            return;
+        }
+
+        currentDate = currentDateArray(config);
+
+        //compute day of the year from weeks and weekdays
+        if (config._w && config._a[DATE] == null && config._a[MONTH] == null) {
+            dayOfYearFromWeekInfo(config);
+        }
+
+        //if the day of the year is set, figure out what it is
+        if (config._dayOfYear != null) {
+            yearToUse = defaults(config._a[YEAR], currentDate[YEAR]);
+
+            if (config._dayOfYear > daysInYear(yearToUse) || config._dayOfYear === 0) {
+                getParsingFlags(config)._overflowDayOfYear = true;
+            }
+
+            date = createUTCDate(yearToUse, 0, config._dayOfYear);
+            config._a[MONTH] = date.getUTCMonth();
+            config._a[DATE] = date.getUTCDate();
+        }
+
+        // Default to current date.
+        // * if no year, month, day of month are given, default to today
+        // * if day of month is given, default month and year
+        // * if month is given, default only year
+        // * if year is given, don't default anything
+        for (i = 0; i < 3 && config._a[i] == null; ++i) {
+            config._a[i] = input[i] = currentDate[i];
+        }
+
+        // Zero out whatever was not defaulted, including time
+        for (; i < 7; i++) {
+            config._a[i] = input[i] = config._a[i] == null ? i === 2 ? 1 : 0 : config._a[i];
+        }
+
+        // Check for 24:00:00.000
+        if (config._a[HOUR] === 24 && config._a[MINUTE] === 0 && config._a[SECOND] === 0 && config._a[MILLISECOND] === 0) {
+            config._nextDay = true;
+            config._a[HOUR] = 0;
+        }
+
+        config._d = (config._useUTC ? createUTCDate : createDate).apply(null, input);
+        expectedWeekday = config._useUTC ? config._d.getUTCDay() : config._d.getDay();
+
+        // Apply timezone offset from input. The actual utcOffset can be changed
+        // with parseZone.
+        if (config._tzm != null) {
+            config._d.setUTCMinutes(config._d.getUTCMinutes() - config._tzm);
+        }
+
+        if (config._nextDay) {
+            config._a[HOUR] = 24;
+        }
+
+        // check for mismatching day of week
+        if (config._w && typeof config._w.d !== 'undefined' && config._w.d !== expectedWeekday) {
+            getParsingFlags(config).weekdayMismatch = true;
+        }
+    }
+
+    function dayOfYearFromWeekInfo(config) {
+        var w, weekYear, week, weekday, dow, doy, temp, weekdayOverflow;
+
+        w = config._w;
+        if (w.GG != null || w.W != null || w.E != null) {
+            dow = 1;
+            doy = 4;
+
+            // TODO: We need to take the current isoWeekYear, but that depends on
+            // how we interpret now (local, utc, fixed offset). So create
+            // a now version of current config (take local/utc/offset flags, and
+            // create now).
+            weekYear = defaults(w.GG, config._a[YEAR], weekOfYear(createLocal(), 1, 4).year);
+            week = defaults(w.W, 1);
+            weekday = defaults(w.E, 1);
+            if (weekday < 1 || weekday > 7) {
+                weekdayOverflow = true;
+            }
+        } else {
+            dow = config._locale._week.dow;
+            doy = config._locale._week.doy;
+
+            var curWeek = weekOfYear(createLocal(), dow, doy);
+
+            weekYear = defaults(w.gg, config._a[YEAR], curWeek.year);
+
+            // Default to current week.
+            week = defaults(w.w, curWeek.week);
+
+            if (w.d != null) {
+                // weekday -- low day numbers are considered next week
+                weekday = w.d;
+                if (weekday < 0 || weekday > 6) {
+                    weekdayOverflow = true;
+                }
+            } else if (w.e != null) {
+                // local weekday -- counting starts from beginning of week
+                weekday = w.e + dow;
+                if (w.e < 0 || w.e > 6) {
+                    weekdayOverflow = true;
+                }
+            } else {
+                // default to beginning of week
+                weekday = dow;
+            }
+        }
+        if (week < 1 || week > weeksInYear(weekYear, dow, doy)) {
+            getParsingFlags(config)._overflowWeeks = true;
+        } else if (weekdayOverflow != null) {
+            getParsingFlags(config)._overflowWeekday = true;
+        } else {
+            temp = dayOfYearFromWeeks(weekYear, week, weekday, dow, doy);
+            config._a[YEAR] = temp.year;
+            config._dayOfYear = temp.dayOfYear;
+        }
+    }
+
+    // iso 8601 regex
+    // 0000-00-00 0000-W00 or 0000-W00-0 + T + 00 or 00:00 or 00:00:00 or 00:00:00.000 + +00:00 or +0000 or +00)
+    var extendedIsoRegex = /^\s*((?:[+-]\d{6}|\d{4})-(?:\d\d-\d\d|W\d\d-\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?::\d\d(?::\d\d(?:[.,]\d+)?)?)?)([\+\-]\d\d(?::?\d\d)?|\s*Z)?)?$/;
+    var basicIsoRegex = /^\s*((?:[+-]\d{6}|\d{4})(?:\d\d\d\d|W\d\d\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?:\d\d(?:\d\d(?:[.,]\d+)?)?)?)([\+\-]\d\d(?::?\d\d)?|\s*Z)?)?$/;
+
+    var tzRegex = /Z|[+-]\d\d(?::?\d\d)?/;
+
+    var isoDates = [['YYYYYY-MM-DD', /[+-]\d{6}-\d\d-\d\d/], ['YYYY-MM-DD', /\d{4}-\d\d-\d\d/], ['GGGG-[W]WW-E', /\d{4}-W\d\d-\d/], ['GGGG-[W]WW', /\d{4}-W\d\d/, false], ['YYYY-DDD', /\d{4}-\d{3}/], ['YYYY-MM', /\d{4}-\d\d/, false], ['YYYYYYMMDD', /[+-]\d{10}/], ['YYYYMMDD', /\d{8}/],
+    // YYYYMM is NOT allowed by the standard
+    ['GGGG[W]WWE', /\d{4}W\d{3}/], ['GGGG[W]WW', /\d{4}W\d{2}/, false], ['YYYYDDD', /\d{7}/]];
+
+    // iso time formats and regexes
+    var isoTimes = [['HH:mm:ss.SSSS', /\d\d:\d\d:\d\d\.\d+/], ['HH:mm:ss,SSSS', /\d\d:\d\d:\d\d,\d+/], ['HH:mm:ss', /\d\d:\d\d:\d\d/], ['HH:mm', /\d\d:\d\d/], ['HHmmss.SSSS', /\d\d\d\d\d\d\.\d+/], ['HHmmss,SSSS', /\d\d\d\d\d\d,\d+/], ['HHmmss', /\d\d\d\d\d\d/], ['HHmm', /\d\d\d\d/], ['HH', /\d\d/]];
+
+    var aspNetJsonRegex = /^\/?Date\((\-?\d+)/i;
+
+    // date from iso format
+    function configFromISO(config) {
+        var i,
+            l,
+            string = config._i,
+            match = extendedIsoRegex.exec(string) || basicIsoRegex.exec(string),
+            allowTime,
+            dateFormat,
+            timeFormat,
+            tzFormat;
+
+        if (match) {
+            getParsingFlags(config).iso = true;
+
+            for (i = 0, l = isoDates.length; i < l; i++) {
+                if (isoDates[i][1].exec(match[1])) {
+                    dateFormat = isoDates[i][0];
+                    allowTime = isoDates[i][2] !== false;
+                    break;
+                }
+            }
+            if (dateFormat == null) {
+                config._isValid = false;
+                return;
+            }
+            if (match[3]) {
+                for (i = 0, l = isoTimes.length; i < l; i++) {
+                    if (isoTimes[i][1].exec(match[3])) {
+                        // match[2] should be 'T' or space
+                        timeFormat = (match[2] || ' ') + isoTimes[i][0];
+                        break;
+                    }
+                }
+                if (timeFormat == null) {
+                    config._isValid = false;
+                    return;
+                }
+            }
+            if (!allowTime && timeFormat != null) {
+                config._isValid = false;
+                return;
+            }
+            if (match[4]) {
+                if (tzRegex.exec(match[4])) {
+                    tzFormat = 'Z';
+                } else {
+                    config._isValid = false;
+                    return;
+                }
+            }
+            config._f = dateFormat + (timeFormat || '') + (tzFormat || '');
+            configFromStringAndFormat(config);
+        } else {
+            config._isValid = false;
+        }
+    }
+
+    // RFC 2822 regex: For details see https://tools.ietf.org/html/rfc2822#section-3.3
+    var rfc2822 = /^(?:(Mon|Tue|Wed|Thu|Fri|Sat|Sun),?\s)?(\d{1,2})\s(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s(\d{2,4})\s(\d\d):(\d\d)(?::(\d\d))?\s(?:(UT|GMT|[ECMP][SD]T)|([Zz])|([+-]\d{4}))$/;
+
+    function extractFromRFC2822Strings(yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr) {
+        var result = [untruncateYear(yearStr), defaultLocaleMonthsShort.indexOf(monthStr), parseInt(dayStr, 10), parseInt(hourStr, 10), parseInt(minuteStr, 10)];
+
+        if (secondStr) {
+            result.push(parseInt(secondStr, 10));
+        }
+
+        return result;
+    }
+
+    function untruncateYear(yearStr) {
+        var year = parseInt(yearStr, 10);
+        if (year <= 49) {
+            return 2000 + year;
+        } else if (year <= 999) {
+            return 1900 + year;
+        }
+        return year;
+    }
+
+    function preprocessRFC2822(s) {
+        // Remove comments and folding whitespace and replace multiple-spaces with a single space
+        return s.replace(/\([^)]*\)|[\n\t]/g, ' ').replace(/(\s\s+)/g, ' ').replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+    }
+
+    function checkWeekday(weekdayStr, parsedInput, config) {
+        if (weekdayStr) {
+            // TODO: Replace the vanilla JS Date object with an indepentent day-of-week check.
+            var weekdayProvided = defaultLocaleWeekdaysShort.indexOf(weekdayStr),
+                weekdayActual = new Date(parsedInput[0], parsedInput[1], parsedInput[2]).getDay();
+            if (weekdayProvided !== weekdayActual) {
+                getParsingFlags(config).weekdayMismatch = true;
+                config._isValid = false;
+                return false;
+            }
+        }
+        return true;
+    }
+
+    var obsOffsets = {
+        UT: 0,
+        GMT: 0,
+        EDT: -4 * 60,
+        EST: -5 * 60,
+        CDT: -5 * 60,
+        CST: -6 * 60,
+        MDT: -6 * 60,
+        MST: -7 * 60,
+        PDT: -7 * 60,
+        PST: -8 * 60
+    };
+
+    function calculateOffset(obsOffset, militaryOffset, numOffset) {
+        if (obsOffset) {
+            return obsOffsets[obsOffset];
+        } else if (militaryOffset) {
+            // the only allowed military tz is Z
+            return 0;
+        } else {
+            var hm = parseInt(numOffset, 10);
+            var m = hm % 100,
+                h = (hm - m) / 100;
+            return h * 60 + m;
+        }
+    }
+
+    // date and time from ref 2822 format
+    function configFromRFC2822(config) {
+        var match = rfc2822.exec(preprocessRFC2822(config._i));
+        if (match) {
+            var parsedArray = extractFromRFC2822Strings(match[4], match[3], match[2], match[5], match[6], match[7]);
+            if (!checkWeekday(match[1], parsedArray, config)) {
+                return;
+            }
+
+            config._a = parsedArray;
+            config._tzm = calculateOffset(match[8], match[9], match[10]);
+
+            config._d = createUTCDate.apply(null, config._a);
+            config._d.setUTCMinutes(config._d.getUTCMinutes() - config._tzm);
+
+            getParsingFlags(config).rfc2822 = true;
+        } else {
+            config._isValid = false;
+        }
+    }
+
+    // date from iso format or fallback
+    function configFromString(config) {
+        var matched = aspNetJsonRegex.exec(config._i);
+
+        if (matched !== null) {
+            config._d = new Date(+matched[1]);
+            return;
+        }
+
+        configFromISO(config);
+        if (config._isValid === false) {
+            delete config._isValid;
+        } else {
+            return;
+        }
+
+        configFromRFC2822(config);
+        if (config._isValid === false) {
+            delete config._isValid;
+        } else {
+            return;
+        }
+
+        // Final attempt, use Input Fallback
+        hooks.createFromInputFallback(config);
+    }
+
+    hooks.createFromInputFallback = deprecate('value provided is not in a recognized RFC2822 or ISO format. moment construction falls back to js Date(), ' + 'which is not reliable across all browsers and versions. Non RFC2822/ISO date formats are ' + 'discouraged and will be removed in an upcoming major release. Please refer to ' + 'http://momentjs.com/guides/#/warnings/js-date/ for more info.', function (config) {
+        config._d = new Date(config._i + (config._useUTC ? ' UTC' : ''));
+    });
+
+    // constant that refers to the ISO standard
+    hooks.ISO_8601 = function () {};
+
+    // constant that refers to the RFC 2822 form
+    hooks.RFC_2822 = function () {};
+
+    // date from string and format string
+    function configFromStringAndFormat(config) {
+        // TODO: Move this to another part of the creation flow to prevent circular deps
+        if (config._f === hooks.ISO_8601) {
+            configFromISO(config);
+            return;
+        }
+        if (config._f === hooks.RFC_2822) {
+            configFromRFC2822(config);
+            return;
+        }
+        config._a = [];
+        getParsingFlags(config).empty = true;
+
+        // This array is used to make a Date, either with `new Date` or `Date.UTC`
+        var string = '' + config._i,
+            i,
+            parsedInput,
+            tokens,
+            token,
+            skipped,
+            stringLength = string.length,
+            totalParsedInputLength = 0;
+
+        tokens = expandFormat(config._f, config._locale).match(formattingTokens) || [];
+
+        for (i = 0; i < tokens.length; i++) {
+            token = tokens[i];
+            parsedInput = (string.match(getParseRegexForToken(token, config)) || [])[0];
+            // console.log('token', token, 'parsedInput', parsedInput,
+            //         'regex', getParseRegexForToken(token, config));
+            if (parsedInput) {
+                skipped = string.substr(0, string.indexOf(parsedInput));
+                if (skipped.length > 0) {
+                    getParsingFlags(config).unusedInput.push(skipped);
+                }
+                string = string.slice(string.indexOf(parsedInput) + parsedInput.length);
+                totalParsedInputLength += parsedInput.length;
+            }
+            // don't parse if it's not a known token
+            if (formatTokenFunctions[token]) {
+                if (parsedInput) {
+                    getParsingFlags(config).empty = false;
+                } else {
+                    getParsingFlags(config).unusedTokens.push(token);
+                }
+                addTimeToArrayFromToken(token, parsedInput, config);
+            } else if (config._strict && !parsedInput) {
+                getParsingFlags(config).unusedTokens.push(token);
+            }
+        }
+
+        // add remaining unparsed input length to the string
+        getParsingFlags(config).charsLeftOver = stringLength - totalParsedInputLength;
+        if (string.length > 0) {
+            getParsingFlags(config).unusedInput.push(string);
+        }
+
+        // clear _12h flag if hour is <= 12
+        if (config._a[HOUR] <= 12 && getParsingFlags(config).bigHour === true && config._a[HOUR] > 0) {
+            getParsingFlags(config).bigHour = undefined;
+        }
+
+        getParsingFlags(config).parsedDateParts = config._a.slice(0);
+        getParsingFlags(config).meridiem = config._meridiem;
+        // handle meridiem
+        config._a[HOUR] = meridiemFixWrap(config._locale, config._a[HOUR], config._meridiem);
+
+        configFromArray(config);
+        checkOverflow(config);
+    }
+
+    function meridiemFixWrap(locale, hour, meridiem) {
+        var isPm;
+
+        if (meridiem == null) {
+            // nothing to do
+            return hour;
+        }
+        if (locale.meridiemHour != null) {
+            return locale.meridiemHour(hour, meridiem);
+        } else if (locale.isPM != null) {
+            // Fallback
+            isPm = locale.isPM(meridiem);
+            if (isPm && hour < 12) {
+                hour += 12;
+            }
+            if (!isPm && hour === 12) {
+                hour = 0;
+            }
+            return hour;
+        } else {
+            // this is not supposed to happen
+            return hour;
+        }
+    }
+
+    // date from string and array of format strings
+    function configFromStringAndArray(config) {
+        var tempConfig, bestMoment, scoreToBeat, i, currentScore;
+
+        if (config._f.length === 0) {
+            getParsingFlags(config).invalidFormat = true;
+            config._d = new Date(NaN);
+            return;
+        }
+
+        for (i = 0; i < config._f.length; i++) {
+            currentScore = 0;
+            tempConfig = copyConfig({}, config);
+            if (config._useUTC != null) {
+                tempConfig._useUTC = config._useUTC;
+            }
+            tempConfig._f = config._f[i];
+            configFromStringAndFormat(tempConfig);
+
+            if (!isValid(tempConfig)) {
+                continue;
+            }
+
+            // if there is any input that was not parsed add a penalty for that format
+            currentScore += getParsingFlags(tempConfig).charsLeftOver;
+
+            //or tokens
+            currentScore += getParsingFlags(tempConfig).unusedTokens.length * 10;
+
+            getParsingFlags(tempConfig).score = currentScore;
+
+            if (scoreToBeat == null || currentScore < scoreToBeat) {
+                scoreToBeat = currentScore;
+                bestMoment = tempConfig;
+            }
+        }
+
+        extend(config, bestMoment || tempConfig);
+    }
+
+    function configFromObject(config) {
+        if (config._d) {
+            return;
+        }
+
+        var i = normalizeObjectUnits(config._i);
+        config._a = map([i.year, i.month, i.day || i.date, i.hour, i.minute, i.second, i.millisecond], function (obj) {
+            return obj && parseInt(obj, 10);
+        });
+
+        configFromArray(config);
+    }
+
+    function createFromConfig(config) {
+        var res = new Moment(checkOverflow(prepareConfig(config)));
+        if (res._nextDay) {
+            // Adding is smart enough around DST
+            res.add(1, 'd');
+            res._nextDay = undefined;
+        }
+
+        return res;
+    }
+
+    function prepareConfig(config) {
+        var input = config._i,
+            format = config._f;
+
+        config._locale = config._locale || getLocale(config._l);
+
+        if (input === null || format === undefined && input === '') {
+            return createInvalid({ nullInput: true });
+        }
+
+        if (typeof input === 'string') {
+            config._i = input = config._locale.preparse(input);
+        }
+
+        if (isMoment(input)) {
+            return new Moment(checkOverflow(input));
+        } else if (isDate(input)) {
+            config._d = input;
+        } else if (isArray(format)) {
+            configFromStringAndArray(config);
+        } else if (format) {
+            configFromStringAndFormat(config);
+        } else {
+            configFromInput(config);
+        }
+
+        if (!isValid(config)) {
+            config._d = null;
+        }
+
+        return config;
+    }
+
+    function configFromInput(config) {
+        var input = config._i;
+        if (isUndefined(input)) {
+            config._d = new Date(hooks.now());
+        } else if (isDate(input)) {
+            config._d = new Date(input.valueOf());
+        } else if (typeof input === 'string') {
+            configFromString(config);
+        } else if (isArray(input)) {
+            config._a = map(input.slice(0), function (obj) {
+                return parseInt(obj, 10);
+            });
+            configFromArray(config);
+        } else if (isObject(input)) {
+            configFromObject(config);
+        } else if (isNumber(input)) {
+            // from milliseconds
+            config._d = new Date(input);
+        } else {
+            hooks.createFromInputFallback(config);
+        }
+    }
+
+    function createLocalOrUTC(input, format, locale, strict, isUTC) {
+        var c = {};
+
+        if (locale === true || locale === false) {
+            strict = locale;
+            locale = undefined;
+        }
+
+        if (isObject(input) && isObjectEmpty(input) || isArray(input) && input.length === 0) {
+            input = undefined;
+        }
+        // object construction must be done this way.
+        // https://github.com/moment/moment/issues/1423
+        c._isAMomentObject = true;
+        c._useUTC = c._isUTC = isUTC;
+        c._l = locale;
+        c._i = input;
+        c._f = format;
+        c._strict = strict;
+
+        return createFromConfig(c);
+    }
+
+    function createLocal(input, format, locale, strict) {
+        return createLocalOrUTC(input, format, locale, strict, false);
+    }
+
+    var prototypeMin = deprecate('moment().min is deprecated, use moment.max instead. http://momentjs.com/guides/#/warnings/min-max/', function () {
+        var other = createLocal.apply(null, arguments);
+        if (this.isValid() && other.isValid()) {
+            return other < this ? this : other;
+        } else {
+            return createInvalid();
+        }
+    });
+
+    var prototypeMax = deprecate('moment().max is deprecated, use moment.min instead. http://momentjs.com/guides/#/warnings/min-max/', function () {
+        var other = createLocal.apply(null, arguments);
+        if (this.isValid() && other.isValid()) {
+            return other > this ? this : other;
+        } else {
+            return createInvalid();
+        }
+    });
+
+    // Pick a moment m from moments so that m[fn](other) is true for all
+    // other. This relies on the function fn to be transitive.
+    //
+    // moments should either be an array of moment objects or an array, whose
+    // first element is an array of moment objects.
+    function pickBy(fn, moments) {
+        var res, i;
+        if (moments.length === 1 && isArray(moments[0])) {
+            moments = moments[0];
+        }
+        if (!moments.length) {
+            return createLocal();
+        }
+        res = moments[0];
+        for (i = 1; i < moments.length; ++i) {
+            if (!moments[i].isValid() || moments[i][fn](res)) {
+                res = moments[i];
+            }
+        }
+        return res;
+    }
+
+    // TODO: Use [].sort instead?
+    function min() {
+        var args = [].slice.call(arguments, 0);
+
+        return pickBy('isBefore', args);
+    }
+
+    function max() {
+        var args = [].slice.call(arguments, 0);
+
+        return pickBy('isAfter', args);
+    }
+
+    var now = function now() {
+        return Date.now ? Date.now() : +new Date();
+    };
+
+    var ordering = ['year', 'quarter', 'month', 'week', 'day', 'hour', 'minute', 'second', 'millisecond'];
+
+    function isDurationValid(m) {
+        for (var key in m) {
+            if (!(indexOf.call(ordering, key) !== -1 && (m[key] == null || !isNaN(m[key])))) {
+                return false;
+            }
+        }
+
+        var unitHasDecimal = false;
+        for (var i = 0; i < ordering.length; ++i) {
+            if (m[ordering[i]]) {
+                if (unitHasDecimal) {
+                    return false; // only allow non-integers for smallest unit
+                }
+                if (parseFloat(m[ordering[i]]) !== toInt(m[ordering[i]])) {
+                    unitHasDecimal = true;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    function isValid$1() {
+        return this._isValid;
+    }
+
+    function createInvalid$1() {
+        return createDuration(NaN);
+    }
+
+    function Duration(duration) {
+        var normalizedInput = normalizeObjectUnits(duration),
+            years = normalizedInput.year || 0,
+            quarters = normalizedInput.quarter || 0,
+            months = normalizedInput.month || 0,
+            weeks = normalizedInput.week || normalizedInput.isoWeek || 0,
+            days = normalizedInput.day || 0,
+            hours = normalizedInput.hour || 0,
+            minutes = normalizedInput.minute || 0,
+            seconds = normalizedInput.second || 0,
+            milliseconds = normalizedInput.millisecond || 0;
+
+        this._isValid = isDurationValid(normalizedInput);
+
+        // representation for dateAddRemove
+        this._milliseconds = +milliseconds + seconds * 1e3 + // 1000
+        minutes * 6e4 + // 1000 * 60
+        hours * 1000 * 60 * 60; //using 1000 * 60 * 60 instead of 36e5 to avoid floating point rounding errors https://github.com/moment/moment/issues/2978
+        // Because of dateAddRemove treats 24 hours as different from a
+        // day when working around DST, we need to store them separately
+        this._days = +days + weeks * 7;
+        // It is impossible to translate months into days without knowing
+        // which months you are are talking about, so we have to store
+        // it separately.
+        this._months = +months + quarters * 3 + years * 12;
+
+        this._data = {};
+
+        this._locale = getLocale();
+
+        this._bubble();
+    }
+
+    function isDuration(obj) {
+        return obj instanceof Duration;
+    }
+
+    function absRound(number) {
+        if (number < 0) {
+            return Math.round(-1 * number) * -1;
+        } else {
+            return Math.round(number);
+        }
+    }
+
+    // FORMATTING
+
+    function offset(token, separator) {
+        addFormatToken(token, 0, 0, function () {
+            var offset = this.utcOffset();
+            var sign = '+';
+            if (offset < 0) {
+                offset = -offset;
+                sign = '-';
+            }
+            return sign + zeroFill(~~(offset / 60), 2) + separator + zeroFill(~~offset % 60, 2);
+        });
+    }
+
+    offset('Z', ':');
+    offset('ZZ', '');
+
+    // PARSING
+
+    addRegexToken('Z', matchShortOffset);
+    addRegexToken('ZZ', matchShortOffset);
+    addParseToken(['Z', 'ZZ'], function (input, array, config) {
+        config._useUTC = true;
+        config._tzm = offsetFromString(matchShortOffset, input);
+    });
+
+    // HELPERS
+
+    // timezone chunker
+    // '+10:00' > ['10',  '00']
+    // '-1530'  > ['-15', '30']
+    var chunkOffset = /([\+\-]|\d\d)/gi;
+
+    function offsetFromString(matcher, string) {
+        var matches = (string || '').match(matcher);
+
+        if (matches === null) {
+            return null;
+        }
+
+        var chunk = matches[matches.length - 1] || [];
+        var parts = (chunk + '').match(chunkOffset) || ['-', 0, 0];
+        var minutes = +(parts[1] * 60) + toInt(parts[2]);
+
+        return minutes === 0 ? 0 : parts[0] === '+' ? minutes : -minutes;
+    }
+
+    // Return a moment from input, that is local/utc/zone equivalent to model.
+    function cloneWithOffset(input, model) {
+        var res, diff;
+        if (model._isUTC) {
+            res = model.clone();
+            diff = (isMoment(input) || isDate(input) ? input.valueOf() : createLocal(input).valueOf()) - res.valueOf();
+            // Use low-level api, because this fn is low-level api.
+            res._d.setTime(res._d.valueOf() + diff);
+            hooks.updateOffset(res, false);
+            return res;
+        } else {
+            return createLocal(input).local();
+        }
+    }
+
+    function getDateOffset(m) {
+        // On Firefox.24 Date#getTimezoneOffset returns a floating point.
+        // https://github.com/moment/moment/pull/1871
+        return -Math.round(m._d.getTimezoneOffset() / 15) * 15;
+    }
+
+    // HOOKS
+
+    // This function will be called whenever a moment is mutated.
+    // It is intended to keep the offset in sync with the timezone.
+    hooks.updateOffset = function () {};
+
+    // MOMENTS
+
+    // keepLocalTime = true means only change the timezone, without
+    // affecting the local hour. So 5:31:26 +0300 --[utcOffset(2, true)]-->
+    // 5:31:26 +0200 It is possible that 5:31:26 doesn't exist with offset
+    // +0200, so we adjust the time as needed, to be valid.
+    //
+    // Keeping the time actually adds/subtracts (one hour)
+    // from the actual represented time. That is why we call updateOffset
+    // a second time. In case it wants us to change the offset again
+    // _changeInProgress == true case, then we have to adjust, because
+    // there is no such time in the given timezone.
+    function getSetOffset(input, keepLocalTime, keepMinutes) {
+        var offset = this._offset || 0,
+            localAdjust;
+        if (!this.isValid()) {
+            return input != null ? this : NaN;
+        }
+        if (input != null) {
+            if (typeof input === 'string') {
+                input = offsetFromString(matchShortOffset, input);
+                if (input === null) {
+                    return this;
+                }
+            } else if (Math.abs(input) < 16 && !keepMinutes) {
+                input = input * 60;
+            }
+            if (!this._isUTC && keepLocalTime) {
+                localAdjust = getDateOffset(this);
+            }
+            this._offset = input;
+            this._isUTC = true;
+            if (localAdjust != null) {
+                this.add(localAdjust, 'm');
+            }
+            if (offset !== input) {
+                if (!keepLocalTime || this._changeInProgress) {
+                    addSubtract(this, createDuration(input - offset, 'm'), 1, false);
+                } else if (!this._changeInProgress) {
+                    this._changeInProgress = true;
+                    hooks.updateOffset(this, true);
+                    this._changeInProgress = null;
+                }
+            }
+            return this;
+        } else {
+            return this._isUTC ? offset : getDateOffset(this);
+        }
+    }
+
+    function getSetZone(input, keepLocalTime) {
+        if (input != null) {
+            if (typeof input !== 'string') {
+                input = -input;
+            }
+
+            this.utcOffset(input, keepLocalTime);
+
+            return this;
+        } else {
+            return -this.utcOffset();
+        }
+    }
+
+    function setOffsetToUTC(keepLocalTime) {
+        return this.utcOffset(0, keepLocalTime);
+    }
+
+    function setOffsetToLocal(keepLocalTime) {
+        if (this._isUTC) {
+            this.utcOffset(0, keepLocalTime);
+            this._isUTC = false;
+
+            if (keepLocalTime) {
+                this.subtract(getDateOffset(this), 'm');
+            }
+        }
+        return this;
+    }
+
+    function setOffsetToParsedOffset() {
+        if (this._tzm != null) {
+            this.utcOffset(this._tzm, false, true);
+        } else if (typeof this._i === 'string') {
+            var tZone = offsetFromString(matchOffset, this._i);
+            if (tZone != null) {
+                this.utcOffset(tZone);
+            } else {
+                this.utcOffset(0, true);
+            }
+        }
+        return this;
+    }
+
+    function hasAlignedHourOffset(input) {
+        if (!this.isValid()) {
+            return false;
+        }
+        input = input ? createLocal(input).utcOffset() : 0;
+
+        return (this.utcOffset() - input) % 60 === 0;
+    }
+
+    function isDaylightSavingTime() {
+        return this.utcOffset() > this.clone().month(0).utcOffset() || this.utcOffset() > this.clone().month(5).utcOffset();
+    }
+
+    function isDaylightSavingTimeShifted() {
+        if (!isUndefined(this._isDSTShifted)) {
+            return this._isDSTShifted;
+        }
+
+        var c = {};
+
+        copyConfig(c, this);
+        c = prepareConfig(c);
+
+        if (c._a) {
+            var other = c._isUTC ? createUTC(c._a) : createLocal(c._a);
+            this._isDSTShifted = this.isValid() && compareArrays(c._a, other.toArray()) > 0;
+        } else {
+            this._isDSTShifted = false;
+        }
+
+        return this._isDSTShifted;
+    }
+
+    function isLocal() {
+        return this.isValid() ? !this._isUTC : false;
+    }
+
+    function isUtcOffset() {
+        return this.isValid() ? this._isUTC : false;
+    }
+
+    function isUtc() {
+        return this.isValid() ? this._isUTC && this._offset === 0 : false;
+    }
+
+    // ASP.NET json date format regex
+    var aspNetRegex = /^(\-|\+)?(?:(\d*)[. ])?(\d+)\:(\d+)(?:\:(\d+)(\.\d*)?)?$/;
+
+    // from http://docs.closure-library.googlecode.com/git/closure_goog_date_date.js.source.html
+    // somewhat more in line with 4.4.3.2 2004 spec, but allows decimal anywhere
+    // and further modified to allow for strings containing both week and day
+    var isoRegex = /^(-|\+)?P(?:([-+]?[0-9,.]*)Y)?(?:([-+]?[0-9,.]*)M)?(?:([-+]?[0-9,.]*)W)?(?:([-+]?[0-9,.]*)D)?(?:T(?:([-+]?[0-9,.]*)H)?(?:([-+]?[0-9,.]*)M)?(?:([-+]?[0-9,.]*)S)?)?$/;
+
+    function createDuration(input, key) {
+        var duration = input,
+
+        // matching against regexp is expensive, do it on demand
+        match = null,
+            sign,
+            ret,
+            diffRes;
+
+        if (isDuration(input)) {
+            duration = {
+                ms: input._milliseconds,
+                d: input._days,
+                M: input._months
+            };
+        } else if (isNumber(input)) {
+            duration = {};
+            if (key) {
+                duration[key] = input;
+            } else {
+                duration.milliseconds = input;
+            }
+        } else if (!!(match = aspNetRegex.exec(input))) {
+            sign = match[1] === '-' ? -1 : 1;
+            duration = {
+                y: 0,
+                d: toInt(match[DATE]) * sign,
+                h: toInt(match[HOUR]) * sign,
+                m: toInt(match[MINUTE]) * sign,
+                s: toInt(match[SECOND]) * sign,
+                ms: toInt(absRound(match[MILLISECOND] * 1000)) * sign // the millisecond decimal point is included in the match
+            };
+        } else if (!!(match = isoRegex.exec(input))) {
+            sign = match[1] === '-' ? -1 : 1;
+            duration = {
+                y: parseIso(match[2], sign),
+                M: parseIso(match[3], sign),
+                w: parseIso(match[4], sign),
+                d: parseIso(match[5], sign),
+                h: parseIso(match[6], sign),
+                m: parseIso(match[7], sign),
+                s: parseIso(match[8], sign)
+            };
+        } else if (duration == null) {
+            // checks for null or undefined
+            duration = {};
+        } else if ((typeof duration === 'undefined' ? 'undefined' : _typeof(duration)) === 'object' && ('from' in duration || 'to' in duration)) {
+            diffRes = momentsDifference(createLocal(duration.from), createLocal(duration.to));
+
+            duration = {};
+            duration.ms = diffRes.milliseconds;
+            duration.M = diffRes.months;
+        }
+
+        ret = new Duration(duration);
+
+        if (isDuration(input) && hasOwnProp(input, '_locale')) {
+            ret._locale = input._locale;
+        }
+
+        return ret;
+    }
+
+    createDuration.fn = Duration.prototype;
+    createDuration.invalid = createInvalid$1;
+
+    function parseIso(inp, sign) {
+        // We'd normally use ~~inp for this, but unfortunately it also
+        // converts floats to ints.
+        // inp may be undefined, so careful calling replace on it.
+        var res = inp && parseFloat(inp.replace(',', '.'));
+        // apply sign while we're at it
+        return (isNaN(res) ? 0 : res) * sign;
+    }
+
+    function positiveMomentsDifference(base, other) {
+        var res = {};
+
+        res.months = other.month() - base.month() + (other.year() - base.year()) * 12;
+        if (base.clone().add(res.months, 'M').isAfter(other)) {
+            --res.months;
+        }
+
+        res.milliseconds = +other - +base.clone().add(res.months, 'M');
+
+        return res;
+    }
+
+    function momentsDifference(base, other) {
+        var res;
+        if (!(base.isValid() && other.isValid())) {
+            return { milliseconds: 0, months: 0 };
+        }
+
+        other = cloneWithOffset(other, base);
+        if (base.isBefore(other)) {
+            res = positiveMomentsDifference(base, other);
+        } else {
+            res = positiveMomentsDifference(other, base);
+            res.milliseconds = -res.milliseconds;
+            res.months = -res.months;
+        }
+
+        return res;
+    }
+
+    // TODO: remove 'name' arg after deprecation is removed
+    function createAdder(direction, name) {
+        return function (val, period) {
+            var dur, tmp;
+            //invert the arguments, but complain about it
+            if (period !== null && !isNaN(+period)) {
+                deprecateSimple(name, 'moment().' + name + '(period, number) is deprecated. Please use moment().' + name + '(number, period). ' + 'See http://momentjs.com/guides/#/warnings/add-inverted-param/ for more info.');
+                tmp = val;val = period;period = tmp;
+            }
+
+            val = typeof val === 'string' ? +val : val;
+            dur = createDuration(val, period);
+            addSubtract(this, dur, direction);
+            return this;
+        };
+    }
+
+    function addSubtract(mom, duration, isAdding, updateOffset) {
+        var milliseconds = duration._milliseconds,
+            days = absRound(duration._days),
+            months = absRound(duration._months);
+
+        if (!mom.isValid()) {
+            // No op
+            return;
+        }
+
+        updateOffset = updateOffset == null ? true : updateOffset;
+
+        if (months) {
+            setMonth(mom, get(mom, 'Month') + months * isAdding);
+        }
+        if (days) {
+            set$1(mom, 'Date', get(mom, 'Date') + days * isAdding);
+        }
+        if (milliseconds) {
+            mom._d.setTime(mom._d.valueOf() + milliseconds * isAdding);
+        }
+        if (updateOffset) {
+            hooks.updateOffset(mom, days || months);
+        }
+    }
+
+    var add = createAdder(1, 'add');
+    var subtract = createAdder(-1, 'subtract');
+
+    function getCalendarFormat(myMoment, now) {
+        var diff = myMoment.diff(now, 'days', true);
+        return diff < -6 ? 'sameElse' : diff < -1 ? 'lastWeek' : diff < 0 ? 'lastDay' : diff < 1 ? 'sameDay' : diff < 2 ? 'nextDay' : diff < 7 ? 'nextWeek' : 'sameElse';
+    }
+
+    function calendar$1(time, formats) {
+        // We want to compare the start of today, vs this.
+        // Getting start-of-today depends on whether we're local/utc/offset or not.
+        var now = time || createLocal(),
+            sod = cloneWithOffset(now, this).startOf('day'),
+            format = hooks.calendarFormat(this, sod) || 'sameElse';
+
+        var output = formats && (isFunction(formats[format]) ? formats[format].call(this, now) : formats[format]);
+
+        return this.format(output || this.localeData().calendar(format, this, createLocal(now)));
+    }
+
+    function clone() {
+        return new Moment(this);
+    }
+
+    function isAfter(input, units) {
+        var localInput = isMoment(input) ? input : createLocal(input);
+        if (!(this.isValid() && localInput.isValid())) {
+            return false;
+        }
+        units = normalizeUnits(units) || 'millisecond';
+        if (units === 'millisecond') {
+            return this.valueOf() > localInput.valueOf();
+        } else {
+            return localInput.valueOf() < this.clone().startOf(units).valueOf();
+        }
+    }
+
+    function isBefore(input, units) {
+        var localInput = isMoment(input) ? input : createLocal(input);
+        if (!(this.isValid() && localInput.isValid())) {
+            return false;
+        }
+        units = normalizeUnits(units) || 'millisecond';
+        if (units === 'millisecond') {
+            return this.valueOf() < localInput.valueOf();
+        } else {
+            return this.clone().endOf(units).valueOf() < localInput.valueOf();
+        }
+    }
+
+    function isBetween(from, to, units, inclusivity) {
+        var localFrom = isMoment(from) ? from : createLocal(from),
+            localTo = isMoment(to) ? to : createLocal(to);
+        if (!(this.isValid() && localFrom.isValid() && localTo.isValid())) {
+            return false;
+        }
+        inclusivity = inclusivity || '()';
+        return (inclusivity[0] === '(' ? this.isAfter(localFrom, units) : !this.isBefore(localFrom, units)) && (inclusivity[1] === ')' ? this.isBefore(localTo, units) : !this.isAfter(localTo, units));
+    }
+
+    function isSame(input, units) {
+        var localInput = isMoment(input) ? input : createLocal(input),
+            inputMs;
+        if (!(this.isValid() && localInput.isValid())) {
+            return false;
+        }
+        units = normalizeUnits(units) || 'millisecond';
+        if (units === 'millisecond') {
+            return this.valueOf() === localInput.valueOf();
+        } else {
+            inputMs = localInput.valueOf();
+            return this.clone().startOf(units).valueOf() <= inputMs && inputMs <= this.clone().endOf(units).valueOf();
+        }
+    }
+
+    function isSameOrAfter(input, units) {
+        return this.isSame(input, units) || this.isAfter(input, units);
+    }
+
+    function isSameOrBefore(input, units) {
+        return this.isSame(input, units) || this.isBefore(input, units);
+    }
+
+    function diff(input, units, asFloat) {
+        var that, zoneDelta, output;
+
+        if (!this.isValid()) {
+            return NaN;
+        }
+
+        that = cloneWithOffset(input, this);
+
+        if (!that.isValid()) {
+            return NaN;
+        }
+
+        zoneDelta = (that.utcOffset() - this.utcOffset()) * 6e4;
+
+        units = normalizeUnits(units);
+
+        switch (units) {
+            case 'year':
+                output = monthDiff(this, that) / 12;break;
+            case 'month':
+                output = monthDiff(this, that);break;
+            case 'quarter':
+                output = monthDiff(this, that) / 3;break;
+            case 'second':
+                output = (this - that) / 1e3;break; // 1000
+            case 'minute':
+                output = (this - that) / 6e4;break; // 1000 * 60
+            case 'hour':
+                output = (this - that) / 36e5;break; // 1000 * 60 * 60
+            case 'day':
+                output = (this - that - zoneDelta) / 864e5;break; // 1000 * 60 * 60 * 24, negate dst
+            case 'week':
+                output = (this - that - zoneDelta) / 6048e5;break; // 1000 * 60 * 60 * 24 * 7, negate dst
+            default:
+                output = this - that;
+        }
+
+        return asFloat ? output : absFloor(output);
+    }
+
+    function monthDiff(a, b) {
+        // difference in months
+        var wholeMonthDiff = (b.year() - a.year()) * 12 + (b.month() - a.month()),
+
+        // b is in (anchor - 1 month, anchor + 1 month)
+        anchor = a.clone().add(wholeMonthDiff, 'months'),
+            anchor2,
+            adjust;
+
+        if (b - anchor < 0) {
+            anchor2 = a.clone().add(wholeMonthDiff - 1, 'months');
+            // linear across the month
+            adjust = (b - anchor) / (anchor - anchor2);
+        } else {
+            anchor2 = a.clone().add(wholeMonthDiff + 1, 'months');
+            // linear across the month
+            adjust = (b - anchor) / (anchor2 - anchor);
+        }
+
+        //check for negative zero, return zero if negative zero
+        return -(wholeMonthDiff + adjust) || 0;
+    }
+
+    hooks.defaultFormat = 'YYYY-MM-DDTHH:mm:ssZ';
+    hooks.defaultFormatUtc = 'YYYY-MM-DDTHH:mm:ss[Z]';
+
+    function toString() {
+        return this.clone().locale('en').format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ');
+    }
+
+    function toISOString(keepOffset) {
+        if (!this.isValid()) {
+            return null;
+        }
+        var utc = keepOffset !== true;
+        var m = utc ? this.clone().utc() : this;
+        if (m.year() < 0 || m.year() > 9999) {
+            return formatMoment(m, utc ? 'YYYYYY-MM-DD[T]HH:mm:ss.SSS[Z]' : 'YYYYYY-MM-DD[T]HH:mm:ss.SSSZ');
+        }
+        if (isFunction(Date.prototype.toISOString)) {
+            // native implementation is ~50x faster, use it when we can
+            if (utc) {
+                return this.toDate().toISOString();
+            } else {
+                return new Date(this.valueOf() + this.utcOffset() * 60 * 1000).toISOString().replace('Z', formatMoment(m, 'Z'));
+            }
+        }
+        return formatMoment(m, utc ? 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]' : 'YYYY-MM-DD[T]HH:mm:ss.SSSZ');
+    }
+
+    /**
+     * Return a human readable representation of a moment that can
+     * also be evaluated to get a new moment which is the same
+     *
+     * @link https://nodejs.org/dist/latest/docs/api/util.html#util_custom_inspect_function_on_objects
+     */
+    function inspect() {
+        if (!this.isValid()) {
+            return 'moment.invalid(/* ' + this._i + ' */)';
+        }
+        var func = 'moment';
+        var zone = '';
+        if (!this.isLocal()) {
+            func = this.utcOffset() === 0 ? 'moment.utc' : 'moment.parseZone';
+            zone = 'Z';
+        }
+        var prefix = '[' + func + '("]';
+        var year = 0 <= this.year() && this.year() <= 9999 ? 'YYYY' : 'YYYYYY';
+        var datetime = '-MM-DD[T]HH:mm:ss.SSS';
+        var suffix = zone + '[")]';
+
+        return this.format(prefix + year + datetime + suffix);
+    }
+
+    function format(inputString) {
+        if (!inputString) {
+            inputString = this.isUtc() ? hooks.defaultFormatUtc : hooks.defaultFormat;
+        }
+        var output = formatMoment(this, inputString);
+        return this.localeData().postformat(output);
+    }
+
+    function from(time, withoutSuffix) {
+        if (this.isValid() && (isMoment(time) && time.isValid() || createLocal(time).isValid())) {
+            return createDuration({ to: this, from: time }).locale(this.locale()).humanize(!withoutSuffix);
+        } else {
+            return this.localeData().invalidDate();
+        }
+    }
+
+    function fromNow(withoutSuffix) {
+        return this.from(createLocal(), withoutSuffix);
+    }
+
+    function to(time, withoutSuffix) {
+        if (this.isValid() && (isMoment(time) && time.isValid() || createLocal(time).isValid())) {
+            return createDuration({ from: this, to: time }).locale(this.locale()).humanize(!withoutSuffix);
+        } else {
+            return this.localeData().invalidDate();
+        }
+    }
+
+    function toNow(withoutSuffix) {
+        return this.to(createLocal(), withoutSuffix);
+    }
+
+    // If passed a locale key, it will set the locale for this
+    // instance.  Otherwise, it will return the locale configuration
+    // variables for this instance.
+    function locale(key) {
+        var newLocaleData;
+
+        if (key === undefined) {
+            return this._locale._abbr;
+        } else {
+            newLocaleData = getLocale(key);
+            if (newLocaleData != null) {
+                this._locale = newLocaleData;
+            }
+            return this;
+        }
+    }
+
+    var lang = deprecate('moment().lang() is deprecated. Instead, use moment().localeData() to get the language configuration. Use moment().locale() to change languages.', function (key) {
+        if (key === undefined) {
+            return this.localeData();
+        } else {
+            return this.locale(key);
+        }
+    });
+
+    function localeData() {
+        return this._locale;
+    }
+
+    var MS_PER_SECOND = 1000;
+    var MS_PER_MINUTE = 60 * MS_PER_SECOND;
+    var MS_PER_HOUR = 60 * MS_PER_MINUTE;
+    var MS_PER_400_YEARS = (365 * 400 + 97) * 24 * MS_PER_HOUR;
+
+    // actual modulo - handles negative numbers (for dates before 1970):
+    function mod$1(dividend, divisor) {
+        return (dividend % divisor + divisor) % divisor;
+    }
+
+    function localStartOfDate(y, m, d) {
+        // the date constructor remaps years 0-99 to 1900-1999
+        if (y < 100 && y >= 0) {
+            // preserve leap years using a full 400 year cycle, then reset
+            return new Date(y + 400, m, d) - MS_PER_400_YEARS;
+        } else {
+            return new Date(y, m, d).valueOf();
+        }
+    }
+
+    function utcStartOfDate(y, m, d) {
+        // Date.UTC remaps years 0-99 to 1900-1999
+        if (y < 100 && y >= 0) {
+            // preserve leap years using a full 400 year cycle, then reset
+            return Date.UTC(y + 400, m, d) - MS_PER_400_YEARS;
+        } else {
+            return Date.UTC(y, m, d);
+        }
+    }
+
+    function startOf(units) {
+        var time;
+        units = normalizeUnits(units);
+        if (units === undefined || units === 'millisecond' || !this.isValid()) {
+            return this;
+        }
+
+        var startOfDate = this._isUTC ? utcStartOfDate : localStartOfDate;
+
+        switch (units) {
+            case 'year':
+                time = startOfDate(this.year(), 0, 1);
+                break;
+            case 'quarter':
+                time = startOfDate(this.year(), this.month() - this.month() % 3, 1);
+                break;
+            case 'month':
+                time = startOfDate(this.year(), this.month(), 1);
+                break;
+            case 'week':
+                time = startOfDate(this.year(), this.month(), this.date() - this.weekday());
+                break;
+            case 'isoWeek':
+                time = startOfDate(this.year(), this.month(), this.date() - (this.isoWeekday() - 1));
+                break;
+            case 'day':
+            case 'date':
+                time = startOfDate(this.year(), this.month(), this.date());
+                break;
+            case 'hour':
+                time = this._d.valueOf();
+                time -= mod$1(time + (this._isUTC ? 0 : this.utcOffset() * MS_PER_MINUTE), MS_PER_HOUR);
+                break;
+            case 'minute':
+                time = this._d.valueOf();
+                time -= mod$1(time, MS_PER_MINUTE);
+                break;
+            case 'second':
+                time = this._d.valueOf();
+                time -= mod$1(time, MS_PER_SECOND);
+                break;
+        }
+
+        this._d.setTime(time);
+        hooks.updateOffset(this, true);
+        return this;
+    }
+
+    function endOf(units) {
+        var time;
+        units = normalizeUnits(units);
+        if (units === undefined || units === 'millisecond' || !this.isValid()) {
+            return this;
+        }
+
+        var startOfDate = this._isUTC ? utcStartOfDate : localStartOfDate;
+
+        switch (units) {
+            case 'year':
+                time = startOfDate(this.year() + 1, 0, 1) - 1;
+                break;
+            case 'quarter':
+                time = startOfDate(this.year(), this.month() - this.month() % 3 + 3, 1) - 1;
+                break;
+            case 'month':
+                time = startOfDate(this.year(), this.month() + 1, 1) - 1;
+                break;
+            case 'week':
+                time = startOfDate(this.year(), this.month(), this.date() - this.weekday() + 7) - 1;
+                break;
+            case 'isoWeek':
+                time = startOfDate(this.year(), this.month(), this.date() - (this.isoWeekday() - 1) + 7) - 1;
+                break;
+            case 'day':
+            case 'date':
+                time = startOfDate(this.year(), this.month(), this.date() + 1) - 1;
+                break;
+            case 'hour':
+                time = this._d.valueOf();
+                time += MS_PER_HOUR - mod$1(time + (this._isUTC ? 0 : this.utcOffset() * MS_PER_MINUTE), MS_PER_HOUR) - 1;
+                break;
+            case 'minute':
+                time = this._d.valueOf();
+                time += MS_PER_MINUTE - mod$1(time, MS_PER_MINUTE) - 1;
+                break;
+            case 'second':
+                time = this._d.valueOf();
+                time += MS_PER_SECOND - mod$1(time, MS_PER_SECOND) - 1;
+                break;
+        }
+
+        this._d.setTime(time);
+        hooks.updateOffset(this, true);
+        return this;
+    }
+
+    function valueOf() {
+        return this._d.valueOf() - (this._offset || 0) * 60000;
+    }
+
+    function unix() {
+        return Math.floor(this.valueOf() / 1000);
+    }
+
+    function toDate() {
+        return new Date(this.valueOf());
+    }
+
+    function toArray() {
+        var m = this;
+        return [m.year(), m.month(), m.date(), m.hour(), m.minute(), m.second(), m.millisecond()];
+    }
+
+    function toObject() {
+        var m = this;
+        return {
+            years: m.year(),
+            months: m.month(),
+            date: m.date(),
+            hours: m.hours(),
+            minutes: m.minutes(),
+            seconds: m.seconds(),
+            milliseconds: m.milliseconds()
+        };
+    }
+
+    function toJSON() {
+        // new Date(NaN).toJSON() === null
+        return this.isValid() ? this.toISOString() : null;
+    }
+
+    function isValid$2() {
+        return isValid(this);
+    }
+
+    function parsingFlags() {
+        return extend({}, getParsingFlags(this));
+    }
+
+    function invalidAt() {
+        return getParsingFlags(this).overflow;
+    }
+
+    function creationData() {
+        return {
+            input: this._i,
+            format: this._f,
+            locale: this._locale,
+            isUTC: this._isUTC,
+            strict: this._strict
+        };
+    }
+
+    // FORMATTING
+
+    addFormatToken(0, ['gg', 2], 0, function () {
+        return this.weekYear() % 100;
+    });
+
+    addFormatToken(0, ['GG', 2], 0, function () {
+        return this.isoWeekYear() % 100;
+    });
+
+    function addWeekYearFormatToken(token, getter) {
+        addFormatToken(0, [token, token.length], 0, getter);
+    }
+
+    addWeekYearFormatToken('gggg', 'weekYear');
+    addWeekYearFormatToken('ggggg', 'weekYear');
+    addWeekYearFormatToken('GGGG', 'isoWeekYear');
+    addWeekYearFormatToken('GGGGG', 'isoWeekYear');
+
+    // ALIASES
+
+    addUnitAlias('weekYear', 'gg');
+    addUnitAlias('isoWeekYear', 'GG');
+
+    // PRIORITY
+
+    addUnitPriority('weekYear', 1);
+    addUnitPriority('isoWeekYear', 1);
+
+    // PARSING
+
+    addRegexToken('G', matchSigned);
+    addRegexToken('g', matchSigned);
+    addRegexToken('GG', match1to2, match2);
+    addRegexToken('gg', match1to2, match2);
+    addRegexToken('GGGG', match1to4, match4);
+    addRegexToken('gggg', match1to4, match4);
+    addRegexToken('GGGGG', match1to6, match6);
+    addRegexToken('ggggg', match1to6, match6);
+
+    addWeekParseToken(['gggg', 'ggggg', 'GGGG', 'GGGGG'], function (input, week, config, token) {
+        week[token.substr(0, 2)] = toInt(input);
+    });
+
+    addWeekParseToken(['gg', 'GG'], function (input, week, config, token) {
+        week[token] = hooks.parseTwoDigitYear(input);
+    });
+
+    // MOMENTS
+
+    function getSetWeekYear(input) {
+        return getSetWeekYearHelper.call(this, input, this.week(), this.weekday(), this.localeData()._week.dow, this.localeData()._week.doy);
+    }
+
+    function getSetISOWeekYear(input) {
+        return getSetWeekYearHelper.call(this, input, this.isoWeek(), this.isoWeekday(), 1, 4);
+    }
+
+    function getISOWeeksInYear() {
+        return weeksInYear(this.year(), 1, 4);
+    }
+
+    function getWeeksInYear() {
+        var weekInfo = this.localeData()._week;
+        return weeksInYear(this.year(), weekInfo.dow, weekInfo.doy);
+    }
+
+    function getSetWeekYearHelper(input, week, weekday, dow, doy) {
+        var weeksTarget;
+        if (input == null) {
+            return weekOfYear(this, dow, doy).year;
+        } else {
+            weeksTarget = weeksInYear(input, dow, doy);
+            if (week > weeksTarget) {
+                week = weeksTarget;
+            }
+            return setWeekAll.call(this, input, week, weekday, dow, doy);
+        }
+    }
+
+    function setWeekAll(weekYear, week, weekday, dow, doy) {
+        var dayOfYearData = dayOfYearFromWeeks(weekYear, week, weekday, dow, doy),
+            date = createUTCDate(dayOfYearData.year, 0, dayOfYearData.dayOfYear);
+
+        this.year(date.getUTCFullYear());
+        this.month(date.getUTCMonth());
+        this.date(date.getUTCDate());
+        return this;
+    }
+
+    // FORMATTING
+
+    addFormatToken('Q', 0, 'Qo', 'quarter');
+
+    // ALIASES
+
+    addUnitAlias('quarter', 'Q');
+
+    // PRIORITY
+
+    addUnitPriority('quarter', 7);
+
+    // PARSING
+
+    addRegexToken('Q', match1);
+    addParseToken('Q', function (input, array) {
+        array[MONTH] = (toInt(input) - 1) * 3;
+    });
+
+    // MOMENTS
+
+    function getSetQuarter(input) {
+        return input == null ? Math.ceil((this.month() + 1) / 3) : this.month((input - 1) * 3 + this.month() % 3);
+    }
+
+    // FORMATTING
+
+    addFormatToken('D', ['DD', 2], 'Do', 'date');
+
+    // ALIASES
+
+    addUnitAlias('date', 'D');
+
+    // PRIORITY
+    addUnitPriority('date', 9);
+
+    // PARSING
+
+    addRegexToken('D', match1to2);
+    addRegexToken('DD', match1to2, match2);
+    addRegexToken('Do', function (isStrict, locale) {
+        // TODO: Remove "ordinalParse" fallback in next major release.
+        return isStrict ? locale._dayOfMonthOrdinalParse || locale._ordinalParse : locale._dayOfMonthOrdinalParseLenient;
+    });
+
+    addParseToken(['D', 'DD'], DATE);
+    addParseToken('Do', function (input, array) {
+        array[DATE] = toInt(input.match(match1to2)[0]);
+    });
+
+    // MOMENTS
+
+    var getSetDayOfMonth = makeGetSet('Date', true);
+
+    // FORMATTING
+
+    addFormatToken('DDD', ['DDDD', 3], 'DDDo', 'dayOfYear');
+
+    // ALIASES
+
+    addUnitAlias('dayOfYear', 'DDD');
+
+    // PRIORITY
+    addUnitPriority('dayOfYear', 4);
+
+    // PARSING
+
+    addRegexToken('DDD', match1to3);
+    addRegexToken('DDDD', match3);
+    addParseToken(['DDD', 'DDDD'], function (input, array, config) {
+        config._dayOfYear = toInt(input);
+    });
+
+    // HELPERS
+
+    // MOMENTS
+
+    function getSetDayOfYear(input) {
+        var dayOfYear = Math.round((this.clone().startOf('day') - this.clone().startOf('year')) / 864e5) + 1;
+        return input == null ? dayOfYear : this.add(input - dayOfYear, 'd');
+    }
+
+    // FORMATTING
+
+    addFormatToken('m', ['mm', 2], 0, 'minute');
+
+    // ALIASES
+
+    addUnitAlias('minute', 'm');
+
+    // PRIORITY
+
+    addUnitPriority('minute', 14);
+
+    // PARSING
+
+    addRegexToken('m', match1to2);
+    addRegexToken('mm', match1to2, match2);
+    addParseToken(['m', 'mm'], MINUTE);
+
+    // MOMENTS
+
+    var getSetMinute = makeGetSet('Minutes', false);
+
+    // FORMATTING
+
+    addFormatToken('s', ['ss', 2], 0, 'second');
+
+    // ALIASES
+
+    addUnitAlias('second', 's');
+
+    // PRIORITY
+
+    addUnitPriority('second', 15);
+
+    // PARSING
+
+    addRegexToken('s', match1to2);
+    addRegexToken('ss', match1to2, match2);
+    addParseToken(['s', 'ss'], SECOND);
+
+    // MOMENTS
+
+    var getSetSecond = makeGetSet('Seconds', false);
+
+    // FORMATTING
+
+    addFormatToken('S', 0, 0, function () {
+        return ~~(this.millisecond() / 100);
+    });
+
+    addFormatToken(0, ['SS', 2], 0, function () {
+        return ~~(this.millisecond() / 10);
+    });
+
+    addFormatToken(0, ['SSS', 3], 0, 'millisecond');
+    addFormatToken(0, ['SSSS', 4], 0, function () {
+        return this.millisecond() * 10;
+    });
+    addFormatToken(0, ['SSSSS', 5], 0, function () {
+        return this.millisecond() * 100;
+    });
+    addFormatToken(0, ['SSSSSS', 6], 0, function () {
+        return this.millisecond() * 1000;
+    });
+    addFormatToken(0, ['SSSSSSS', 7], 0, function () {
+        return this.millisecond() * 10000;
+    });
+    addFormatToken(0, ['SSSSSSSS', 8], 0, function () {
+        return this.millisecond() * 100000;
+    });
+    addFormatToken(0, ['SSSSSSSSS', 9], 0, function () {
+        return this.millisecond() * 1000000;
+    });
+
+    // ALIASES
+
+    addUnitAlias('millisecond', 'ms');
+
+    // PRIORITY
+
+    addUnitPriority('millisecond', 16);
+
+    // PARSING
+
+    addRegexToken('S', match1to3, match1);
+    addRegexToken('SS', match1to3, match2);
+    addRegexToken('SSS', match1to3, match3);
+
+    var token;
+    for (token = 'SSSS'; token.length <= 9; token += 'S') {
+        addRegexToken(token, matchUnsigned);
+    }
+
+    function parseMs(input, array) {
+        array[MILLISECOND] = toInt(('0.' + input) * 1000);
+    }
+
+    for (token = 'S'; token.length <= 9; token += 'S') {
+        addParseToken(token, parseMs);
+    }
+    // MOMENTS
+
+    var getSetMillisecond = makeGetSet('Milliseconds', false);
+
+    // FORMATTING
+
+    addFormatToken('z', 0, 0, 'zoneAbbr');
+    addFormatToken('zz', 0, 0, 'zoneName');
+
+    // MOMENTS
+
+    function getZoneAbbr() {
+        return this._isUTC ? 'UTC' : '';
+    }
+
+    function getZoneName() {
+        return this._isUTC ? 'Coordinated Universal Time' : '';
+    }
+
+    var proto = Moment.prototype;
+
+    proto.add = add;
+    proto.calendar = calendar$1;
+    proto.clone = clone;
+    proto.diff = diff;
+    proto.endOf = endOf;
+    proto.format = format;
+    proto.from = from;
+    proto.fromNow = fromNow;
+    proto.to = to;
+    proto.toNow = toNow;
+    proto.get = stringGet;
+    proto.invalidAt = invalidAt;
+    proto.isAfter = isAfter;
+    proto.isBefore = isBefore;
+    proto.isBetween = isBetween;
+    proto.isSame = isSame;
+    proto.isSameOrAfter = isSameOrAfter;
+    proto.isSameOrBefore = isSameOrBefore;
+    proto.isValid = isValid$2;
+    proto.lang = lang;
+    proto.locale = locale;
+    proto.localeData = localeData;
+    proto.max = prototypeMax;
+    proto.min = prototypeMin;
+    proto.parsingFlags = parsingFlags;
+    proto.set = stringSet;
+    proto.startOf = startOf;
+    proto.subtract = subtract;
+    proto.toArray = toArray;
+    proto.toObject = toObject;
+    proto.toDate = toDate;
+    proto.toISOString = toISOString;
+    proto.inspect = inspect;
+    proto.toJSON = toJSON;
+    proto.toString = toString;
+    proto.unix = unix;
+    proto.valueOf = valueOf;
+    proto.creationData = creationData;
+    proto.year = getSetYear;
+    proto.isLeapYear = getIsLeapYear;
+    proto.weekYear = getSetWeekYear;
+    proto.isoWeekYear = getSetISOWeekYear;
+    proto.quarter = proto.quarters = getSetQuarter;
+    proto.month = getSetMonth;
+    proto.daysInMonth = getDaysInMonth;
+    proto.week = proto.weeks = getSetWeek;
+    proto.isoWeek = proto.isoWeeks = getSetISOWeek;
+    proto.weeksInYear = getWeeksInYear;
+    proto.isoWeeksInYear = getISOWeeksInYear;
+    proto.date = getSetDayOfMonth;
+    proto.day = proto.days = getSetDayOfWeek;
+    proto.weekday = getSetLocaleDayOfWeek;
+    proto.isoWeekday = getSetISODayOfWeek;
+    proto.dayOfYear = getSetDayOfYear;
+    proto.hour = proto.hours = getSetHour;
+    proto.minute = proto.minutes = getSetMinute;
+    proto.second = proto.seconds = getSetSecond;
+    proto.millisecond = proto.milliseconds = getSetMillisecond;
+    proto.utcOffset = getSetOffset;
+    proto.utc = setOffsetToUTC;
+    proto.local = setOffsetToLocal;
+    proto.parseZone = setOffsetToParsedOffset;
+    proto.hasAlignedHourOffset = hasAlignedHourOffset;
+    proto.isDST = isDaylightSavingTime;
+    proto.isLocal = isLocal;
+    proto.isUtcOffset = isUtcOffset;
+    proto.isUtc = isUtc;
+    proto.isUTC = isUtc;
+    proto.zoneAbbr = getZoneAbbr;
+    proto.zoneName = getZoneName;
+    proto.dates = deprecate('dates accessor is deprecated. Use date instead.', getSetDayOfMonth);
+    proto.months = deprecate('months accessor is deprecated. Use month instead', getSetMonth);
+    proto.years = deprecate('years accessor is deprecated. Use year instead', getSetYear);
+    proto.zone = deprecate('moment().zone is deprecated, use moment().utcOffset instead. http://momentjs.com/guides/#/warnings/zone/', getSetZone);
+    proto.isDSTShifted = deprecate('isDSTShifted is deprecated. See http://momentjs.com/guides/#/warnings/dst-shifted/ for more information', isDaylightSavingTimeShifted);
+
+    function createUnix(input) {
+        return createLocal(input * 1000);
+    }
+
+    function createInZone() {
+        return createLocal.apply(null, arguments).parseZone();
+    }
+
+    function preParsePostFormat(string) {
+        return string;
+    }
+
+    var proto$1 = Locale.prototype;
+
+    proto$1.calendar = calendar;
+    proto$1.longDateFormat = longDateFormat;
+    proto$1.invalidDate = invalidDate;
+    proto$1.ordinal = ordinal;
+    proto$1.preparse = preParsePostFormat;
+    proto$1.postformat = preParsePostFormat;
+    proto$1.relativeTime = relativeTime;
+    proto$1.pastFuture = pastFuture;
+    proto$1.set = set;
+
+    proto$1.months = localeMonths;
+    proto$1.monthsShort = localeMonthsShort;
+    proto$1.monthsParse = localeMonthsParse;
+    proto$1.monthsRegex = monthsRegex;
+    proto$1.monthsShortRegex = monthsShortRegex;
+    proto$1.week = localeWeek;
+    proto$1.firstDayOfYear = localeFirstDayOfYear;
+    proto$1.firstDayOfWeek = localeFirstDayOfWeek;
+
+    proto$1.weekdays = localeWeekdays;
+    proto$1.weekdaysMin = localeWeekdaysMin;
+    proto$1.weekdaysShort = localeWeekdaysShort;
+    proto$1.weekdaysParse = localeWeekdaysParse;
+
+    proto$1.weekdaysRegex = weekdaysRegex;
+    proto$1.weekdaysShortRegex = weekdaysShortRegex;
+    proto$1.weekdaysMinRegex = weekdaysMinRegex;
+
+    proto$1.isPM = localeIsPM;
+    proto$1.meridiem = localeMeridiem;
+
+    function get$1(format, index, field, setter) {
+        var locale = getLocale();
+        var utc = createUTC().set(setter, index);
+        return locale[field](utc, format);
+    }
+
+    function listMonthsImpl(format, index, field) {
+        if (isNumber(format)) {
+            index = format;
+            format = undefined;
+        }
+
+        format = format || '';
+
+        if (index != null) {
+            return get$1(format, index, field, 'month');
+        }
+
+        var i;
+        var out = [];
+        for (i = 0; i < 12; i++) {
+            out[i] = get$1(format, i, field, 'month');
+        }
+        return out;
+    }
+
+    // ()
+    // (5)
+    // (fmt, 5)
+    // (fmt)
+    // (true)
+    // (true, 5)
+    // (true, fmt, 5)
+    // (true, fmt)
+    function listWeekdaysImpl(localeSorted, format, index, field) {
+        if (typeof localeSorted === 'boolean') {
+            if (isNumber(format)) {
+                index = format;
+                format = undefined;
+            }
+
+            format = format || '';
+        } else {
+            format = localeSorted;
+            index = format;
+            localeSorted = false;
+
+            if (isNumber(format)) {
+                index = format;
+                format = undefined;
+            }
+
+            format = format || '';
+        }
+
+        var locale = getLocale(),
+            shift = localeSorted ? locale._week.dow : 0;
+
+        if (index != null) {
+            return get$1(format, (index + shift) % 7, field, 'day');
+        }
+
+        var i;
+        var out = [];
+        for (i = 0; i < 7; i++) {
+            out[i] = get$1(format, (i + shift) % 7, field, 'day');
+        }
+        return out;
+    }
+
+    function listMonths(format, index) {
+        return listMonthsImpl(format, index, 'months');
+    }
+
+    function listMonthsShort(format, index) {
+        return listMonthsImpl(format, index, 'monthsShort');
+    }
+
+    function listWeekdays(localeSorted, format, index) {
+        return listWeekdaysImpl(localeSorted, format, index, 'weekdays');
+    }
+
+    function listWeekdaysShort(localeSorted, format, index) {
+        return listWeekdaysImpl(localeSorted, format, index, 'weekdaysShort');
+    }
+
+    function listWeekdaysMin(localeSorted, format, index) {
+        return listWeekdaysImpl(localeSorted, format, index, 'weekdaysMin');
+    }
+
+    getSetGlobalLocale('en', {
+        dayOfMonthOrdinalParse: /\d{1,2}(th|st|nd|rd)/,
+        ordinal: function ordinal(number) {
+            var b = number % 10,
+                output = toInt(number % 100 / 10) === 1 ? 'th' : b === 1 ? 'st' : b === 2 ? 'nd' : b === 3 ? 'rd' : 'th';
+            return number + output;
+        }
+    });
+
+    // Side effect imports
+
+    hooks.lang = deprecate('moment.lang is deprecated. Use moment.locale instead.', getSetGlobalLocale);
+    hooks.langData = deprecate('moment.langData is deprecated. Use moment.localeData instead.', getLocale);
+
+    var mathAbs = Math.abs;
+
+    function abs() {
+        var data = this._data;
+
+        this._milliseconds = mathAbs(this._milliseconds);
+        this._days = mathAbs(this._days);
+        this._months = mathAbs(this._months);
+
+        data.milliseconds = mathAbs(data.milliseconds);
+        data.seconds = mathAbs(data.seconds);
+        data.minutes = mathAbs(data.minutes);
+        data.hours = mathAbs(data.hours);
+        data.months = mathAbs(data.months);
+        data.years = mathAbs(data.years);
+
+        return this;
+    }
+
+    function addSubtract$1(duration, input, value, direction) {
+        var other = createDuration(input, value);
+
+        duration._milliseconds += direction * other._milliseconds;
+        duration._days += direction * other._days;
+        duration._months += direction * other._months;
+
+        return duration._bubble();
+    }
+
+    // supports only 2.0-style add(1, 's') or add(duration)
+    function add$1(input, value) {
+        return addSubtract$1(this, input, value, 1);
+    }
+
+    // supports only 2.0-style subtract(1, 's') or subtract(duration)
+    function subtract$1(input, value) {
+        return addSubtract$1(this, input, value, -1);
+    }
+
+    function absCeil(number) {
+        if (number < 0) {
+            return Math.floor(number);
+        } else {
+            return Math.ceil(number);
+        }
+    }
+
+    function bubble() {
+        var milliseconds = this._milliseconds;
+        var days = this._days;
+        var months = this._months;
+        var data = this._data;
+        var seconds, minutes, hours, years, monthsFromDays;
+
+        // if we have a mix of positive and negative values, bubble down first
+        // check: https://github.com/moment/moment/issues/2166
+        if (!(milliseconds >= 0 && days >= 0 && months >= 0 || milliseconds <= 0 && days <= 0 && months <= 0)) {
+            milliseconds += absCeil(monthsToDays(months) + days) * 864e5;
+            days = 0;
+            months = 0;
+        }
+
+        // The following code bubbles up values, see the tests for
+        // examples of what that means.
+        data.milliseconds = milliseconds % 1000;
+
+        seconds = absFloor(milliseconds / 1000);
+        data.seconds = seconds % 60;
+
+        minutes = absFloor(seconds / 60);
+        data.minutes = minutes % 60;
+
+        hours = absFloor(minutes / 60);
+        data.hours = hours % 24;
+
+        days += absFloor(hours / 24);
+
+        // convert days to months
+        monthsFromDays = absFloor(daysToMonths(days));
+        months += monthsFromDays;
+        days -= absCeil(monthsToDays(monthsFromDays));
+
+        // 12 months -> 1 year
+        years = absFloor(months / 12);
+        months %= 12;
+
+        data.days = days;
+        data.months = months;
+        data.years = years;
+
+        return this;
+    }
+
+    function daysToMonths(days) {
+        // 400 years have 146097 days (taking into account leap year rules)
+        // 400 years have 12 months === 4800
+        return days * 4800 / 146097;
+    }
+
+    function monthsToDays(months) {
+        // the reverse of daysToMonths
+        return months * 146097 / 4800;
+    }
+
+    function as(units) {
+        if (!this.isValid()) {
+            return NaN;
+        }
+        var days;
+        var months;
+        var milliseconds = this._milliseconds;
+
+        units = normalizeUnits(units);
+
+        if (units === 'month' || units === 'quarter' || units === 'year') {
+            days = this._days + milliseconds / 864e5;
+            months = this._months + daysToMonths(days);
+            switch (units) {
+                case 'month':
+                    return months;
+                case 'quarter':
+                    return months / 3;
+                case 'year':
+                    return months / 12;
+            }
+        } else {
+            // handle milliseconds separately because of floating point math errors (issue #1867)
+            days = this._days + Math.round(monthsToDays(this._months));
+            switch (units) {
+                case 'week':
+                    return days / 7 + milliseconds / 6048e5;
+                case 'day':
+                    return days + milliseconds / 864e5;
+                case 'hour':
+                    return days * 24 + milliseconds / 36e5;
+                case 'minute':
+                    return days * 1440 + milliseconds / 6e4;
+                case 'second':
+                    return days * 86400 + milliseconds / 1000;
+                // Math.floor prevents floating point math errors here
+                case 'millisecond':
+                    return Math.floor(days * 864e5) + milliseconds;
+                default:
+                    throw new Error('Unknown unit ' + units);
+            }
+        }
+    }
+
+    // TODO: Use this.as('ms')?
+    function valueOf$1() {
+        if (!this.isValid()) {
+            return NaN;
+        }
+        return this._milliseconds + this._days * 864e5 + this._months % 12 * 2592e6 + toInt(this._months / 12) * 31536e6;
+    }
+
+    function makeAs(alias) {
+        return function () {
+            return this.as(alias);
+        };
+    }
+
+    var asMilliseconds = makeAs('ms');
+    var asSeconds = makeAs('s');
+    var asMinutes = makeAs('m');
+    var asHours = makeAs('h');
+    var asDays = makeAs('d');
+    var asWeeks = makeAs('w');
+    var asMonths = makeAs('M');
+    var asQuarters = makeAs('Q');
+    var asYears = makeAs('y');
+
+    function clone$1() {
+        return createDuration(this);
+    }
+
+    function get$2(units) {
+        units = normalizeUnits(units);
+        return this.isValid() ? this[units + 's']() : NaN;
+    }
+
+    function makeGetter(name) {
+        return function () {
+            return this.isValid() ? this._data[name] : NaN;
+        };
+    }
+
+    var milliseconds = makeGetter('milliseconds');
+    var seconds = makeGetter('seconds');
+    var minutes = makeGetter('minutes');
+    var hours = makeGetter('hours');
+    var days = makeGetter('days');
+    var months = makeGetter('months');
+    var years = makeGetter('years');
+
+    function weeks() {
+        return absFloor(this.days() / 7);
+    }
+
+    var round = Math.round;
+    var thresholds = {
+        ss: 44, // a few seconds to seconds
+        s: 45, // seconds to minute
+        m: 45, // minutes to hour
+        h: 22, // hours to day
+        d: 26, // days to month
+        M: 11 // months to year
+    };
+
+    // helper function for moment.fn.from, moment.fn.fromNow, and moment.duration.fn.humanize
+    function substituteTimeAgo(string, number, withoutSuffix, isFuture, locale) {
+        return locale.relativeTime(number || 1, !!withoutSuffix, string, isFuture);
+    }
+
+    function relativeTime$1(posNegDuration, withoutSuffix, locale) {
+        var duration = createDuration(posNegDuration).abs();
+        var seconds = round(duration.as('s'));
+        var minutes = round(duration.as('m'));
+        var hours = round(duration.as('h'));
+        var days = round(duration.as('d'));
+        var months = round(duration.as('M'));
+        var years = round(duration.as('y'));
+
+        var a = seconds <= thresholds.ss && ['s', seconds] || seconds < thresholds.s && ['ss', seconds] || minutes <= 1 && ['m'] || minutes < thresholds.m && ['mm', minutes] || hours <= 1 && ['h'] || hours < thresholds.h && ['hh', hours] || days <= 1 && ['d'] || days < thresholds.d && ['dd', days] || months <= 1 && ['M'] || months < thresholds.M && ['MM', months] || years <= 1 && ['y'] || ['yy', years];
+
+        a[2] = withoutSuffix;
+        a[3] = +posNegDuration > 0;
+        a[4] = locale;
+        return substituteTimeAgo.apply(null, a);
+    }
+
+    // This function allows you to set the rounding function for relative time strings
+    function getSetRelativeTimeRounding(roundingFunction) {
+        if (roundingFunction === undefined) {
+            return round;
+        }
+        if (typeof roundingFunction === 'function') {
+            round = roundingFunction;
+            return true;
+        }
+        return false;
+    }
+
+    // This function allows you to set a threshold for relative time strings
+    function getSetRelativeTimeThreshold(threshold, limit) {
+        if (thresholds[threshold] === undefined) {
+            return false;
+        }
+        if (limit === undefined) {
+            return thresholds[threshold];
+        }
+        thresholds[threshold] = limit;
+        if (threshold === 's') {
+            thresholds.ss = limit - 1;
+        }
+        return true;
+    }
+
+    function humanize(withSuffix) {
+        if (!this.isValid()) {
+            return this.localeData().invalidDate();
+        }
+
+        var locale = this.localeData();
+        var output = relativeTime$1(this, !withSuffix, locale);
+
+        if (withSuffix) {
+            output = locale.pastFuture(+this, output);
+        }
+
+        return locale.postformat(output);
+    }
+
+    var abs$1 = Math.abs;
+
+    function sign(x) {
+        return (x > 0) - (x < 0) || +x;
+    }
+
+    function toISOString$1() {
+        // for ISO strings we do not use the normal bubbling rules:
+        //  * milliseconds bubble up until they become hours
+        //  * days do not bubble at all
+        //  * months bubble up until they become years
+        // This is because there is no context-free conversion between hours and days
+        // (think of clock changes)
+        // and also not between days and months (28-31 days per month)
+        if (!this.isValid()) {
+            return this.localeData().invalidDate();
+        }
+
+        var seconds = abs$1(this._milliseconds) / 1000;
+        var days = abs$1(this._days);
+        var months = abs$1(this._months);
+        var minutes, hours, years;
+
+        // 3600 seconds -> 60 minutes -> 1 hour
+        minutes = absFloor(seconds / 60);
+        hours = absFloor(minutes / 60);
+        seconds %= 60;
+        minutes %= 60;
+
+        // 12 months -> 1 year
+        years = absFloor(months / 12);
+        months %= 12;
+
+        // inspired by https://github.com/dordille/moment-isoduration/blob/master/moment.isoduration.js
+        var Y = years;
+        var M = months;
+        var D = days;
+        var h = hours;
+        var m = minutes;
+        var s = seconds ? seconds.toFixed(3).replace(/\.?0+$/, '') : '';
+        var total = this.asSeconds();
+
+        if (!total) {
+            // this is the same as C#'s (Noda) and python (isodate)...
+            // but not other JS (goog.date)
+            return 'P0D';
+        }
+
+        var totalSign = total < 0 ? '-' : '';
+        var ymSign = sign(this._months) !== sign(total) ? '-' : '';
+        var daysSign = sign(this._days) !== sign(total) ? '-' : '';
+        var hmsSign = sign(this._milliseconds) !== sign(total) ? '-' : '';
+
+        return totalSign + 'P' + (Y ? ymSign + Y + 'Y' : '') + (M ? ymSign + M + 'M' : '') + (D ? daysSign + D + 'D' : '') + (h || m || s ? 'T' : '') + (h ? hmsSign + h + 'H' : '') + (m ? hmsSign + m + 'M' : '') + (s ? hmsSign + s + 'S' : '');
+    }
+
+    var proto$2 = Duration.prototype;
+
+    proto$2.isValid = isValid$1;
+    proto$2.abs = abs;
+    proto$2.add = add$1;
+    proto$2.subtract = subtract$1;
+    proto$2.as = as;
+    proto$2.asMilliseconds = asMilliseconds;
+    proto$2.asSeconds = asSeconds;
+    proto$2.asMinutes = asMinutes;
+    proto$2.asHours = asHours;
+    proto$2.asDays = asDays;
+    proto$2.asWeeks = asWeeks;
+    proto$2.asMonths = asMonths;
+    proto$2.asQuarters = asQuarters;
+    proto$2.asYears = asYears;
+    proto$2.valueOf = valueOf$1;
+    proto$2._bubble = bubble;
+    proto$2.clone = clone$1;
+    proto$2.get = get$2;
+    proto$2.milliseconds = milliseconds;
+    proto$2.seconds = seconds;
+    proto$2.minutes = minutes;
+    proto$2.hours = hours;
+    proto$2.days = days;
+    proto$2.weeks = weeks;
+    proto$2.months = months;
+    proto$2.years = years;
+    proto$2.humanize = humanize;
+    proto$2.toISOString = toISOString$1;
+    proto$2.toString = toISOString$1;
+    proto$2.toJSON = toISOString$1;
+    proto$2.locale = locale;
+    proto$2.localeData = localeData;
+
+    proto$2.toIsoString = deprecate('toIsoString() is deprecated. Please use toISOString() instead (notice the capitals)', toISOString$1);
+    proto$2.lang = lang;
+
+    // Side effect imports
+
+    // FORMATTING
+
+    addFormatToken('X', 0, 0, 'unix');
+    addFormatToken('x', 0, 0, 'valueOf');
+
+    // PARSING
+
+    addRegexToken('x', matchSigned);
+    addRegexToken('X', matchTimestamp);
+    addParseToken('X', function (input, array, config) {
+        config._d = new Date(parseFloat(input, 10) * 1000);
+    });
+    addParseToken('x', function (input, array, config) {
+        config._d = new Date(toInt(input));
+    });
+
+    // Side effect imports
+
+
+    hooks.version = '2.24.0';
+
+    setHookCallback(createLocal);
+
+    hooks.fn = proto;
+    hooks.min = min;
+    hooks.max = max;
+    hooks.now = now;
+    hooks.utc = createUTC;
+    hooks.unix = createUnix;
+    hooks.months = listMonths;
+    hooks.isDate = isDate;
+    hooks.locale = getSetGlobalLocale;
+    hooks.invalid = createInvalid;
+    hooks.duration = createDuration;
+    hooks.isMoment = isMoment;
+    hooks.weekdays = listWeekdays;
+    hooks.parseZone = createInZone;
+    hooks.localeData = getLocale;
+    hooks.isDuration = isDuration;
+    hooks.monthsShort = listMonthsShort;
+    hooks.weekdaysMin = listWeekdaysMin;
+    hooks.defineLocale = defineLocale;
+    hooks.updateLocale = updateLocale;
+    hooks.locales = listLocales;
+    hooks.weekdaysShort = listWeekdaysShort;
+    hooks.normalizeUnits = normalizeUnits;
+    hooks.relativeTimeRounding = getSetRelativeTimeRounding;
+    hooks.relativeTimeThreshold = getSetRelativeTimeThreshold;
+    hooks.calendarFormat = getCalendarFormat;
+    hooks.prototype = proto;
+
+    // currently HTML5 input type only supports 24-hour formats
+    hooks.HTML5_FMT = {
+        DATETIME_LOCAL: 'YYYY-MM-DDTHH:mm', // <input type="datetime-local" />
+        DATETIME_LOCAL_SECONDS: 'YYYY-MM-DDTHH:mm:ss', // <input type="datetime-local" step="1" />
+        DATETIME_LOCAL_MS: 'YYYY-MM-DDTHH:mm:ss.SSS', // <input type="datetime-local" step="0.001" />
+        DATE: 'YYYY-MM-DD', // <input type="date" />
+        TIME: 'HH:mm', // <input type="time" />
+        TIME_SECONDS: 'HH:mm:ss', // <input type="time" step="1" />
+        TIME_MS: 'HH:mm:ss.SSS', // <input type="time" step="0.001" />
+        WEEK: 'GGGG-[W]WW', // <input type="week" />
+        MONTH: 'YYYY-MM' // <input type="month" />
+    };
+
+    return hooks;
+});
+});
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+  return typeof obj;
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+};
+
+function _toConsumableArray(arr) {
+  if (Array.isArray(arr)) {
+    for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) {
+      arr2[i] = arr[i];
+    }return arr2;
+  } else {
+    return Array.from(arr);
+  }
+}
+
+var vueMoment = {
+  install: function install(Vue, options) {
+    var moment$$1 = options && options.moment ? options.moment : moment;
+
+    Object.defineProperties(Vue.prototype, {
+      $moment: {
+        get: function get() {
+          return moment$$1;
+        }
+      }
+    });
+
+    Vue.moment = moment$$1;
+
+    Vue.filter('moment', function () {
+      var arguments$1 = arguments;
+
+      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments$1[_key];
+      }
+
+      args = Array.prototype.slice.call(args);
+      var input = args.shift();
+      var date = void 0;
+
+      if (Array.isArray(input) && typeof input[0] === 'string') {
+        // If input is array, assume we're being passed a format pattern to parse against.
+        // Format pattern will accept an array of potential formats to parse against.
+        // Date string should be at [0], format pattern(s) should be at [1]
+        date = moment$$1(input[0], input[1], true);
+      } else if (typeof input === 'number') {
+        if (input.toString().length < 12) {
+          // If input is an integer with fewer than 12 digits, assume Unix seconds...
+          date = moment$$1.unix(input);
+        } else {
+          // ..otherwise, assume milliseconds.
+          date = moment$$1(input);
+        }
+      } else {
+        // Otherwise, throw the input at moment and see what happens...
+        date = moment$$1(input);
+      }
+
+      if (!input || !date.isValid()) {
+        // Log a warning if moment couldn't reconcile the input. Better than throwing an error?
+        console.warn('Could not build a valid `moment` object from input.');
+        return input;
+      }
+
+      function parse() {
+        var arguments$1 = arguments;
+
+        for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+          args[_key2] = arguments$1[_key2];
+        }
+
+        args = Array.prototype.slice.call(args);
+        var method = args.shift();
+
+        switch (method) {
+          case 'add':
+            {
+              /*
+              * Mutates the original moment by adding time.
+              * http://momentjs.com/docs/#/manipulating/add/
+              */
+
+              var addends = args.shift().split(',').map(Function.prototype.call, String.prototype.trim);
+              var obj = {};
+
+              for (var n = 0; n < addends.length; n++) {
+                var addend = addends[n].split(' ');
+                obj[addend[1]] = addend[0];
+              }
+              date.add(obj);
+              break;
+            }
+
+          case 'subtract':
+            {
+              /*
+              * Mutates the original moment by subtracting time.
+              * http://momentjs.com/docs/#/manipulating/subtract/
+              */
+
+              var subtrahends = args.shift().split(',').map(Function.prototype.call, String.prototype.trim);
+              var _obj = {};
+
+              for (var _n = 0; _n < subtrahends.length; _n++) {
+                var subtrahend = subtrahends[_n].split(' ');
+                _obj[subtrahend[1]] = subtrahend[0];
+              }
+              date.subtract(_obj);
+              break;
+            }
+
+          case 'from':
+            {
+              /*
+              * Display a moment in relative time, either from now or from a specified date.
+              * http://momentjs.com/docs/#/displaying/fromnow/
+              */
+
+              var from = 'now';
+              var removeSuffix = false;
+
+              if (args[0] === 'now') { args.shift(); }
+              // If valid, assume it is a date we want the output computed against.
+              if (moment$$1(args[0]).isValid()) { from = moment$$1(args.shift()); }
+
+              if (args[0] === true) {
+                args.shift();
+                removeSuffix = true;
+              }
+
+              if (from !== 'now') {
+                date = date.from(from, removeSuffix);
+              } else {
+                date = date.fromNow(removeSuffix);
+              }
+              break;
+            }
+
+          case 'diff':
+            {
+              /*
+              * Mutates the original moment by doing a difference with another date.
+              * http://momentjs.com/docs/#/displaying/difference/
+              */
+
+              var referenceTime = moment$$1();
+              var units = '';
+              var float = false;
+
+              if (moment$$1(args[0]).isValid()) {
+                // If valid, assume it is a date we want the output computed against.
+                referenceTime = moment$$1(args.shift());
+              } else if (args[0] === null || args[0] === 'now') {
+                // If null or 'now', remove argument and proceed with default referenceTime.
+                args.shift();
+              }
+
+              if (args[0]) { units = args.shift(); }
+
+              if (args[0] === true) { float = args.shift(); }
+
+              date = date.diff(referenceTime, units, float);
+              break;
+            }
+
+          case 'calendar':
+            {
+              /*
+              * Formats a date with different strings depending on how close
+              * to a certain date (today by default) the date is.
+              * http://momentjs.com/docs/#/displaying/calendar-time/
+              */
+
+              var _referenceTime = moment$$1();
+              var formats = {};
+
+              if (moment$$1(args[0]).isValid()) {
+                // If valid, assume it is a date we want the output computed against.
+                _referenceTime = moment$$1(args.shift());
+              } else if (args[0] === null || args[0] === 'now') {
+                // If null or 'now', remove argument and proceed with default referenceTime.
+                args.shift();
+              }
+
+              if (_typeof(args[0]) === 'object') { formats = args.shift(); }
+
+              date = date.calendar(_referenceTime, formats);
+              break;
+            }
+
+          case 'utc':
+            {
+              /*
+              * Mutates the original moment by converting to UTC
+              * https://momentjs.com/docs/#/manipulating/utc/
+              */
+              date.utc();
+              break;
+            }
+
+          case 'timezone':
+            {
+              /*
+              * Mutates the original moment by converting to a new timezone.
+              * https://momentjs.com/timezone/docs/#/using-timezones/converting-to-zone/
+              */
+              date.tz(args.shift());
+              break;
+            }
+
+          default:
+            {
+              /*
+              * Formats a date by taking a string of tokens and replacing
+              * them with their corresponding values.
+              * http://momentjs.com/docs/#/displaying/format/
+              */
+
+              var format = method;
+              date = date.format(format);
+            }
+        }
+
+        if (args.length) { parse.apply(parse, args); }
+      }
+
+      parse.apply(parse, args);
+
+      return date;
+    });
+
+    Vue.filter('duration', function () {
+      var arguments$1 = arguments;
+
+      for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+        args[_key3] = arguments$1[_key3];
+      }
+
+      /*
+      * Basic pass-through filter for leveraging moment.js's ability
+      * to manipulate and display durations.
+      * https://momentjs.com/docs/#/durations/
+      */
+      args = Array.prototype.slice.call(args);
+      var input = args.shift();
+      var method = args.shift();
+
+      function createDuration(time) {
+        if (!Array.isArray(time)) { time = [time]; }
+        var result = moment$$1.duration.apply(moment$$1, _toConsumableArray(time));
+        if (!result.isValid()) { console.warn('Could not build a valid `duration` object from input.'); }
+        return result;
+      }
+      var duration = createDuration(input);
+
+      if (method === 'add' || method === 'subtract') {
+        // Generates a duration object and either adds or subtracts it
+        // from our original duration.
+        var durationChange = createDuration(args);
+        duration[method](durationChange);
+      } else if (duration && duration[method]) {
+        var _duration;
+
+        // This gives a full proxy to moment.duration functions.
+        duration = (_duration = duration)[method].apply(_duration, _toConsumableArray(args));
+      }
+
+      return duration;
+    });
+  }
+};
+
+var vueMoment_1 = vueMoment.install;
+
+exports['default'] = vueMoment;
+exports.install = vueMoment_1;
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+})));
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js")))
+
+/***/ }),
+
+/***/ "./node_modules/vue-notification/dist/index.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/vue-notification/dist/index.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(true)
+		module.exports = factory(__webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js"));
+	else {}
+})(this, function(__WEBPACK_EXTERNAL_MODULE_20__) {
+return /******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// identity function for calling harmony imports with the correct context
+/******/ 	__webpack_require__.i = function(value) { return value; };
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "/dist/";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ (function(module, exports) {
+
+// this module is a runtime utility for cleaner component module output and will
+// be included in the final webpack user bundle
+
+module.exports = function normalizeComponent (
+  rawScriptExports,
+  compiledTemplate,
+  scopeId,
+  cssModules
+) {
+  var esModule
+  var scriptExports = rawScriptExports = rawScriptExports || {}
+
+  // ES6 modules interop
+  var type = typeof rawScriptExports.default
+  if (type === 'object' || type === 'function') {
+    esModule = rawScriptExports
+    scriptExports = rawScriptExports.default
+  }
+
+  // Vue.extend constructor export interop
+  var options = typeof scriptExports === 'function'
+    ? scriptExports.options
+    : scriptExports
+
+  // render functions
+  if (compiledTemplate) {
+    options.render = compiledTemplate.render
+    options.staticRenderFns = compiledTemplate.staticRenderFns
+  }
+
+  // scopedId
+  if (scopeId) {
+    options._scopeId = scopeId
+  }
+
+  // inject cssModules
+  if (cssModules) {
+    var computed = Object.create(options.computed || null)
+    Object.keys(cssModules).forEach(function (key) {
+      var module = cssModules[key]
+      computed[key] = function () { return module }
+    })
+    options.computed = computed
+  }
+
+  return {
+    esModule: esModule,
+    exports: scriptExports,
+    options: options
+  }
+}
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return events; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
+
+
+var events = new __WEBPACK_IMPORTED_MODULE_0_vue___default.a({ name: 'vue-notification' });
+
+/***/ }),
+/* 2 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Notifications_vue__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Notifications_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__Notifications_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__events__ = __webpack_require__(1);
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+
+
+
+var Notify = {
+  install: function install(Vue) {
+    var args = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    if (this.installed) {
+      return;
+    }
+
+    this.installed = true;
+    this.params = args;
+
+    Vue.component(args.componentName || 'notifications', __WEBPACK_IMPORTED_MODULE_0__Notifications_vue___default.a);
+
+    var notify = function notify(params) {
+      if (typeof params === 'string') {
+        params = { title: '', text: params };
+      }
+
+      if ((typeof params === 'undefined' ? 'undefined' : _typeof(params)) === 'object') {
+        __WEBPACK_IMPORTED_MODULE_1__events__["a" /* events */].$emit('add', params);
+      }
+    };
+
+    notify.close = function (id) {
+      __WEBPACK_IMPORTED_MODULE_1__events__["a" /* events */].$emit('close', id);
+    };
+
+    var name = args.name || 'notify';
+
+    Vue.prototype['$' + name] = notify;
+    Vue[name] = notify;
+  }
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (Notify);
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(17)
+
+var Component = __webpack_require__(0)(
+  /* script */
+  __webpack_require__(5),
+  /* template */
+  __webpack_require__(15),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: 'CssGroup',
+  props: ['name']
+});
+
+/***/ }),
+/* 5 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__index__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__events__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__util__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__defaults__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__VelocityGroup_vue__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__VelocityGroup_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__VelocityGroup_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__CssGroup_vue__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__CssGroup_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5__CssGroup_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__parser__ = __webpack_require__(8);
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+
+
+
+
+
+
+
+var STATE = {
+  IDLE: 0,
+  DESTROYED: 2
+};
+
+var Component = {
+  name: 'Notifications',
+  components: {
+    VelocityGroup: __WEBPACK_IMPORTED_MODULE_4__VelocityGroup_vue___default.a,
+    CssGroup: __WEBPACK_IMPORTED_MODULE_5__CssGroup_vue___default.a
+  },
+  props: {
+    group: {
+      type: String,
+      default: ''
+    },
+
+    width: {
+      type: [Number, String],
+      default: 300
+    },
+
+    reverse: {
+      type: Boolean,
+      default: false
+    },
+
+    position: {
+      type: [String, Array],
+      default: function _default() {
+        return __WEBPACK_IMPORTED_MODULE_3__defaults__["a" /* default */].position;
+      }
+    },
+
+    classes: {
+      type: String,
+      default: 'vue-notification'
+    },
+
+    animationType: {
+      type: String,
+      default: 'css',
+      validator: function validator(value) {
+        return value === 'css' || value === 'velocity';
+      }
+    },
+
+    animation: {
+      type: Object,
+      default: function _default() {
+        return __WEBPACK_IMPORTED_MODULE_3__defaults__["a" /* default */].velocityAnimation;
+      }
+    },
+
+    animationName: {
+      type: String,
+      default: __WEBPACK_IMPORTED_MODULE_3__defaults__["a" /* default */].cssAnimation
+    },
+
+    speed: {
+      type: Number,
+      default: 300
+    },
+
+    cooldown: {
+      type: Number,
+      default: 0
+    },
+
+    duration: {
+      type: Number,
+      default: 3000
+    },
+
+    delay: {
+      type: Number,
+      default: 0
+    },
+
+    max: {
+      type: Number,
+      default: Infinity
+    },
+
+    ignoreDuplicates: {
+      type: Boolean,
+      default: false
+    },
+
+    closeOnClick: {
+      type: Boolean,
+      default: true
+    }
+  },
+  data: function data() {
+    return {
+      list: [],
+      velocity: __WEBPACK_IMPORTED_MODULE_0__index__["default"].params.velocity
+    };
+  },
+  mounted: function mounted() {
+    __WEBPACK_IMPORTED_MODULE_1__events__["a" /* events */].$on('add', this.addItem);
+    __WEBPACK_IMPORTED_MODULE_1__events__["a" /* events */].$on('close', this.closeItem);
+  },
+
+  computed: {
+    actualWidth: function actualWidth() {
+      return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_6__parser__["a" /* default */])(this.width);
+    },
+    isVA: function isVA() {
+      return this.animationType === 'velocity';
+    },
+    componentName: function componentName() {
+      return this.isVA ? 'VelocityGroup' : 'CssGroup';
+    },
+    styles: function styles() {
+      var _listToDirection = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__util__["a" /* listToDirection */])(this.position),
+          x = _listToDirection.x,
+          y = _listToDirection.y;
+
+      var width = this.actualWidth.value;
+      var suffix = this.actualWidth.type;
+
+      var styles = _defineProperty({
+        width: width + suffix
+      }, y, '0px');
+
+      if (x === 'center') {
+        styles['left'] = 'calc(50% - ' + width / 2 + suffix + ')';
+      } else {
+        styles[x] = '0px';
+      }
+
+      return styles;
+    },
+    active: function active() {
+      return this.list.filter(function (v) {
+        return v.state !== STATE.DESTROYED;
+      });
+    },
+    botToTop: function botToTop() {
+      return this.styles.hasOwnProperty('bottom');
+    }
+  },
+  methods: {
+    destroyIfNecessary: function destroyIfNecessary(item) {
+      if (this.closeOnClick) {
+        this.destroy(item);
+      }
+    },
+    addItem: function addItem(event) {
+      var _this = this;
+
+      event.group = event.group || '';
+
+      if (this.group !== event.group) {
+        return;
+      }
+
+      if (event.clean || event.clear) {
+        this.destroyAll();
+        return;
+      }
+
+      var duration = typeof event.duration === 'number' ? event.duration : this.duration;
+
+      var speed = typeof event.speed === 'number' ? event.speed : this.speed;
+
+      var ignoreDuplicates = typeof event.ignoreDuplicates === 'boolean' ? event.ignoreDuplicates : this.ignoreDuplicates;
+
+      var title = event.title,
+          text = event.text,
+          type = event.type,
+          data = event.data,
+          id = event.id;
+
+
+      var item = {
+        id: id || __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__util__["b" /* Id */])(),
+        title: title,
+        text: text,
+        type: type,
+        state: STATE.IDLE,
+        speed: speed,
+        length: duration + 2 * speed,
+        data: data
+      };
+
+      if (duration >= 0) {
+        item.timer = setTimeout(function () {
+          _this.destroy(item);
+        }, item.length);
+      }
+
+      var direction = this.reverse ? !this.botToTop : this.botToTop;
+
+      var indexToDestroy = -1;
+
+      var isDuplicate = this.active.some(function (item) {
+        return item.title === event.title && item.text === event.text;
+      });
+
+      var canAdd = ignoreDuplicates ? !isDuplicate : true;
+
+      if (!canAdd) return;
+
+      if (direction) {
+        this.list.push(item);
+
+        if (this.active.length > this.max) {
+          indexToDestroy = 0;
+        }
+      } else {
+        this.list.unshift(item);
+
+        if (this.active.length > this.max) {
+          indexToDestroy = this.active.length - 1;
+        }
+      }
+
+      if (indexToDestroy !== -1) {
+        this.destroy(this.active[indexToDestroy]);
+      }
+    },
+    closeItem: function closeItem(id) {
+      this.destroyById(id);
+    },
+    notifyClass: function notifyClass(item) {
+      return ['vue-notification-template', this.classes, item.type];
+    },
+    notifyWrapperStyle: function notifyWrapperStyle(item) {
+      return this.isVA ? null : { transition: 'all ' + item.speed + 'ms' };
+    },
+    destroy: function destroy(item) {
+      clearTimeout(item.timer);
+      item.state = STATE.DESTROYED;
+
+      if (!this.isVA) {
+        this.clean();
+      }
+    },
+    destroyById: function destroyById(id) {
+      var item = this.list.find(function (v) {
+        return v.id === id;
+      });
+
+      if (item) {
+        this.destroy(item);
+      }
+    },
+    destroyAll: function destroyAll() {
+      this.active.forEach(this.destroy);
+    },
+    getAnimation: function getAnimation(index, el) {
+      var animation = this.animation[index];
+
+      return typeof animation === 'function' ? animation.call(this, el) : animation;
+    },
+    enter: function enter(_ref) {
+      var el = _ref.el,
+          complete = _ref.complete;
+
+      var animation = this.getAnimation('enter', el);
+
+      this.velocity(el, animation, {
+        duration: this.speed,
+        complete: complete
+      });
+    },
+    leave: function leave(_ref2) {
+      var el = _ref2.el,
+          complete = _ref2.complete;
+
+      var animation = this.getAnimation('leave', el);
+
+      this.velocity(el, animation, {
+        duration: this.speed,
+        complete: complete
+      });
+    },
+    clean: function clean() {
+      this.list = this.list.filter(function (v) {
+        return v.state !== STATE.DESTROYED;
+      });
+    }
+  }
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (Component);
+
+/***/ }),
+/* 6 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: 'VelocityGroup',
+  methods: {
+    enter: function enter(el, complete) {
+      this.$emit('enter', { el: el, complete: complete });
+    },
+    leave: function leave(el, complete) {
+      this.$emit('leave', { el: el, complete: complete });
+    },
+    afterLeave: function afterLeave() {
+      this.$emit('afterLeave');
+    }
+  }
+});
+
+/***/ }),
+/* 7 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony default export */ __webpack_exports__["a"] = ({
+  position: ['top', 'right'],
+  cssAnimation: 'vn-fade',
+  velocityAnimation: {
+    enter: function enter(el) {
+      var height = el.clientHeight;
+
+      return {
+        height: [height, 0],
+        opacity: [1, 0]
+      };
+    },
+    leave: {
+      height: 0,
+      opacity: [0, 1]
+    }
+  }
+});
+
+/***/ }),
+/* 8 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* unused harmony export parse */
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var floatRegexp = '[-+]?[0-9]*.?[0-9]+';
+
+var types = [{
+  name: 'px',
+  regexp: new RegExp('^' + floatRegexp + 'px$')
+}, {
+  name: '%',
+  regexp: new RegExp('^' + floatRegexp + '%$')
+}, {
+  name: 'px',
+  regexp: new RegExp('^' + floatRegexp + '$')
+}];
+
+var getType = function getType(value) {
+  if (value === 'auto') {
+    return {
+      type: value,
+      value: 0
+    };
+  }
+
+  for (var i = 0; i < types.length; i++) {
+    var type = types[i];
+    if (type.regexp.test(value)) {
+      return {
+        type: type.name,
+        value: parseFloat(value)
+      };
+    }
+  }
+
+  return {
+    type: '',
+    value: value
+  };
+};
+
+var parse = function parse(value) {
+  switch (typeof value === 'undefined' ? 'undefined' : _typeof(value)) {
+    case 'number':
+      return { type: 'px', value: value };
+    case 'string':
+      return getType(value);
+    default:
+      return { type: '', value: value };
+  }
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (parse);
+
+/***/ }),
+/* 9 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return Id; });
+/* unused harmony export split */
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return listToDirection; });
+var directions = {
+  x: ['left', 'center', 'right'],
+  y: ['top', 'bottom']
+};
+
+var Id = function (i) {
+  return function () {
+    return i++;
+  };
+}(0);
+
+var split = function split(value) {
+  if (typeof value !== 'string') {
+    return [];
+  }
+
+  return value.split(/\s+/gi).filter(function (v) {
+    return v;
+  });
+};
+
+var listToDirection = function listToDirection(value) {
+  if (typeof value === 'string') {
+    value = split(value);
+  }
+
+  var x = null;
+  var y = null;
+
+  value.forEach(function (v) {
+    if (directions.y.indexOf(v) !== -1) {
+      y = v;
+    }
+    if (directions.x.indexOf(v) !== -1) {
+      x = v;
+    }
+  });
+
+  return { x: x, y: y };
+};
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(11)();
+// imports
+
+
+// module
+exports.push([module.i, ".vue-notification-group{display:block;position:fixed;z-index:5000}.vue-notification-wrapper{display:block;overflow:hidden;width:100%;margin:0;padding:0}.notification-title{font-weight:600}.vue-notification-template{background:#fff}.vue-notification,.vue-notification-template{display:block;box-sizing:border-box;text-align:left}.vue-notification{font-size:12px;padding:10px;margin:0 5px 5px;color:#fff;background:#44a4fc;border-left:5px solid #187fe7}.vue-notification.warn{background:#ffb648;border-left-color:#f48a06}.vue-notification.error{background:#e54d42;border-left-color:#b82e24}.vue-notification.success{background:#68cd86;border-left-color:#42a85f}.vn-fade-enter-active,.vn-fade-leave-active,.vn-fade-move{transition:all .5s}.vn-fade-enter,.vn-fade-leave-to{opacity:0}", ""]);
+
+// exports
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports) {
+
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+// css base code, injected by the css-loader
+module.exports = function() {
+	var list = [];
+
+	// return the list of modules as css string
+	list.toString = function toString() {
+		var result = [];
+		for(var i = 0; i < this.length; i++) {
+			var item = this[i];
+			if(item[2]) {
+				result.push("@media " + item[2] + "{" + item[1] + "}");
+			} else {
+				result.push(item[1]);
+			}
+		}
+		return result.join("");
+	};
+
+	// import a list of modules into the list
+	list.i = function(modules, mediaQuery) {
+		if(typeof modules === "string")
+			modules = [[null, modules, ""]];
+		var alreadyImportedModules = {};
+		for(var i = 0; i < this.length; i++) {
+			var id = this[i][0];
+			if(typeof id === "number")
+				alreadyImportedModules[id] = true;
+		}
+		for(i = 0; i < modules.length; i++) {
+			var item = modules[i];
+			// skip already imported module
+			// this implementation is not 100% perfect for weird media query combinations
+			//  when a module is imported multiple times with different media queries.
+			//  I hope this will never occur (Hey this way we have smaller bundles)
+			if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+				if(mediaQuery && !item[2]) {
+					item[2] = mediaQuery;
+				} else if(mediaQuery) {
+					item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+				}
+				list.push(item);
+			}
+		}
+	};
+	return list;
+};
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Component = __webpack_require__(0)(
+  /* script */
+  __webpack_require__(4),
+  /* template */
+  __webpack_require__(16),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Component = __webpack_require__(0)(
+  /* script */
+  __webpack_require__(6),
+  /* template */
+  __webpack_require__(14),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('transition-group', {
+    attrs: {
+      "css": false
+    },
+    on: {
+      "enter": _vm.enter,
+      "leave": _vm.leave,
+      "after-leave": _vm.afterLeave
+    }
+  }, [_vm._t("default")], 2)
+},staticRenderFns: []}
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "vue-notification-group",
+    style: (_vm.styles)
+  }, [_c(_vm.componentName, {
+    tag: "component",
+    attrs: {
+      "name": _vm.animationName
+    },
+    on: {
+      "enter": _vm.enter,
+      "leave": _vm.leave,
+      "after-leave": _vm.clean
+    }
+  }, _vm._l((_vm.active), function(item) {
+    return _c('div', {
+      key: item.id,
+      staticClass: "vue-notification-wrapper",
+      style: (_vm.notifyWrapperStyle(item)),
+      attrs: {
+        "data-id": item.id
+      }
+    }, [_vm._t("body", [_c('div', {
+      class: _vm.notifyClass(item),
+      on: {
+        "click": function($event) {
+          return _vm.destroyIfNecessary(item)
+        }
+      }
+    }, [(item.title) ? _c('div', {
+      staticClass: "notification-title",
+      domProps: {
+        "innerHTML": _vm._s(item.title)
+      }
+    }) : _vm._e(), _vm._v(" "), _c('div', {
+      staticClass: "notification-content",
+      domProps: {
+        "innerHTML": _vm._s(item.text)
+      }
+    })])], {
+      "item": item,
+      "close": function () { return _vm.destroy(item); }
+    })], 2)
+  }), 0)], 1)
+},staticRenderFns: []}
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('transition-group', {
+    attrs: {
+      "name": _vm.name
+    }
+  }, [_vm._t("default")], 2)
+},staticRenderFns: []}
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(10);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(18)("2901aeae", content, true);
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/*
+  MIT License http://www.opensource.org/licenses/mit-license.php
+  Author Tobias Koppers @sokra
+  Modified by Evan You @yyx990803
+*/
+
+var hasDocument = typeof document !== 'undefined'
+
+if (typeof DEBUG !== 'undefined' && DEBUG) {
+  if (!hasDocument) {
+    throw new Error(
+    'vue-style-loader cannot be used in a non-browser environment. ' +
+    "Use { target: 'node' } in your Webpack config to indicate a server-rendering environment."
+  ) }
+}
+
+var listToStyles = __webpack_require__(19)
+
+/*
+type StyleObject = {
+  id: number;
+  parts: Array<StyleObjectPart>
+}
+
+type StyleObjectPart = {
+  css: string;
+  media: string;
+  sourceMap: ?string
+}
+*/
+
+var stylesInDom = {/*
+  [id: number]: {
+    id: number,
+    refs: number,
+    parts: Array<(obj?: StyleObjectPart) => void>
+  }
+*/}
+
+var head = hasDocument && (document.head || document.getElementsByTagName('head')[0])
+var singletonElement = null
+var singletonCounter = 0
+var isProduction = false
+var noop = function () {}
+
+// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+// tags it will allow on a page
+var isOldIE = typeof navigator !== 'undefined' && /msie [6-9]\b/.test(navigator.userAgent.toLowerCase())
+
+module.exports = function (parentId, list, _isProduction) {
+  isProduction = _isProduction
+
+  var styles = listToStyles(parentId, list)
+  addStylesToDom(styles)
+
+  return function update (newList) {
+    var mayRemove = []
+    for (var i = 0; i < styles.length; i++) {
+      var item = styles[i]
+      var domStyle = stylesInDom[item.id]
+      domStyle.refs--
+      mayRemove.push(domStyle)
+    }
+    if (newList) {
+      styles = listToStyles(parentId, newList)
+      addStylesToDom(styles)
+    } else {
+      styles = []
+    }
+    for (var i = 0; i < mayRemove.length; i++) {
+      var domStyle = mayRemove[i]
+      if (domStyle.refs === 0) {
+        for (var j = 0; j < domStyle.parts.length; j++) {
+          domStyle.parts[j]()
+        }
+        delete stylesInDom[domStyle.id]
+      }
+    }
+  }
+}
+
+function addStylesToDom (styles /* Array<StyleObject> */) {
+  for (var i = 0; i < styles.length; i++) {
+    var item = styles[i]
+    var domStyle = stylesInDom[item.id]
+    if (domStyle) {
+      domStyle.refs++
+      for (var j = 0; j < domStyle.parts.length; j++) {
+        domStyle.parts[j](item.parts[j])
+      }
+      for (; j < item.parts.length; j++) {
+        domStyle.parts.push(addStyle(item.parts[j]))
+      }
+      if (domStyle.parts.length > item.parts.length) {
+        domStyle.parts.length = item.parts.length
+      }
+    } else {
+      var parts = []
+      for (var j = 0; j < item.parts.length; j++) {
+        parts.push(addStyle(item.parts[j]))
+      }
+      stylesInDom[item.id] = { id: item.id, refs: 1, parts: parts }
+    }
+  }
+}
+
+function createStyleElement () {
+  var styleElement = document.createElement('style')
+  styleElement.type = 'text/css'
+  head.appendChild(styleElement)
+  return styleElement
+}
+
+function addStyle (obj /* StyleObjectPart */) {
+  var update, remove
+  var styleElement = document.querySelector('style[data-vue-ssr-id~="' + obj.id + '"]')
+
+  if (styleElement) {
+    if (isProduction) {
+      // has SSR styles and in production mode.
+      // simply do nothing.
+      return noop
+    } else {
+      // has SSR styles but in dev mode.
+      // for some reason Chrome can't handle source map in server-rendered
+      // style tags - source maps in <style> only works if the style tag is
+      // created and inserted dynamically. So we remove the server rendered
+      // styles and inject new ones.
+      styleElement.parentNode.removeChild(styleElement)
+    }
+  }
+
+  if (isOldIE) {
+    // use singleton mode for IE9.
+    var styleIndex = singletonCounter++
+    styleElement = singletonElement || (singletonElement = createStyleElement())
+    update = applyToSingletonTag.bind(null, styleElement, styleIndex, false)
+    remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true)
+  } else {
+    // use multi-style-tag mode in all other cases
+    styleElement = createStyleElement()
+    update = applyToTag.bind(null, styleElement)
+    remove = function () {
+      styleElement.parentNode.removeChild(styleElement)
+    }
+  }
+
+  update(obj)
+
+  return function updateStyle (newObj /* StyleObjectPart */) {
+    if (newObj) {
+      if (newObj.css === obj.css &&
+          newObj.media === obj.media &&
+          newObj.sourceMap === obj.sourceMap) {
+        return
+      }
+      update(obj = newObj)
+    } else {
+      remove()
+    }
+  }
+}
+
+var replaceText = (function () {
+  var textStore = []
+
+  return function (index, replacement) {
+    textStore[index] = replacement
+    return textStore.filter(Boolean).join('\n')
+  }
+})()
+
+function applyToSingletonTag (styleElement, index, remove, obj) {
+  var css = remove ? '' : obj.css
+
+  if (styleElement.styleSheet) {
+    styleElement.styleSheet.cssText = replaceText(index, css)
+  } else {
+    var cssNode = document.createTextNode(css)
+    var childNodes = styleElement.childNodes
+    if (childNodes[index]) styleElement.removeChild(childNodes[index])
+    if (childNodes.length) {
+      styleElement.insertBefore(cssNode, childNodes[index])
+    } else {
+      styleElement.appendChild(cssNode)
+    }
+  }
+}
+
+function applyToTag (styleElement, obj) {
+  var css = obj.css
+  var media = obj.media
+  var sourceMap = obj.sourceMap
+
+  if (media) {
+    styleElement.setAttribute('media', media)
+  }
+
+  if (sourceMap) {
+    // https://developer.chrome.com/devtools/docs/javascript-debugging
+    // this makes source maps inside style tags work properly in Chrome
+    css += '\n/*# sourceURL=' + sourceMap.sources[0] + ' */'
+    // http://stackoverflow.com/a/26603875
+    css += '\n/*# sourceMappingURL=data:application/json;base64,' + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + ' */'
+  }
+
+  if (styleElement.styleSheet) {
+    styleElement.styleSheet.cssText = css
+  } else {
+    while (styleElement.firstChild) {
+      styleElement.removeChild(styleElement.firstChild)
+    }
+    styleElement.appendChild(document.createTextNode(css))
+  }
+}
+
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports) {
+
+/**
+ * Translates the list format produced by css-loader into something
+ * easier to manipulate.
+ */
+module.exports = function listToStyles (parentId, list) {
+  var styles = []
+  var newStyles = {}
+  for (var i = 0; i < list.length; i++) {
+    var item = list[i]
+    var id = item[0]
+    var css = item[1]
+    var media = item[2]
+    var sourceMap = item[3]
+    var part = {
+      id: parentId + ':' + i,
+      css: css,
+      media: media,
+      sourceMap: sourceMap
+    }
+    if (!newStyles[id]) {
+      styles.push(newStyles[id] = { id: id, parts: [part] })
+    } else {
+      newStyles[id].parts.push(part)
+    }
+  }
+  return styles
+}
+
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_20__;
+
+/***/ })
+/******/ ]);
+});
+//# sourceMappingURL=index.js.map
 
 /***/ }),
 
@@ -49769,34 +64319,55 @@ module.exports = function(module) {
 /*!*****************************!*\
   !*** ./resources/js/app.js ***!
   \*****************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-/**
- * First we will load all of this project's JavaScript dependencies which
- * includes Vue and other libraries. It is a great starting point when
- * building robust, powerful web applications using Vue and Laravel.
- */
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vue_notification__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-notification */ "./node_modules/vue-notification/dist/index.js");
+/* harmony import */ var vue_notification__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue_notification__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _components_DashboardComponent_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/DashboardComponent.vue */ "./resources/js/components/DashboardComponent.vue");
+/* harmony import */ var _components_PostComponent_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/PostComponent.vue */ "./resources/js/components/PostComponent.vue");
+/* harmony import */ var _components_Facilitator_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/Facilitator.vue */ "./resources/js/components/Facilitator.vue");
+/* harmony import */ var _components_EditProgramme_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/EditProgramme.vue */ "./resources/js/components/EditProgramme.vue");
+/* harmony import */ var _components_EventManager_vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/EventManager.vue */ "./resources/js/components/EventManager.vue");
+/* harmony import */ var _components_event_manager_Speaker__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/event-manager/Speaker */ "./resources/js/components/event-manager/Speaker.vue");
+/* harmony import */ var _components_event_manager_Event__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./components/event-manager/Event */ "./resources/js/components/event-manager/Event.vue");
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
-/**
- * The following block of code may be used to automatically register your
- * Vue components. It will recursively scan this directory for the Vue
- * components and automatically register them with their "basename".
- *
- * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
- */
-// const files = require.context('./', true, /\.vue$/i)
-// files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
+Vue.use(__webpack_require__(/*! vue-moment */ "./node_modules/vue-moment/dist/vue-moment.js"));
 
-Vue.component('example-component', __webpack_require__(/*! ./components/ExampleComponent.vue */ "./resources/js/components/ExampleComponent.vue")["default"]);
+
+
+
+
+
+
+
+Vue.component('dashboard-component', _components_DashboardComponent_vue__WEBPACK_IMPORTED_MODULE_1__["default"]);
+Vue.component('post-component', _components_PostComponent_vue__WEBPACK_IMPORTED_MODULE_2__["default"]);
+Vue.component('edit-component', _components_EditProgramme_vue__WEBPACK_IMPORTED_MODULE_4__["default"]);
+Vue.component('facilitator-component', _components_Facilitator_vue__WEBPACK_IMPORTED_MODULE_3__["default"]);
+Vue.component('speaker', _components_event_manager_Speaker__WEBPACK_IMPORTED_MODULE_6__["default"]);
+Vue.component('manager', _components_EventManager_vue__WEBPACK_IMPORTED_MODULE_5__["default"]);
+Vue.component('event', _components_event_manager_Event__WEBPACK_IMPORTED_MODULE_7__["default"]);
+Vue.use(vue_notification__WEBPACK_IMPORTED_MODULE_0___default.a);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+var filter = function filter(text, length, clamp) {
+  clamp = clamp || '...';
+  var node = document.createElement('div');
+  node.innerHTML = text;
+  var content = node.textContent;
+  return content.length > length ? content.slice(0, length) + clamp : content;
+};
+
+Vue.filter('truncate', filter);
 var app = new Vue({
   el: '#app'
 });
@@ -49832,6 +64403,7 @@ try {
 
 window.axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+window.axios.defaults.withCredentials = true;
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
  * for events that are broadcast by Laravel. Echo and event broadcasting
@@ -49848,18 +64420,20 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 /***/ }),
 
-/***/ "./resources/js/components/ExampleComponent.vue":
-/*!******************************************************!*\
-  !*** ./resources/js/components/ExampleComponent.vue ***!
-  \******************************************************/
+/***/ "./resources/js/components/DashboardComponent.vue":
+/*!********************************************************!*\
+  !*** ./resources/js/components/DashboardComponent.vue ***!
+  \********************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _ExampleComponent_vue_vue_type_template_id_299e239e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ExampleComponent.vue?vue&type=template&id=299e239e& */ "./resources/js/components/ExampleComponent.vue?vue&type=template&id=299e239e&");
-/* harmony import */ var _ExampleComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ExampleComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/ExampleComponent.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* harmony import */ var _DashboardComponent_vue_vue_type_template_id_01ab55f4___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DashboardComponent.vue?vue&type=template&id=01ab55f4& */ "./resources/js/components/DashboardComponent.vue?vue&type=template&id=01ab55f4&");
+/* harmony import */ var _DashboardComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./DashboardComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/DashboardComponent.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _DashboardComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./DashboardComponent.vue?vue&type=style&index=0&lang=css& */ "./resources/js/components/DashboardComponent.vue?vue&type=style&index=0&lang=css&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
 
 
 
@@ -49867,10 +64441,10 @@ __webpack_require__.r(__webpack_exports__);
 
 /* normalize component */
 
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _ExampleComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _ExampleComponent_vue_vue_type_template_id_299e239e___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _ExampleComponent_vue_vue_type_template_id_299e239e___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
+  _DashboardComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _DashboardComponent_vue_vue_type_template_id_01ab55f4___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _DashboardComponent_vue_vue_type_template_id_01ab55f4___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
   null,
   null,
@@ -49880,40 +64454,524 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 
 /* hot reload */
 if (false) { var api; }
-component.options.__file = "resources/js/components/ExampleComponent.vue"
+component.options.__file = "resources/js/components/DashboardComponent.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
 
-/***/ "./resources/js/components/ExampleComponent.vue?vue&type=script&lang=js&":
-/*!*******************************************************************************!*\
-  !*** ./resources/js/components/ExampleComponent.vue?vue&type=script&lang=js& ***!
-  \*******************************************************************************/
+/***/ "./resources/js/components/DashboardComponent.vue?vue&type=script&lang=js&":
+/*!*********************************************************************************!*\
+  !*** ./resources/js/components/DashboardComponent.vue?vue&type=script&lang=js& ***!
+  \*********************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ExampleComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./ExampleComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/ExampleComponent.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ExampleComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DashboardComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./DashboardComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/DashboardComponent.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DashboardComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
-/***/ "./resources/js/components/ExampleComponent.vue?vue&type=template&id=299e239e&":
-/*!*************************************************************************************!*\
-  !*** ./resources/js/components/ExampleComponent.vue?vue&type=template&id=299e239e& ***!
-  \*************************************************************************************/
+/***/ "./resources/js/components/DashboardComponent.vue?vue&type=style&index=0&lang=css&":
+/*!*****************************************************************************************!*\
+  !*** ./resources/js/components/DashboardComponent.vue?vue&type=style&index=0&lang=css& ***!
+  \*****************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_DashboardComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/style-loader!../../../node_modules/css-loader??ref--6-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--6-2!../../../node_modules/vue-loader/lib??vue-loader-options!./DashboardComponent.vue?vue&type=style&index=0&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/DashboardComponent.vue?vue&type=style&index=0&lang=css&");
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_DashboardComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_DashboardComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_DashboardComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_DashboardComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_DashboardComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
+
+/***/ }),
+
+/***/ "./resources/js/components/DashboardComponent.vue?vue&type=template&id=01ab55f4&":
+/*!***************************************************************************************!*\
+  !*** ./resources/js/components/DashboardComponent.vue?vue&type=template&id=01ab55f4& ***!
+  \***************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ExampleComponent_vue_vue_type_template_id_299e239e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./ExampleComponent.vue?vue&type=template&id=299e239e& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/ExampleComponent.vue?vue&type=template&id=299e239e&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ExampleComponent_vue_vue_type_template_id_299e239e___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DashboardComponent_vue_vue_type_template_id_01ab55f4___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./DashboardComponent.vue?vue&type=template&id=01ab55f4& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/DashboardComponent.vue?vue&type=template&id=01ab55f4&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DashboardComponent_vue_vue_type_template_id_01ab55f4___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ExampleComponent_vue_vue_type_template_id_299e239e___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DashboardComponent_vue_vue_type_template_id_01ab55f4___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
+
+/***/ }),
+
+/***/ "./resources/js/components/EditProgramme.vue":
+/*!***************************************************!*\
+  !*** ./resources/js/components/EditProgramme.vue ***!
+  \***************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _EditProgramme_vue_vue_type_template_id_e915aa52___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./EditProgramme.vue?vue&type=template&id=e915aa52& */ "./resources/js/components/EditProgramme.vue?vue&type=template&id=e915aa52&");
+/* harmony import */ var _EditProgramme_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./EditProgramme.vue?vue&type=script&lang=js& */ "./resources/js/components/EditProgramme.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _EditProgramme_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./EditProgramme.vue?vue&type=style&index=0&lang=css& */ "./resources/js/components/EditProgramme.vue?vue&type=style&index=0&lang=css&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
+  _EditProgramme_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _EditProgramme_vue_vue_type_template_id_e915aa52___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _EditProgramme_vue_vue_type_template_id_e915aa52___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/EditProgramme.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/EditProgramme.vue?vue&type=script&lang=js&":
+/*!****************************************************************************!*\
+  !*** ./resources/js/components/EditProgramme.vue?vue&type=script&lang=js& ***!
+  \****************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_EditProgramme_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./EditProgramme.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/EditProgramme.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_EditProgramme_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/EditProgramme.vue?vue&type=style&index=0&lang=css&":
+/*!************************************************************************************!*\
+  !*** ./resources/js/components/EditProgramme.vue?vue&type=style&index=0&lang=css& ***!
+  \************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_EditProgramme_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/style-loader!../../../node_modules/css-loader??ref--6-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--6-2!../../../node_modules/vue-loader/lib??vue-loader-options!./EditProgramme.vue?vue&type=style&index=0&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/EditProgramme.vue?vue&type=style&index=0&lang=css&");
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_EditProgramme_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_EditProgramme_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_EditProgramme_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_EditProgramme_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_EditProgramme_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
+
+/***/ }),
+
+/***/ "./resources/js/components/EditProgramme.vue?vue&type=template&id=e915aa52&":
+/*!**********************************************************************************!*\
+  !*** ./resources/js/components/EditProgramme.vue?vue&type=template&id=e915aa52& ***!
+  \**********************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_EditProgramme_vue_vue_type_template_id_e915aa52___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./EditProgramme.vue?vue&type=template&id=e915aa52& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/EditProgramme.vue?vue&type=template&id=e915aa52&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_EditProgramme_vue_vue_type_template_id_e915aa52___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_EditProgramme_vue_vue_type_template_id_e915aa52___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/EventManager.vue":
+/*!**************************************************!*\
+  !*** ./resources/js/components/EventManager.vue ***!
+  \**************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _EventManager_vue_vue_type_template_id_4f88561e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./EventManager.vue?vue&type=template&id=4f88561e& */ "./resources/js/components/EventManager.vue?vue&type=template&id=4f88561e&");
+/* harmony import */ var _EventManager_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./EventManager.vue?vue&type=script&lang=js& */ "./resources/js/components/EventManager.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _EventManager_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _EventManager_vue_vue_type_template_id_4f88561e___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _EventManager_vue_vue_type_template_id_4f88561e___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/EventManager.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/EventManager.vue?vue&type=script&lang=js&":
+/*!***************************************************************************!*\
+  !*** ./resources/js/components/EventManager.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_EventManager_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./EventManager.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/EventManager.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_EventManager_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/EventManager.vue?vue&type=template&id=4f88561e&":
+/*!*********************************************************************************!*\
+  !*** ./resources/js/components/EventManager.vue?vue&type=template&id=4f88561e& ***!
+  \*********************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_EventManager_vue_vue_type_template_id_4f88561e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./EventManager.vue?vue&type=template&id=4f88561e& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/EventManager.vue?vue&type=template&id=4f88561e&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_EventManager_vue_vue_type_template_id_4f88561e___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_EventManager_vue_vue_type_template_id_4f88561e___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/Facilitator.vue":
+/*!*************************************************!*\
+  !*** ./resources/js/components/Facilitator.vue ***!
+  \*************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Facilitator_vue_vue_type_template_id_0899305e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Facilitator.vue?vue&type=template&id=0899305e& */ "./resources/js/components/Facilitator.vue?vue&type=template&id=0899305e&");
+/* harmony import */ var _Facilitator_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Facilitator.vue?vue&type=script&lang=js& */ "./resources/js/components/Facilitator.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Facilitator_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Facilitator_vue_vue_type_template_id_0899305e___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Facilitator_vue_vue_type_template_id_0899305e___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/Facilitator.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/Facilitator.vue?vue&type=script&lang=js&":
+/*!**************************************************************************!*\
+  !*** ./resources/js/components/Facilitator.vue?vue&type=script&lang=js& ***!
+  \**************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Facilitator_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./Facilitator.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Facilitator.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Facilitator_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/Facilitator.vue?vue&type=template&id=0899305e&":
+/*!********************************************************************************!*\
+  !*** ./resources/js/components/Facilitator.vue?vue&type=template&id=0899305e& ***!
+  \********************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Facilitator_vue_vue_type_template_id_0899305e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./Facilitator.vue?vue&type=template&id=0899305e& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Facilitator.vue?vue&type=template&id=0899305e&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Facilitator_vue_vue_type_template_id_0899305e___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Facilitator_vue_vue_type_template_id_0899305e___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/PostComponent.vue":
+/*!***************************************************!*\
+  !*** ./resources/js/components/PostComponent.vue ***!
+  \***************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _PostComponent_vue_vue_type_template_id_54a00d62___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./PostComponent.vue?vue&type=template&id=54a00d62& */ "./resources/js/components/PostComponent.vue?vue&type=template&id=54a00d62&");
+/* harmony import */ var _PostComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./PostComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/PostComponent.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _PostComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./PostComponent.vue?vue&type=style&index=0&lang=css& */ "./resources/js/components/PostComponent.vue?vue&type=style&index=0&lang=css&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
+  _PostComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _PostComponent_vue_vue_type_template_id_54a00d62___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _PostComponent_vue_vue_type_template_id_54a00d62___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/PostComponent.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/PostComponent.vue?vue&type=script&lang=js&":
+/*!****************************************************************************!*\
+  !*** ./resources/js/components/PostComponent.vue?vue&type=script&lang=js& ***!
+  \****************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_PostComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./PostComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/PostComponent.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_PostComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/PostComponent.vue?vue&type=style&index=0&lang=css&":
+/*!************************************************************************************!*\
+  !*** ./resources/js/components/PostComponent.vue?vue&type=style&index=0&lang=css& ***!
+  \************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_PostComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/style-loader!../../../node_modules/css-loader??ref--6-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--6-2!../../../node_modules/vue-loader/lib??vue-loader-options!./PostComponent.vue?vue&type=style&index=0&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/PostComponent.vue?vue&type=style&index=0&lang=css&");
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_PostComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_PostComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_PostComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_PostComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_PostComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
+
+/***/ }),
+
+/***/ "./resources/js/components/PostComponent.vue?vue&type=template&id=54a00d62&":
+/*!**********************************************************************************!*\
+  !*** ./resources/js/components/PostComponent.vue?vue&type=template&id=54a00d62& ***!
+  \**********************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PostComponent_vue_vue_type_template_id_54a00d62___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./PostComponent.vue?vue&type=template&id=54a00d62& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/PostComponent.vue?vue&type=template&id=54a00d62&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PostComponent_vue_vue_type_template_id_54a00d62___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PostComponent_vue_vue_type_template_id_54a00d62___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/event-manager/Event.vue":
+/*!*********************************************************!*\
+  !*** ./resources/js/components/event-manager/Event.vue ***!
+  \*********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Event_vue_vue_type_template_id_762cc9ac___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Event.vue?vue&type=template&id=762cc9ac& */ "./resources/js/components/event-manager/Event.vue?vue&type=template&id=762cc9ac&");
+/* harmony import */ var _Event_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Event.vue?vue&type=script&lang=js& */ "./resources/js/components/event-manager/Event.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Event_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Event_vue_vue_type_template_id_762cc9ac___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Event_vue_vue_type_template_id_762cc9ac___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/event-manager/Event.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/event-manager/Event.vue?vue&type=script&lang=js&":
+/*!**********************************************************************************!*\
+  !*** ./resources/js/components/event-manager/Event.vue?vue&type=script&lang=js& ***!
+  \**********************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Event_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./Event.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/event-manager/Event.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Event_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/event-manager/Event.vue?vue&type=template&id=762cc9ac&":
+/*!****************************************************************************************!*\
+  !*** ./resources/js/components/event-manager/Event.vue?vue&type=template&id=762cc9ac& ***!
+  \****************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Event_vue_vue_type_template_id_762cc9ac___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./Event.vue?vue&type=template&id=762cc9ac& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/event-manager/Event.vue?vue&type=template&id=762cc9ac&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Event_vue_vue_type_template_id_762cc9ac___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Event_vue_vue_type_template_id_762cc9ac___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/event-manager/Speaker.vue":
+/*!***********************************************************!*\
+  !*** ./resources/js/components/event-manager/Speaker.vue ***!
+  \***********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Speaker_vue_vue_type_template_id_52991fe2___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Speaker.vue?vue&type=template&id=52991fe2& */ "./resources/js/components/event-manager/Speaker.vue?vue&type=template&id=52991fe2&");
+/* harmony import */ var _Speaker_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Speaker.vue?vue&type=script&lang=js& */ "./resources/js/components/event-manager/Speaker.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Speaker_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Speaker_vue_vue_type_template_id_52991fe2___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Speaker_vue_vue_type_template_id_52991fe2___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/event-manager/Speaker.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/event-manager/Speaker.vue?vue&type=script&lang=js&":
+/*!************************************************************************************!*\
+  !*** ./resources/js/components/event-manager/Speaker.vue?vue&type=script&lang=js& ***!
+  \************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Speaker_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./Speaker.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/event-manager/Speaker.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Speaker_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/event-manager/Speaker.vue?vue&type=template&id=52991fe2&":
+/*!******************************************************************************************!*\
+  !*** ./resources/js/components/event-manager/Speaker.vue?vue&type=template&id=52991fe2& ***!
+  \******************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Speaker_vue_vue_type_template_id_52991fe2___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./Speaker.vue?vue&type=template&id=52991fe2& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/event-manager/Speaker.vue?vue&type=template&id=52991fe2&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Speaker_vue_vue_type_template_id_52991fe2___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Speaker_vue_vue_type_template_id_52991fe2___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/event-bus.js":
+/*!***********************************!*\
+  !*** ./resources/js/event-bus.js ***!
+  \***********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_0__);
+// event-bus.js
+
+var EventBus = new vue__WEBPACK_IMPORTED_MODULE_0___default.a();
+/* harmony default export */ __webpack_exports__["default"] = (EventBus);
 
 /***/ }),
 

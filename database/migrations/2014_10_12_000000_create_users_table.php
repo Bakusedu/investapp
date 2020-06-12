@@ -21,9 +21,11 @@ class CreateUsersTable extends Migration
             $table->string('avatar')->nullable();
             $table->string('email')->unique();
             $table->boolean('isAdmin')->default(false);
+            $table->boolean('isModerator')->default(false);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

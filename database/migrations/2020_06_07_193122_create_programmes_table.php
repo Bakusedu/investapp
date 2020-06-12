@@ -16,9 +16,20 @@ class CreateProgrammesTable extends Migration
         Schema::create('programmes', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('description');
+            $table->longText('overview');
+            $table->longText('key_features');
             $table->string('duration');
             $table->string('featured');
+            $table->unsignedBigInteger('fee');
+            $table->string('venue');
+            $table->string('attendee');
+            $table->string('type');
+            $table->string('startdate');
+            $table->string('status')->default('pending');
+            $table->string('enddate');
+            $table->unsignedBigInteger('createdBy');
+            $table->foreign('createdBy')->references('id')->on('users')->onDelete('cascade');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

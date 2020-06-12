@@ -19,6 +19,7 @@ class CreateForumsTable extends Migration
             $table->string('slug');
             $table->boolean('isActive')->default(true);
             $table->string('description');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -22,6 +22,7 @@ class CreateForumCategoriesTable extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->unsignedBigInteger('forum_id');
             $table->foreign('forum_id')->references('id')->on('forums')->onDelete('cascade');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

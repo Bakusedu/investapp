@@ -14,6 +14,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::get('/programmes/{type}', 'UsersController@programmes')->middleware('auth:sanctum');
+
+Route::get('/program/details', 'ProgrammeController@programmeDetails');
+
+Route::post('/saveprogram', 'ProgrammeController@save');
+Route::post('/addevent', 'ProgrammeController@addEvent');
+Route::post('/editevent', 'ProgrammeController@updateEvent');
+
+Route::post('/updateprogram', 'ProgrammeController@update');
+Route::post('/addspeaker', 'ProgrammeController@addSpeaker');
+Route::post('/updatespeaker', 'ProgrammeController@updateSpeaker');
+Route::get('/join', 'ProgrammeController@joinRequest');

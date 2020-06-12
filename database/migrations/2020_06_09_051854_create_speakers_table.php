@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateEventsTable extends Migration
+class CreateSpeakersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,18 +13,21 @@ class CreateEventsTable extends Migration
      */
     public function up()
     {
-        Schema::create('events', function (Blueprint $table) {
+        Schema::create('speakers', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
             $table->string('title');
-            $table->longText('details');
-            $table->string('start_date');
-            $table->string('end_date');
-            $table->boolean('use_feedback')->default(false);
-            $table->string('question');
-            $table->string('feedback_type');
+            $table->string('organization');
+            $table->string('facebook')->nullable();
+            $table->string('twitter')->nullable();
+            $table->string('linkedIn')->nullable();
+            $table->string('invite_id');
+            $table->string('email');
+            $table->string('image');
+            $table->boolean('invite_accepted')->default(false);
+            $table->boolean('invited')->default(false);
             $table->unsignedBigInteger('programme_id');
             $table->foreign('programme_id')->references('id')->on('programmes')->onDelete('cascade');
-            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -36,6 +39,6 @@ class CreateEventsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('events');
+        Schema::dropIfExists('speakers');
     }
 }

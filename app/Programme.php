@@ -15,4 +15,19 @@ class Programme extends Model
     {
         return $this->hasMany('App\Event');
     }
+
+    public function creator()
+    {
+        return $this->belongsTo('App\User', 'createdBy', 'id');
+    }
+
+    public function speakers()
+    {
+        return $this->hasMany('App\Speaker');
+    }
+
+    public function waitinglist()
+    {
+       return $this->hasMany('App\WaitingList')->whereStatus('pending');
+    }
 }

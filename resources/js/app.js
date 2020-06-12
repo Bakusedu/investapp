@@ -1,31 +1,37 @@
-/**
- * First we will load all of this project's JavaScript dependencies which
- * includes Vue and other libraries. It is a great starting point when
- * building robust, powerful web applications using Vue and Laravel.
- */
-
 require('./bootstrap');
 
 window.Vue = require('vue');
-
-/**
- * The following block of code may be used to automatically register your
- * Vue components. It will recursively scan this directory for the Vue
- * components and automatically register them with their "basename".
- *
- * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
- */
-
-// const files = require.context('./', true, /\.vue$/i)
-// files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
-
-Vue.component('example-component', require('./components/ExampleComponent.vue').default);
-
+Vue.use(require('vue-moment'));
+import Notifications from 'vue-notification'
+import ExampleComponent from './components/DashboardComponent.vue';
+import PostComponent from './components/PostComponent.vue';
+import Facilitator from './components/Facilitator.vue';
+import EditProgramme from './components/EditProgramme.vue';
+import Manager from './components/EventManager.vue';
+import Speaker from './components/event-manager/Speaker';
+import Event from './components/event-manager/Event';
+Vue.component('dashboard-component', ExampleComponent);
+Vue.component('post-component', PostComponent)
+Vue.component('edit-component', EditProgramme)
+Vue.component('facilitator-component', Facilitator)
+Vue.component('speaker', Speaker)
+Vue.component('manager', Manager)
+Vue.component('event', Event)
+Vue.use(Notifications)
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
+var filter = function(text, length, clamp){
+    clamp = clamp || '...';
+    var node = document.createElement('div');
+    node.innerHTML = text;
+    var content = node.textContent;
+    return content.length > length ? content.slice(0, length) + clamp : content;
+};
+
+Vue.filter('truncate', filter);
 
 const app = new Vue({
     el: '#app',

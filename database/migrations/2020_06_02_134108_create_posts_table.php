@@ -23,6 +23,7 @@ class CreatePostsTable extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->unsignedBigInteger('forum_category_id');
             $table->foreign('forum_category_id')->references('id')->on('forum_categories')->onDelete('cascade');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

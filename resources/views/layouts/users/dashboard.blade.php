@@ -51,8 +51,22 @@
             });</script>
           @yield('head')
     </head>
-    <body>
-            <nav class="flex items-center justify-between flex-wrap py-4 px-6 fixed w-full z-50 top-0"
+    <body class="bg-gray-300">
+        @if (Auth::check())
+        <script>
+           window.Laravel = {!!json_encode([
+               'isLoggedin' => true,
+               'user' => Auth::user()
+           ])!!}
+        </script>
+    @else
+        <script>
+            window.Laravel = {!!json_encode([
+                'isLoggedin' => false
+            ])!!}
+        </script>
+    @endif
+            <nav class="flex items-center justify-between flex-wrap py-4 px-6 fixed w-full z-30 top-0"
                 x-data="{ isOpen: false }"
                 @keydown.escape="isOpen = false"
                 :class="{ 'shadow-lg bg-gray-100' : isOpen , 'bg-yellow-100' : !isOpen}"
@@ -126,6 +140,7 @@
                     </ul>
                 </div>
             </nav>
+
             @yield('header')
             @yield('content')
 
