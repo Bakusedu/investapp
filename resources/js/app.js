@@ -10,6 +10,7 @@ import EditProgramme from './components/EditProgramme.vue';
 import Manager from './components/EventManager.vue';
 import Speaker from './components/event-manager/Speaker';
 import Event from './components/event-manager/Event';
+import WaitingList from './components/event-manager/WaitingList';
 Vue.component('dashboard-component', ExampleComponent);
 Vue.component('post-component', PostComponent)
 Vue.component('edit-component', EditProgramme)
@@ -17,6 +18,7 @@ Vue.component('facilitator-component', Facilitator)
 Vue.component('speaker', Speaker)
 Vue.component('manager', Manager)
 Vue.component('event', Event)
+Vue.component('waiting-list',WaitingList)
 Vue.use(Notifications)
 /**
  * Next, we will create a fresh Vue application instance and attach it to

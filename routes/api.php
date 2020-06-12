@@ -25,4 +25,6 @@ Route::post('/editevent', 'ProgrammeController@updateEvent');
 Route::post('/updateprogram', 'ProgrammeController@update');
 Route::post('/addspeaker', 'ProgrammeController@addSpeaker');
 Route::post('/updatespeaker', 'ProgrammeController@updateSpeaker');
+
 Route::get('/join', 'ProgrammeController@joinRequest');
+Route::post('/approve', 'ProgrammeController@waitingApproval');

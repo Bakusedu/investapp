@@ -21,7 +21,7 @@
                 <div class="table-cell bg-gray-200 text-gray-700 px-4 py-2 text-sm"><span class="bg-yellow-700 hover:shadow-lg w-full rounded px-3 py-1 text-white">{{item.users.length}}<i class="fa fa-eye"></i></span></div>
                 <div class="table-cell bg-gray-400 text-gray-700 px-4 py-2 text-sm"><span v-on:click="loadSpeakers(item.speakers)" class="bg-purple-700 hover:shadow-lg w-full rounded px-3 py-1 text-white">{{item.speakers.length}}<i class="fa fa-eye"></i></span></div>
                 <div class="table-cell bg-gray-200 text-gray-700 px-4 py-2 text-sm"><span @click="loadList(item.waitinglist)" class="bg-red-700 px-2
-                cursor-pointer py-1 rounded text-white">(0) Waiting List</span> <i class="fa fa-edit"></i> <i class="fa fa-trash-alt"></i></div>
+                cursor-pointer hover:shadow-lg py-1 rounded text-white">({{item.waitinglist.length}}) Waiting List</span> <i class="fa fa-edit"></i> <i class="fa fa-trash-alt"></i></div>
             </div>
         </div>
     </div>
@@ -71,6 +71,11 @@ export default {
             vm.openEvent = payLoad.action
           //  vm.programmeId = payLoad.progId
         });
+       EventBus.$on('closewaitingList', function (payLoad) {
+            vm.waiting = payLoad.action
+          //  vm.programmeId = payLoad.progId
+        });
+
     }
 
 }

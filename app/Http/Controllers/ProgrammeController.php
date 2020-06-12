@@ -425,4 +425,16 @@ class ProgrammeController extends Controller
 
         return response()->json(['status' => 'success']);
     }
+
+    public function waitingApproval(Request $request)
+    {
+        //Todo: Check if the current user is the owner of event befor approval
+        $waiting = WaitingList::findOrFail($request->id);
+        $waiting->status = 'approved';
+        $waiting->save();
+        $programme = Programme::findOrFail($waiting->programme_id);
+        $programme->users()->attach($waiting->user_id);
+
+        return response()->json(['status'=>'success'], 200);
+    }
 }
