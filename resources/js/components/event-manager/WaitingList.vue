@@ -25,7 +25,8 @@
                 <div class="table-cell bg-gray-200 text-gray-700 w-48 px-4 py-2 text-sm">{{item.email}}</div>
                 <div class="table-cell bg-gray-200 text-gray-700 px-4 w-4 overflow-hidden py-2 text-sm">{{item.phone}} </div>
                 <div class="table-cell bg-gray-400  text-gray-700 px-4 py-2 w-48 text-sm"> {{ item.created_at | moment("MMMM Do YYYY") }} </div>
-                <div class="table-cell bg-gray-400 text-gray-700 px-4 py-2 text-sm"><span class="cursor-pointer bg-yellow-700 text-white hover:shadow-lg rounded p-1 px-3" v-if="item.status == 'pending'">Approve</span><span v-else>Accepted</span></div>
+                <div class="table-cell bg-gray-400 text-gray-700 px-4 py-2 text-sm"><p class="cursor-pointer bg-yellow-700 text-white hover:shadow-lg rounded p-1 px-3"
+                 v-if="item.status == 'pending'" @click="approve(item.id)"> <span v-if="adding">Processing</span> <span v-else>Approve</span> </p><span v-if="item.status=='approved'">Accepted</span></div>
             </div>
         </div>
      </div>
@@ -49,16 +50,6 @@ export default {
                 },
             editEvent: false,
             errors: [],
-            event:{
-                title: '',
-                details: '',
-                start_date: '',
-                end_date: '',
-                use_feedback: '',
-                question: '',
-                feedback_type: '',
-                id: ''
-            },
             adding:false
         }
     },
@@ -73,20 +64,13 @@ export default {
             this.editEvent = true
         },
 
-        addEvent(){
+        approve(id){
            this.adding = true
              let formdata = new FormData();
-            formdata.append('eventId', this.event.id)
-            formdata.append('startdate', this.event.start_date)
-            formdata.append('title', this.event.title)
-            formdata.append('enddate', this.event.end_date)
-            formdata.append('useFeedback', this.event.use_feedback)
-            formdata.append('question', this.event.question)
-            formdata.append('feedbackType', this.event.feedback_type)
-            formdata.append('details', this.event.details)
+            formdata.append('id', id)
 
         let vm = this
-        axios.post( '/api/editevent',
+        axios.post( '/api/approve',
             formdata,
             {
                 headers: {
@@ -98,17 +82,18 @@ export default {
            vm.$notify({
             group: 'foo',
             title: 'success',
-            text: 'Event Updated',
+            text: 'Participant Confirmed | Reload Page',
             type: 'success',
              duration: 10000,
             });
+            this.waitingList[id].status = 'approved'
            vm.adding = false
         })
         .catch(function(e){
            vm.adding = false
             vm.$notify({
                 type: 'warn',
-                text: 'unable to update event'
+                text: 'unable to approve'
                 })
             });
         },

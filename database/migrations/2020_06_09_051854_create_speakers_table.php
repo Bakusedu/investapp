@@ -24,6 +24,7 @@ class CreateSpeakersTable extends Migration
             $table->string('invite_id');
             $table->string('email');
             $table->string('image');
+            $table->string('status')->default('pending');
             $table->boolean('invite_accepted')->default(false);
             $table->boolean('invited')->default(false);
             $table->unsignedBigInteger('programme_id');

@@ -1,10 +1,10 @@
 <template>
 
-        <div class="h-full">
+        <div>
               <!--Overlay-->
-             <div v-if="edit == true" class="absolute inset-0 z-40 flex items-center justify-center" >
+             <div v-if="edit == true" class="z-40 flex items-center justify-center" >
                 <!--Dialog-->
-                <div class="bg-white w-9/12 xs:w-full h-screen opacity-100 overflow-y-auto md:max-w-md mx-auto rounded shadow-lg py-4 mt-20 text-left pt-10 pb-40 px-6" style="top: 30px">
+                <div class="bg-white w-9/12 xs:w-full h-auto opacity-100 md:max-w-md mx-auto rounded shadow-lg py-4 text-left px-6">
 
                     <!--Title-->
                     <div class="flex justify-between items-center pb-3">
@@ -105,9 +105,9 @@
             </div><!-- /Overlay -->
 
                           <!--Overlay-->
-             <div v-if="speakers == true" class="absolute inset-0 mt-12 xs:pt-64 z-50 flex items-center justify-center" >
+             <div v-if="speakers == true" class="absolute xs:pt-64 z-40 flex items-center justify-center" >
                 <!--Dialog-->
-                <div class="bg-white w-9/12 xs:w-full h-auto md:max-w-md mx-auto rounded shadow-lg pb-32 xs:pt-64 pt-56 text-left p-4 px-6" style="top: 60px">
+                <div class="bg-white w-9/12 xs:w-full h-auto md:max-w-md mx-auto rounded shadow-lg pb-3 xs:pt-64 text-left p-4 px-6">
 
                     <!--Title-->
                     <div class="flex justify-between items-center pb-3">

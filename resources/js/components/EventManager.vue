@@ -18,9 +18,9 @@
                 <div class="table-cell bg-gray-400 text-gray-700 px-4 py-2 text-sm">{{item.title}}</div>
                 <div class="table-cell bg-gray-200 text-gray-700 px-4 py-2 text-sm">{{ item.startdate | moment("MMMM Do YYYY") }} - {{ item.enddate | moment( "MMMM Do YYYY") }}</div>
                 <div class="table-cell bg-gray-400 text-gray-700 px-4 py-2 text-sm"><span v-on:click="loadEvents(item.events)" class="bg-green-700 hover:shadow-lg w-full rounded px-3 py-1 text-white">{{item.events.length}} <i class="fa fa-eye"></i> </span> </div>
-                <div class="table-cell bg-gray-200 text-gray-700 px-4 py-2 text-sm"><span class="bg-yellow-700 hover:shadow-lg w-full rounded px-3 py-1 text-white">{{item.users.length}}<i class="fa fa-eye"></i></span></div>
+                <div class="table-cell bg-gray-200 text-gray-700 px-4 py-2 text-sm"><span v-on:click="loadUsers(item.users)" class="bg-yellow-700 hover:shadow-lg w-full rounded px-3 py-1 text-white">{{item.users.length}}<i class="fa fa-eye"></i></span></div>
                 <div class="table-cell bg-gray-400 text-gray-700 px-4 py-2 text-sm"><span v-on:click="loadSpeakers(item.speakers)" class="bg-purple-700 hover:shadow-lg w-full rounded px-3 py-1 text-white">{{item.speakers.length}}<i class="fa fa-eye"></i></span></div>
-                <div class="table-cell bg-gray-200 text-gray-700 px-4 py-2 text-sm"><span @click="loadList(item.waitinglist)" class="bg-red-700 px-2
+                <div class="table-cell bg-gray-200 text-gray-700 px-4 py-2 text-sm"><span v-if="item.waitinglist.length > 0" @click="loadList(item.waitinglist)" class="bg-red-700 px-2
                 cursor-pointer hover:shadow-lg py-1 rounded text-white">({{item.waitinglist.length}}) Waiting List</span> <i class="fa fa-edit"></i> <i class="fa fa-trash-alt"></i></div>
             </div>
         </div>
@@ -28,6 +28,8 @@
     <speaker class="absolute w-full p-2 min-h-full flex xs:flex-col rounded-lg bg-white top-0" v-bind:openSpeakers="openSpeakers" v-bind:speakers="eventSpeakers"></speaker>
     <event class="absolute w-full p-2 min-h-full flex xs:flex-col rounded-lg bg-white top-0" v-bind:openEvent="openEvent" v-bind:events="eventDetails"></event>
     <waiting-list class="absolute w-full p-2 min-h-full flex xs:flex-col rounded-lg bg-white top-0" v-bind:openList="waiting" v-bind:waitingList="waitingList"></waiting-list>
+    <users-list class="absolute w-full p-2 min-h-full flex xs:flex-col rounded-lg bg-white top-0" v-bind:showUsers="showUsers" v-bind:userList="userList"></users-list>
+
 </div>
 </template>
 
@@ -42,7 +44,9 @@ export default {
           openEvent: false,
           eventDetails: '',
           waiting: false,
-          waitingList: ''
+          waitingList: '',
+          userList: '',
+          showUsers: false
         }
     },
     methods:{
@@ -59,6 +63,11 @@ export default {
         loadList(list){
             this.waitingList = list
             this.waiting = true
+        },
+
+        loadUsers(users){
+            this.userList = users
+            this.showUsers = true
         }
     },
     mounted(){
@@ -73,6 +82,10 @@ export default {
         });
        EventBus.$on('closewaitingList', function (payLoad) {
             vm.waiting = payLoad.action
+          //  vm.programmeId = payLoad.progId
+        });
+        EventBus.$on('closeUsers', function (payLoad) {
+            vm.showUsers = payLoad.action
           //  vm.programmeId = payLoad.progId
         });
 

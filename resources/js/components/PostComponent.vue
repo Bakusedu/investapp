@@ -107,7 +107,7 @@
                 <!--/Dialog -->
             </div><!-- /Overlay -->
                 <!--Overlay-->
-                <div v-if="events == true" @events="events = true" class="absolute inset-0 pt-20 mt-16 xs:pt-64 z-40 flex items-center justify-center" >
+                <div v-if="events == true" @events="events = true" class="z-40 flex items-center justify-center" >
                 <!--Dialog-->
                 <div class="bg-white w-9/12 xs:w-full h-auto overflow-y-auto md:max-w-md mx-auto rounded shadow py-4 px-8 mt-20 text-left pt-30 pb-40" style="top: 60px">
 

@@ -18,13 +18,13 @@ Route::get('/programmes/{type}', 'UsersController@programmes')->middleware('auth
 
 Route::get('/program/details', 'ProgrammeController@programmeDetails');
 
-Route::post('/saveprogram', 'ProgrammeController@save');
-Route::post('/addevent', 'ProgrammeController@addEvent');
-Route::post('/editevent', 'ProgrammeController@updateEvent');
+Route::post('/saveprogram', 'ProgrammeController@save')->middleware('auth:sanctum');
+Route::post('/addevent', 'ProgrammeController@addEvent')->middleware('auth:sanctum');
+Route::post('/editevent', 'ProgrammeController@updateEvent')->middleware('auth:sanctum');
 
-Route::post('/updateprogram', 'ProgrammeController@update');
-Route::post('/addspeaker', 'ProgrammeController@addSpeaker');
-Route::post('/updatespeaker', 'ProgrammeController@updateSpeaker');
+Route::post('/updateprogram', 'ProgrammeController@update')->middleware('auth:sanctum');
+Route::post('/addspeaker', 'ProgrammeController@addSpeaker')->middleware('auth:sanctum');
+Route::post('/updatespeaker', 'ProgrammeController@updateSpeaker')->middleware('auth:sanctum');
 
-Route::get('/join', 'ProgrammeController@joinRequest');
-Route::post('/approve', 'ProgrammeController@waitingApproval');
+Route::get('/join', 'ProgrammeController@joinRequest')->middleware('auth:sanctum');
+Route::post('/approve', 'ProgrammeController@waitingApproval')->middleware('auth:sanctum');

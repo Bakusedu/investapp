@@ -5,11 +5,15 @@ use Session;
 use App\Programme;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
 use App\Event;
 use Auth;
+use App\User;
 use App\WaitingList;
 use Carbon\Carbon;
 use App\Speaker;
+use App\Mail\JoinProgramme;
+use App\Mail\JoinApproved;
 class ProgrammeController extends Controller
 {
     /**
@@ -110,6 +114,8 @@ class ProgrammeController extends Controller
         $waiting->save();
         $programme = Programme::findOrFail($waiting->programme_id);
         $programme->users()->attach($waiting->user_id);
+        $user = User::findOrFail($waiting->user_id);
+        Mail::to($user->email)->send(new JoinApproved($programme, $user));
         Session::flash('success', 'Approved Successfully');
         return redirect()->back();
     }
@@ -226,7 +232,7 @@ class ProgrammeController extends Controller
             'user_id' => $user->id,
             'programme_id' => $programme->id
         ]);
-
+        Mail::to($user->email)->send(new JoinProgramme($programme, $user));
         return redirect()->back();
     }
 
@@ -378,6 +384,7 @@ class ProgrammeController extends Controller
                 'user_id' => $user->id,
                 'programme_id' => $programme->id
             ]);
+            Mail::to($user->email)->send(new JoinProgramme($programme, $user));
            return response()->json(['status'=>'success'], 200);
         }
 
@@ -434,7 +441,8 @@ class ProgrammeController extends Controller
         $waiting->save();
         $programme = Programme::findOrFail($waiting->programme_id);
         $programme->users()->attach($waiting->user_id);
-
+        $user = User::findOrFail($waiting->user_id);
+        Mail::to($user->email)->send(new JoinApproved($programme, $user));
         return response()->json(['status'=>'success'], 200);
     }
 }

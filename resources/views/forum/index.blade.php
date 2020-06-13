@@ -422,7 +422,7 @@
             <ul class="timeline">
 
                 <!-- Item 1 -->
-                <li>
+                {{-- <li>
                     <div class="direction-r">
                         <div class="flag-wrapper">
                             <span class="flag">very long hsa hjds  sdh</span>
@@ -433,25 +433,17 @@
                             <p>My current employment. Way better than the position before! My current employment. Way better than the position before! My current employment. Way better than the position before! My current employment. Way better than the position before!</p>
                         </div>
                     </div>
-                </li>
+                </li> --}}
                 <!-- Item 3 -->
-                <li>
-                    <div class="direction-r">
-                        <div class="flag-wrapper">
-                            <span class="flag">Harvard University</span>
-                            <span class="time-wrapper"><span class="time">2008 - 2011</span></span>
-                        </div>
-                        <div class="desc">A description of all the lectures and courses I have taken and my final degree?</div>
-                    </div>
-                </li>
+
 
             </ul>
 
         </li>
         <li x-show="tab === 'guidlines'" class="p-8">
-            <ul class="list-outside list-disc bg-gray-200 ...">
+            {{-- <ul class="list-outside list-disc bg-gray-200 ...">
                 <li>Lorem ipsum dolor sit amet, consectetur adipisicing elit</li>
-            </ul>
+            </ul> --}}
         </li>
       </ul>
     </div>

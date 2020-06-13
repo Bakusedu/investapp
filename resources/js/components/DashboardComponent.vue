@@ -9,7 +9,7 @@
             <h3>{{user.email}}</h3></div>
         <div class="flex-col flex xs:flex-row flex-wrap items-center justify-center">
             <div class="p-4">
-                <a href="#"
+                <a :href="'/forum/home'"
                     class="bg-gray-300 text-gray-700 font-semibold py-2 xs:py-1 xs:px-10 px-16 rounded inline-flex items-center"
                     >
                     <span class="mr-1">Forum</span>
@@ -30,7 +30,7 @@
 
             <div v-if="hasProgram" class="p-4">
                 <div class="inline-block">
-                  <button id="users" class="bg-gray-300 text-gray-700 font-semibold py-2 xs:py-1 xs:p-4 xs:text-sm px-8 rounded inline-flex items-center">
+                  <button @click="manager=true" id="users" class="bg-gray-300 text-gray-700 font-semibold py-2 xs:py-1 xs:p-4 xs:text-sm px-8 rounded inline-flex items-center">
                     <span class="mr-1">Events Manager</span>
                    </button>
                 </div>
@@ -51,8 +51,8 @@
             <a :href="'/programme/calendar/'+programme.programme.id" class="text-lg text-center"><span class="hover:shadow-2xl text-sm hover:bg-yellow-600 shadow-lg p-1 px-3 rounded-md bg-yellow-700 text-white"> View Calendar <i class="fa fa-calendar-alt"></i></span> </a>
             <div v-on:click="joinProgram(programme.programme.id)" v-if="!programme.requested&&programme.confirmed==false" class="text-lg flex justify-center text-center">
                 <div>
-                <p v-if="requesting == 'sending'">Sending request...</p><p class="hover:shadow-2xl text-sm hover:bg-yellow-600 cursor-pointer shadow-lg p-1 px-3 rounded-md bg-yellow-700 text-white" v-else-if="requesting=='sent'">Request Sent</p><p class="hover:shadow-2xl text-sm hover:bg-yellow-600 cursor-pointer shadow-lg p-1 px-3 rounded-md bg-yellow-700 text-white" v-else>Join Programme<p></p></div> </div>
-            <a href="#" v-else-if="programme.requested&&programme.confirmed==true" class="text-lg text-center"><span class="hover:shadow-2xl text-sm hover:bg-yellow-600 shadow-lg p-1 px-3 rounded-md bg-yellow-700 text-white"><i class="fa fa-info"></i> You are attending</span> </a>
+                <p v-if="requesting == 'sending'" class=" p-1 px-3 rounded-md bg-yellow-700 text-white">Sending request...</p><p class="hover:shadow-2xl text-sm hover:bg-yellow-600 cursor-pointer shadow-lg p-1 px-3 rounded-md bg-yellow-700 text-white" v-else-if="requesting=='sent'">Request Sent</p><p class="hover:shadow-2xl text-sm hover:bg-yellow-600 cursor-pointer shadow-lg p-1 px-3 rounded-md bg-yellow-700 text-white" v-else>Join Programme<p></p></div> </div>
+            <a href="#" v-else-if="programme.requested&&programme.confirmed==true" class="text-lg text-center"><span class="hover:shadow-2xl text-sm hover:bg-yellow-600 shadow-lg p-1 px-3 rounded-md bg-green-700 text-white"><i class="fa fa-info"></i> You are attending</span> </a>
             <a href="#" v-else-if="programme.requested" class="text-lg w-full text-center"> <span class="hover:shadow-2xl text-sm hover:bg-green-600 shadow-lg p-1 px-3 rounded-md bg-green-700 text-white">Awaiting Confirmation</span> </a>
             </div>
              <div class="flex flex-col xs:flex-row justify-center ">
@@ -68,11 +68,11 @@
              <p class="px-16 text-lg font-extrabold">{{programme.programme.title}}</p>
                 <h1 class="font-bold text-lg">Programme Overview</h1>
             </div>
-            <p class="p-6 text-justify"><span><i class="fa fa-info"></i></span> {{programme.programme.overview}}</p>
+            <p class="p-6 text-justify text-gray-700"><span><i style="font-size: 10" class="fa fa-info"></i></span> {{programme.programme.overview}}</p>
             <p class=" px-6 font-bold text-lg">Key Features</p>
             <hr class="w-full bg-gray-300">
-            <ul class="p-2 pl-4 text-left">
-                <li v-for="(item, index) in programme.keyFeatures" :key="index"><i style="font-size: 10px" class="fa fa-star"></i> {{item}}</li>
+            <ul class="p-2 pl-8 text-base list-disc text-gray-700 text-justify">
+                <li v-for="(item, index) in programme.keyFeatures" :key="index">{{item}}</li>
             </ul>
             <p class=" px-6 text-center font-bold text-xl"><span><i class="fa fa-calendar-check"></i></span> Programme Events</p>
             <table v-if="programme.events != null"  class="p-6 table-fixed w-full ">
@@ -80,6 +80,7 @@
                     <th class="border py-2">Title</th>
                     <th class="border py-2 ">Start Date</th>
                     <th class="border py-2 ">Due Date</th>
+                    <th class="border py-2" v-if="programme.confirmed">Feedback</th>
                 </thead>
                 <tbody>
                 <tr v-for="(item, index) in programme.events" :key="index">
@@ -87,10 +88,15 @@
                     {{item.title}}
                     </td>
                     <td>
-                      {{item.start_date}}
+                     {{ item.start_date | moment("MMMM Do YYYY") }}
                     </td>
                     <td>
-                   {{item.end_date}}
+                     {{item.end_date | moment("MMMM Do YYYY") }}
+                    </td>
+                    <td v-if="programme.confirmed">
+                       <span v-if="item.use_feedback" class="px-3 cursor-pointer bg-gray-700 text-white rounded">
+                           Submit Feedback
+                       </span> <span v-else>Not Required</span>
                     </td>
                 </tr>
             </tbody>
@@ -98,10 +104,10 @@
         <p v-else>No Events Scheduled</p>
         </div>
          <facilitator-component v-bind:view="viewFacilitators" v-bind:facilitators="programme.programme.speakers" v-bind:creator="programme.programme.creator" @close="viewFacilitators=!viewFacilitators"></facilitator-component>
-        <a href="#" v-on:click="details=false" class="flex-1 float-left right-0 justify-end"><span class="px-3 py-2 bg-red-600 text-white rounded-full font-bold">X</span></a>
+        <a href="#" v-on:click="details=false" class="flex-1 float-left right-0 justify-end"><span class="px-3 py-2 rounded-full font-extrabold">X</span></a>
     </div>
     </div>
-    <div v-if="details == false && manager == false" key="programmeTiles" class="flex-1 xs:m-0 xs:mt-5 m-3 flex-col flex xs:flex-col rounded-lg bg-white">
+    <div v-if="details == false && manager == false" key="programmeTiles" class="relative flex-1 xs:m-0 xs:mt-5 m-3 flex-col flex xs:flex-col rounded-lg bg-white">
             <div class="flex-1 text-lg font-bold"><span><i class="fa fa-calendar-alt"></i> Programmes</span>
             </div>
                 <!-- button -->
@@ -124,6 +130,7 @@
                            {{item.type}}
                         </div>
                     </div>
+
                     <div v-on:click="fetchDetails(item.id)" class="flex-1 h-20">
                         <img :src="'/files/images?filename=' + item.featured" class="object-cover h-40 w-full" alt="" srcset="">
                     </div>
@@ -135,9 +142,10 @@
                         <span v-if="item.createdBy === user.id" class="cursor-pointer hover:bg-blue-800 hover:text-white text-black px-6 rounded shadow-sm bg-gray-300" v-on:click="editEvents(item.id)"> Edit</span>
                         </div>
                     </div>
-                       <edit-component v-bind:edit="edit" v-bind:programme="programme" @close="edit=!edit"></edit-component>
+
                 </div>
               </transition-group>
+                    <edit-component key="edit" class="z-40 absolute" style="background: rgba(0,0,0,0.5)" v-bind:edit="edit" v-bind:programme="programme" @close="edit=!edit"></edit-component>
             <div class="pagination">
             <button class="text-gray-700 text-center bg-gray-400 px-4 py-2 m-2 disabled" @click="fetchStories(pagination.prev_page_url)"
                     :disabled="!pagination.prev_page_url">
@@ -187,20 +195,20 @@ const MAX_HEIGHT = 720;
                 requesting: 'notsent',
                 edit: false,
                 editId: null,
-                manager: true
+                manager: false
             }
         },
         methods: {
             fetchStories: function (page_url) {
                 let vm = this;
                 this.show=false;
+                this.manager=false;
                 page_url = page_url || '/api/programmes/all'
                 axios
                 .get(page_url)
                     .then(function (response) {
                         vm.makePagination(response.data)
                         vm.programmes = response.data.data
-                        console.log(response)
 
                  });
             },
@@ -216,13 +224,13 @@ const MAX_HEIGHT = 720;
                 },
             fetchDetails: function(id){
                 this.details = true;
+                this.manager =false;
                 axios.get('/api/program/details', {
                     params: {
                         id: id
                     }
                 }).then((response)=> {
                     this.programme = response.data
-                    console.log(response.data)
                     this.isloading = false;
                 });
             },
@@ -256,7 +264,7 @@ const MAX_HEIGHT = 720;
                 img.onload = () => {
                 this.image.width = img.width;
                 this.image.height = img.height;
-                console.log(this.image);
+
                 if(this.image.width > MAX_WIDTH) {
                     this.imageError = `The image width (${this.image.width}) is too much (max is ${MAX_WIDTH}).`;
                     return;
@@ -307,7 +315,6 @@ const MAX_HEIGHT = 720;
                let vm = this
             axios.get('/api/programmes/mine').then((response)=>{
                 this.myprogrammes = response.data.data
-                console.log(response.data.data)
                 response.data.data.length > 0 ? vm.hasProgram = true : vm.hasProgram = false;
 
             })

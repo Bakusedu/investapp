@@ -17,7 +17,7 @@ class UsersController extends Controller
 {
 
         $data = Programme::with('events')->latest()->paginate(6);
-        $programme = Auth::user()->programmes()->latest()->with('events')->paginate(6);
+        $programme = Auth::user()->programmes()->where('createdBy', '!=', Auth::user()->id)->latest()->with('events')->paginate(6);
         if ($type == 'mine') {
             $user = Auth::user();
          $data = Programme::where("createdBy", $user->id)->latest()->with('events')->with('users')->with('waitinglist')->with('speakers')->paginate(6);
