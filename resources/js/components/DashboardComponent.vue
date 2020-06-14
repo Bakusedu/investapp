@@ -138,7 +138,7 @@
                         <p v-on:click="fetchDetails(item.id)" class="font-bold cursor-pointer">{{item.title}}</p>
                         <p class="text-sm">{{item.overview| truncate(90,'...')}}</p>
                         <div class="flex justify-between">
-                        <span class="text-blue-700 shadow-xs cursor-pointer" v-on:click="fetchDetails(item.id)">Show more >></span>
+                        <span class="text-blue-700 shadow-xs cursor-pointer font-medium" v-on:click="fetchDetails(item.id)">Show more ></span>
                         <span v-if="item.createdBy === user.id" class="cursor-pointer hover:bg-blue-800 hover:text-white text-black px-6 rounded shadow-sm bg-gray-300" v-on:click="editEvents(item.id)"> Edit</span>
                         </div>
                     </div>

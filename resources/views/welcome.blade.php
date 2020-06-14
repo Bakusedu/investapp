@@ -36,10 +36,11 @@
 <div class="h-10 p-16 mb-16">
     Follow The LiftHub
     <div class="flex-none">
-        <a href="#" class="fa fa-facebook"></a>
-        <a href="#" class="fa fa-twitter"></a>
-        <a href="#" class="fa fa-instagram"></a>
-        <a href="#" class="fab fa-facebook-messenger"></a>
+        <a href="https://web.facebook.com/thelifthub/" class="fab fa-facebook"></a>
+        <a href="https://twitter.com/thelifthub" class="fab fa-twitter"></a>
+        <a href="#" class="fab fa-instagram"></a>
+        <a href="https://web.facebook.com/thelifthub/" class="fab fa-facebook-messenger"></a>
+        <a href="https://chat.whatsapp.com/JIenKYuZ9t42NbqACYiXfn" title="Whatsapp" class="bg-green-500 fab fa-whatsapp"></a>
    </div>
 </div>
 <footer class="p-16 h-64 bg-gray-900">

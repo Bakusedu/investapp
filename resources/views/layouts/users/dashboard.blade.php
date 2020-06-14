@@ -116,10 +116,16 @@
                 >
                     <ul class="pt-6 sm:pt-0 md:pt-0 lg:pt-0 xl:pt-0 list-reset sm:flex md:flex lg:flex xl:flex justify-end flex-1 items-center">
                         <li class="mr-3">
-                        <a class="inline-block py-2 px-4 text-yellow-500 no-underline" href="{{route('user.dashboard')}}" @click="isOpen = false">Home</a>
+                        <a class="inline-block @if(Request::is('/')) shadow-lg @endif py-2 px-4 text-yellow-500 no-underline" href="{{url('/')}}" @click="isOpen = false">Home</a>
                         </li>
                         <li class="mr-3">
-                        <a class="inline-block text-gray-600 @if(Request::is('forum/home')) shadow-lg @endif rounded-full no-underline hover:text-gray-500 hover:text-underline py-2 px-4" href="{{route('forum.home')}}" @click="isOpen = false">Forum</a>
+                            <a href="{{route('forum.home')}}" class="rounded-full hover:shadow-lg inline-block text-gray-600 no-underline hover:text-white hover:text-underline hover:bg-yellow-600 py-2 px-4" @click="isOpen = false">Forum</a>
+                        </li>
+                        <li class="mr-3">
+                            <a href="{{route('programme.join')}}" class="@if(Request::is('join/programme')) shadow-lg @endif rounded-full hover:shadow-lg inline-block text-gray-600 no-underline hover:text-white hover:text-underline hover:bg-yellow-600 py-2 px-4" @click="isOpen = false">Programmes</a>
+                        </li>
+                        <li class="mr-3">
+                          <a href="https://blog.lifthub.org/" class="rounded-full hover:shadow-lg inline-block text-gray-600 no-underline hover:text-white hover:text-underline hover:bg-yellow-600 py-2 px-4" @click="isOpen = false">Blog</a>
                         </li>
                         @auth
                         <li class="mr-3">
