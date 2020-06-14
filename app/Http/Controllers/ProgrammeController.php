@@ -198,15 +198,17 @@ class ProgrammeController extends Controller
 
     public function joinPage()
     {
-        $programmes = Programme::paginate(6);
+        $programmes = Programme::latest()->paginate(6);
         return view('programme', compact('programmes'));
     }
 
     public function details(Request $request)
     {
         $programme = Programme::findOrFail($request->id);
+        $speakers = $programme->comfirmedSpeakers()->get();
         $requested = false;
         $confirmed = false;
+        $expired = true;
         $features = json_decode($programme->key_features);
         if (Auth::check()) {
             $whitelist = WaitingList::whereUserId(Auth::user()->id)
@@ -217,7 +219,11 @@ class ProgrammeController extends Controller
             $whitelist->status ==  'approved' ? $confirmed = true: $confirmed = false ;
           }
         }
-        return view('programme-details', compact('programme', 'requested', 'confirmed','features'));
+        if (Carbon::now() > Carbon::parse($programme->enddate)) {
+            $expired = false;
+         }
+
+        return view('programme-details', compact('programme', 'speakers', 'requested', 'confirmed','features', 'expired'));
     }
 
     public function sendRequest(Request $request)

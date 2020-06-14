@@ -6,7 +6,7 @@
     <hr class="w-full bg-gray-500">
     <div class="xs:flex-col-reverse flex h-full overflow-x-hidden xs:overflow-y-scroll">
        @if (Auth::user()->isAdmin)
-       <div class="xs:flex xs:flex-1 xs:flex-col xs:w-full xs:p-3 w-1/4 pb-20 border-r-2 border-grey xs:content-center xs:overflow-y-visible overflow-y-scroll">
+       {{-- <div class="xs:flex xs:flex-1 xs:flex-col xs:w-full xs:p-3 w-1/4 pb-20 border-r-2 border-grey xs:content-center xs:overflow-y-visible overflow-y-scroll">
         <div x-data="{ open: false, message: 'boy o boy' }" class="m-2">
             <div class="flex flex-row p-2 xs:h-full xs:w-full bg-white rounded-md shadow-md" x-on:click="open = true">
                 <span class="p-2 text-2xl text-gray-500"><i class="fas fa-list-alt"></i></span>
@@ -115,7 +115,7 @@
                 <p>Active Courses</p>
             </div>
         </section>
-    </div>
+    </div> --}}
        @else
            <h4>Coming Soon</h4>
        @endif

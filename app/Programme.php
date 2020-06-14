@@ -26,6 +26,11 @@ class Programme extends Model
         return $this->hasMany('App\Speaker');
     }
 
+    public function comfirmedSpeakers()
+    {
+        return $this->hasMany('App\Speaker')->whereStatus('accepted');
+    }
+
     public function waitinglist()
     {
        return $this->hasMany('App\WaitingList')->whereStatus('pending');

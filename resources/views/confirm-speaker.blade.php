@@ -30,7 +30,7 @@
                     <p class="font-bold text-2xl"> Key Features</p>
                     <ul class="list-disc p-3">
                         @foreach ($features as $item)
-                        <li class="text-lg font-medium">{{$item}}</li>
+                        <li class=" text-lg text-gray-700 text-base">{{$item}}</li>
                         @endforeach
                     </ul>
                 </div>

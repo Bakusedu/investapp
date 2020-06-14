@@ -52,11 +52,11 @@
             </div>
             <div class="bg-white p-3 m-2 shadow-md rounded-md text-center">
                 <h3>1</h3>
-                <p>Active Courses</p>
+                <p>Events</p>
             </div>
             <div class="bg-white p-3 m-2 shadow-md rounded-md text-center">
                 <h3>1</h3>
-                <p>Active Courses</p>
+                <p>Forum Posts</p>
             </div>
         </section>
         <hr>

@@ -51,12 +51,17 @@
                    <span class="px-4 py-3 bg-white rounded-full"><i class="fas fa-user-tie 3x"></i></span>
                 </div>
                 <ul class="flex flex-col justify-evenly">
-                <a href="#" title="Dashboard">
+                <a href="{{route('home')}}" title="Dashboard">
                     <li class="p-5 px-8 bg-teal-500">
                         <span class="text-2xl text-white"><i class="fas fa-inbox"></i></span>
                     </li>
                 </a>
-                <a href="#" title="Business">
+                <a href="{{route('programmes.index')}}" title="Programmes">
+                    <li class="p-5 px-8">
+                        <span class="text-2xl text-gray-300"><i class="fa fa-business-time"></i></span>
+                    </li>
+                </a>
+                <a href="{{route('categories')}}" title="Forum">
                     <li class="p-5 px-8">
                         <span class="text-2xl text-gray-300"><i class="fa fa-business-time"></i></span>
                     </li>
@@ -64,11 +69,6 @@
                 <a href="#" title="Customer Management">
                     <li class="p-5 px-8">
                         <span class="text-2xl text-gray-300"><i class="fas fa-users-cog"></i></span>
-                    </li>
-                </a>
-                <a href="#" title="Subscriptions">
-                    <li class="p-5 px-8">
-                        <span class="text-2xl text-gray-300"><i class="fas fa-suitcase"></i></span>
                     </li>
                 </a>
                 <a href="#" title="Jobs">
