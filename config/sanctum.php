@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', 'localhost,127.0.0.1')),
+    'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', 'lifthub.org,104.248.122.187,localhost,127.0.0.1')),
 
     /*
     |--------------------------------------------------------------------------

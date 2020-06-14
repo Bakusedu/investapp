@@ -81,7 +81,7 @@
                             <a href="{{route('forum.home')}}" class="rounded-full hover:shadow-lg inline-block text-gray-600 no-underline hover:text-white hover:text-underline hover:bg-yellow-600 py-2 px-4" @click="isOpen = false">Forum</a>
                         </li>
                         <li class="mr-3">
-                            <a href="{{route('programme.join')}}" class="@if (Route::has('programme.join')) shadow-lg @endif rounded-full hover:shadow-lg inline-block text-gray-600 no-underline hover:text-white hover:text-underline hover:bg-yellow-600 py-2 px-4" @click="isOpen = false">Programmes</a>
+                            <a href="{{route('programme.join')}}" class="@if(Request::is('join/programme')) shadow-lg @endif rounded-full hover:shadow-lg inline-block text-gray-600 no-underline hover:text-white hover:text-underline hover:bg-yellow-600 py-2 px-4" @click="isOpen = false">Programmes</a>
                         </li>
                         <li class="mr-3">
                           <a href="https://blog.lifthub.org/" class="rounded-full hover:shadow-lg inline-block text-gray-600 no-underline hover:text-white hover:text-underline hover:bg-yellow-600 py-2 px-4" @click="isOpen = false">Blog</a>
