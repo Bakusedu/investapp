@@ -12,34 +12,33 @@
         <img src="" class="w-full object-cover" alt="" srcset="">
     </div>
 </div>
-<div class="flex w-full p-16 pt-24 xs:p-4">
-<div class="flex-1 w-6/12">
+<div class="flex w-full p-16 xs:pt-6 pt-24 xs:p-4 xs:flex-col">
+<div class="flex-1 w-6/12 xs:flex-none xs:w-full">
     <img src="{{asset('images/work.jpg')}}" class="object-fill w-full h-full" alt="">
 </div>
-<div class="flex-1 w-6/12 p-16 xs:p-4">
+<div class="flex-1 w-6/12 p-16 xs:p-4 xs:w-full xs:flex-none">
     <h1 class="font-bold xs:text-lg text-4xl">Where work feeels like fun.</h1>
     <p>Unlock the potentials of your company and the people in it.
         Transform your business drastically by relying on our feasible solution and community approach</p>
 </div>
 </div>
 
-<div class="flex w-full p-16 pt-16 xs:p-4">
-    <div class="flex-1 w-6/12 pt-8 xs:p-4">
+<div class="flex w-full p-16 pt-16 xs:p-4 xs:flex-col-reverse">
+    <div class="flex-1 w-6/12 pt-8 xs:w-full xs:flex-none xs:p-4">
         <h1 class="font-bold xs:text-lg text-4xl">Where work feeels like fun.</h1>
         <p>Unlock the potentials of your company and the people in it.
             Transform your business drastically by relying on our feasible solution and community approach</p>
     </div>
-    <div class="flex-1 w-6/12">
+    <div class="flex-1 w-6/12 xs:w-full xs:flex-none">
         <img src="{{asset('images/work4.jpg')}}" class="object-fill w-full h-full" alt="">
     </div>
 </div>
-<div class="h-10 p-16 mb-16">
+<div class="h-10 p-16 xs:text-sm xs:w-full mb-16">
     Follow The LiftHub
     <div class="flex-none">
         <a href="https://web.facebook.com/thelifthub/" class="fab fa-facebook"></a>
         <a href="https://twitter.com/thelifthub" class="fab fa-twitter"></a>
         <a href="#" class="fab fa-instagram"></a>
-        <a href="https://web.facebook.com/thelifthub/" class="fab fa-facebook-messenger"></a>
         <a href="https://chat.whatsapp.com/JIenKYuZ9t42NbqACYiXfn" title="Whatsapp" class="bg-green-500 fab fa-whatsapp"></a>
    </div>
 </div>
