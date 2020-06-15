@@ -23,7 +23,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('/request/to/join', 'ProgrammeController@sendRequest')->name('join.request');
 });
 
-
+Route::get('logout','UsersController@Logout');
 Route::get('/join/programme', 'ProgrammeController@joinPage')->name('programme.join');
 Route::get('/programme/details', 'ProgrammeController@details')->name('programme.details');
 Route::get('/invite/{id}', 'SpeakerController@speakerInvite')->name('invitation.page');

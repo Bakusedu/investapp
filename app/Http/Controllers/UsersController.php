@@ -28,4 +28,10 @@ class UsersController extends Controller
 
        return response()->json($data, 200);
     }
+
+    public function Logout()
+    {
+        Auth::logout();
+        return view("welcome");
+    }
 }
