@@ -42,8 +42,8 @@
         <a href="https://chat.whatsapp.com/JIenKYuZ9t42NbqACYiXfn" title="Whatsapp" class="bg-green-500 fab fa-whatsapp"></a>
    </div>
 </div>
-<footer class="p-16 h-64 bg-gray-900">
-    {{-- <div class="flex flex-row justify-evenly">
+<footer class="p-16 h-64 text-white bg-gray-900">
+    <div class="flex flex-row xs:flex-col justify-evenly">
         <div class="shadow py-6 px-8 hover:shadow-lg">
             Blog
         </div>
@@ -53,7 +53,9 @@
         <div class="shadow py-6 px-8 hover:shadow-lg">
             Forum
         </div>
-    </div> --}}
+    </div>
 </footer>
-
+<div class="p-6 text-white bg-gray-900 text-center">
+    ©LiftHub {{\Carbon\Carbon::now()->year}}
+</div>
 @endsection
