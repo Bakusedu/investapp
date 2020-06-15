@@ -411,7 +411,7 @@ class ProgrammeController extends Controller
             'details' => $request->details,
             'start_date' => $request->startdate,
             'end_date' => $request->enddate,
-            'use_feedback' => $request->useFeedback === true ? 1 : 0,
+            'use_feedback' => $request->useFeedback == true ? 1 : 0,
             'question' => $request->question ?? 'null',
             'feedback_type' => $request->feedbackType ?? 'null'
         ]);

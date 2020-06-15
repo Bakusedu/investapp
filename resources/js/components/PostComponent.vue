@@ -611,6 +611,7 @@ import EventBus from '../event-bus';
         },
 
         validateEvent(){
+            console.log(this.feedback)
           let startDate = this.$refs.eventStartDate.value;
           let endDate = this.$refs.eventEndDate.value;
           let details = this.$refs.eventDetails.value;
