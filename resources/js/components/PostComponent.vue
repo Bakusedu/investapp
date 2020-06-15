@@ -107,7 +107,7 @@
                 <!--/Dialog -->
             </div><!-- /Overlay -->
                 <!--Overlay-->
-                <div v-if="events == true" @events="events = true" class="z-40 flex items-center justify-center" >
+                <div v-if="events == true" @events="events = true" class="absolute inset-0 mt-24 z-40 flex items-center justify-center" >
                 <!--Dialog-->
                 <div class="bg-white w-9/12 xs:w-full h-auto overflow-y-auto md:max-w-md mx-auto rounded shadow py-4 px-8 mt-20 text-left pt-30 pb-40" style="top: 60px">
 
@@ -161,7 +161,7 @@
                             </div>
                         </div>
                         <label class="block text-gray-700 text-sm font-bold m-2">
-                        Event Task
+                        Event Description
                         </label>
                         <textarea ref="eventDetails" required placeholder="Enter event details here" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" cols="30" rows="10"></textarea>
                     <button @click="validateEvent" class="font-semibold px-10 py-3 rounded-t bg-yellow-600"><p v-if="adding">Proccessing...</p> <p v-else>Add to Calendar</p></button>
