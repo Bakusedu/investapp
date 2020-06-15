@@ -219,7 +219,7 @@ class ProgrammeController extends Controller
             $whitelist->status ==  'approved' ? $confirmed = true: $confirmed = false ;
           }
         }
-        if (Carbon::now() > Carbon::parse($programme->enddate)) {
+        if (Carbon::now() < Carbon::parse($programme->enddate)) {
             $expired = false;
          }
 
