@@ -107,14 +107,14 @@
                 <!--/Dialog -->
             </div><!-- /Overlay -->
                 <!--Overlay-->
-                <div v-if="events == true" @events="events = true" class="absolute inset-0 mt-24 z-40 flex items-center justify-center" >
+                <div v-if="events == true" @events="events = true" class="absolute inset-0 xs:mt-56 mt-40 z-40 flex items-center justify-center" >
                 <!--Dialog-->
                 <div class="bg-white w-9/12 xs:w-full h-auto overflow-y-auto md:max-w-md mx-auto rounded shadow py-4 px-8 mt-20 text-left pt-30 pb-40" style="top: 60px">
 
                     <!--Title-->
                     <div class="flex justify-between items-center pb-3">
-                        <p class="text-base px-6 bg-gray-200 rounded font-bold">Add Event(s)</p>
-                        <p @click="speakers = true" class="text-base cursor-pointer px-6 shadow-md bg-yellow-600 rounded font-bold">Add Speakers</p>
+                        <p class="text-base px-6 py-2 bg-gray-200 rounded font-bold">Add Event(s)</p>
+                        <p @click="speakers = true" class="text-base cursor-pointer px-6 py-2 shadow-md bg-yellow-600 rounded font-bold">Add Speakers</p>
                         <div class="cursor-pointer z-50" @click="events = false">
                             <svg class="fill-current text-black" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
                                 <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"></path>
@@ -133,12 +133,12 @@
                             <input required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" ref="eventTitle" type="text" placeholder="Enter  title">
                             </div>
                         </div>
-                        <div class="flex flex-row w-full pb-4">
+                        <div class="flex flex-row w-full xs:flex-col pb-4">
                             <div class="flex-1">
                             <label class="block text-gray-700 text-sm font-bold m-2" > Start Date</label>
                             <input ref="eventStartDate" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"  type="datetime-local" placeholder="Start Date">
                             </div>
-                            <div class="flex-1">
+                            <div class="flex-1 xs:w-full xs:flex-none">
                             <label class="block text-gray-700 text-sm font-bold m-2">End Date</label>
                             <input ref="eventEndDate" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="datetime-local" placeholder="End Date">
                             </div>

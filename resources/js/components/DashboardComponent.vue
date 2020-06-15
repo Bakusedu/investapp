@@ -7,7 +7,7 @@
         </div>
         <div class="xs:flex-1 p-4 xs:hidden"><h3 class="font-bold"><span>{{user.first_name}}</span> <span>{{user.last_name}}</span></h3>
             <h3>{{user.email}}</h3></div>
-        <div class="flex-col flex xs:flex-row flex-wrap items-center justify-center">
+        <div class="flex-col flex xs:flex-row flex-wrap items-center justify-between">
             <div class="p-4">
                 <a :href="'/forum/home'"
                     class="bg-gray-300 text-gray-700 font-semibold py-2 xs:py-1 xs:px-10 px-16 rounded inline-flex items-center"
@@ -39,7 +39,7 @@
             <div class="inline-block">
 
             <a href="/logout">
-                    <li class="bg-gray-200 hover:bg-gray-400 py-2 px-8 block whitespace-no-wrap">
+                    <li class="bg-gray-200 hover:bg-gray-400 rounded py-2 px-8 block xs:py-1 xs:p-4 xs:px-10 xs:text-sm whitespace-no-wrap">
                         Logout
                     </li>
             </a>
@@ -121,9 +121,9 @@
             <div class="flex-1 text-lg font-bold"><span><i class="fa fa-calendar-alt"></i> Programmes</span>
             </div>
                 <!-- button -->
-                <div class="absolute right-0 pr-12">
+                <div class="absolute right-0 mt-5 pr-10 xs:pr-2">
                     <a v-on:click="create = true" href="#"
-                        class="bg-green-600 shadow-lg text-white font-semibold py-2 xs:py-1 text-sm xs:px-10 px-16 rounded inline-flex items-center"
+                        class="bg-green-600 xs:text-xs shadow-lg text-white font-semibold py-2 xs:py-1 text-sm xs:px-10 px-16 rounded inline-flex items-center"
                         >
                         <span class="mr-1">Create Programme</span>
                     </a>

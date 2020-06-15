@@ -4,13 +4,15 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>The LiftHub</title>
+        <title>The LiftHUB</title>
         <!-- Styles -->
      <link href="{{ mix('css/app.css') }}" rel="stylesheet">
      <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
-
+    <style>
+        [x-cloak] { display: none; }
+    </style>
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
@@ -42,9 +44,9 @@
     <body>
         <main class="bg-white font-montserrat h-full">
             <nav class="flex items-center justify-between flex-wrap py-4 px-6 fixed w-full z-50 top-0"
-                x-data="{ isOpen: false }"
+                x-data="{ isOpen: false }" x-cloak
                 @keydown.escape="isOpen = false"
-                :class="{ 'shadow-lg bg-gray-100' : isOpen , 'bg-white shadow-lg' : !isOpen}"
+                :class="{ 'shadow-lg bg-yellow-100' : isOpen , 'bg-white shadow-lg' : !isOpen}"
             >
 
                 <!--Logo etc-->
@@ -108,7 +110,7 @@
 
     </main>
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.0.1/dist/alpine.js" defer></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src={{asset("js/jquery.min.js")}}></script>
 
     <script>
         $(document).ready(function() {

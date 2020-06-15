@@ -11,7 +11,9 @@
      <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
-
+    <style>
+        [x-cloak] { display: none; }
+    </style>
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
@@ -66,10 +68,10 @@
             ])!!}
         </script>
     @endif
-            <nav class="flex items-center justify-between flex-wrap py-4 px-6 fixed w-full z-30 top-0"
-                x-data="{ isOpen: false }"
+            <nav class="flex items-center justify-between flex-wrap py-4 px-6 fixed w-full z-50 top-0"
+                x-data="{ isOpen: false }" x-cloak
                 @keydown.escape="isOpen = false"
-                :class="{ 'shadow-lg bg-gray-100' : isOpen , 'bg-yellow-100' : !isOpen}"
+                :class="{ 'shadow-lg bg-yellow-100' : isOpen , 'bg-white' : !isOpen}"
             >
 
                 <!--Logo etc-->
@@ -93,7 +95,7 @@
                 </div>
 
                 <!--Toggle button (hidden on large screens)-->
-                <button @click="isOpen = !isOpen" type="button" class="block right-0 sm:hidden xs:fixed md:hidden lg:hidden xl:hidden text-gray-800 hover:text-yellow-900 focus:outline-none focus:text-yellow-900"
+                <button @click="isOpen = !isOpen" type="button" class="block px-2 mt-8 top-0 right-0 sm:hidden xs:fixed md:hidden lg:hidden xl:hidden text-gray-800 hover:text-yellow-900 focus:outline-none focus:text-yellow-900"
                     :class="{ 'transition transform-180': isOpen }"
                 >
                 <svg class="h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -131,8 +133,8 @@
                         <li class="mr-3">
                         <a class="@if(Request::is('dashboard')) shadow-lg @endif rounded-full inline-block text-gray-600 no-underline hover:text-white hover:text-underline hover:bg-yellow-400 py-2 px-4" href="{{route('user.dashboard')}}" @click="isOpen = false">Dashboard</a>
                         </li>
-                        <li class="mr-3">
-                            <div class="rounded-full h-12 w-12 flex items-center justify-center" style="background-image: url('/files/images?filename={{Auth::user()->avatar}}'); background-size: cover"></div>
+                        <li class="xs:absolute xs:top-0 xs:inset-y-0 xs:right-0 xs:mt-32 mr-3">
+                            <div class="rounded-full h-12 w-12 xs:h-32 xs:w-32 flex items-center justify-center" style="background-image: url('/files/images?filename={{Auth::user()->avatar}}'); background-size: cover"></div>
                         </li>
                         @endauth
                         @unless (Auth::check())
@@ -151,7 +153,7 @@
             @yield('content')
 
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.0.1/dist/alpine.js" defer></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src={{asset("js/jquery.min.js")}}></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
      @yield('script')
     <script>
