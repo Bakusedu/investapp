@@ -16,7 +16,7 @@
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
+    <link rel="stylesheet" href={{asset("fontawesome/css/all.css")}}>
     <link rel="stylesheet" href="{{asset('css/share.css')}}">
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
@@ -116,9 +116,9 @@
         $(document).ready(function() {
             $(window).scroll(function() {
               if ($(document).scrollTop() > 2) {
-                $("nav").addClass("transition duration-500 ease-in-out transform -translate-y-1 scale-x-100 opacity-75");
+                $("nav").addClass("transition duration-500 ease-in-out transform -translate-y-1 scale-x-100");
               } else {
-                $("nav").removeClass("transition duration-500 ease-in-out transform -translate-y-1 scale-104  opacity-75");
+                $("nav").removeClass("transition duration-500 ease-in-out transform -translate-y-1 scale-104");
               }
             });
           });

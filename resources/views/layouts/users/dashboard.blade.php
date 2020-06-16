@@ -17,7 +17,7 @@
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
+    <link rel="stylesheet" href={{asset("fontawesome/css/all.css")}}>
     <link href="{{asset('corner-popup-master/dist/css/corner-popup.min.css')}}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
         <!-- Fonts -->
@@ -160,9 +160,9 @@
     $(document).ready(function() {
         $(window).scroll(function() {
           if ($(document).scrollTop() > 2) {
-            $("nav").addClass("transition duration-500 ease-in-out transform -translate-y-1 scale-104 opacity-75");
+            $("nav").addClass("transition duration-500 ease-in-out transform -translate-y-1 scale-104");
           } else {
-            $("nav").removeClass("transition duration-500 ease-in-out transform -translate-y-1 scale-104 opacity-75");
+            $("nav").removeClass("transition duration-500 ease-in-out transform -translate-y-1 scale-104");
           }
         });
       });

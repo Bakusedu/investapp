@@ -53,24 +53,23 @@
              <span class="text-xl">Loading...</span>
         </div>
         <div v-else class="w-full flex xs:flex-col rounded-lg bg-white">
-        <div class="w-3/12 hover:w-2/12 rounded-md flex xs:flex-none xs:w-full items-center flex-col bg-gray-500" :style="{backgroundImage:`url('/files/images?filename=${programme.programme.featured}')`, backgroundSize:'cover', backgroundRepeat:'no-repeat', backgroundPosition:'center'}">
-            <p class="font-extrabold bg-orange-400 pb-4 w-full pt-2 text-lg text-center">Event</p>
-            <p class="text-center bg-gray-100 rounded w-full text-black font-bold">{{programme.programme.title}}</p>
-            <div class="flex flex-col w-full xs:space-x-4 h-64 flex-wrap xs:flex-no-wrap">
-            <p v-on:click="viewFacilitators = true" class="text-lg  w-full text-center"><span class="hover:shadow-2xl text-sm hover:bg-yellow-600 cursor-pointer shadow-lg p-1 px-3 rounded-md bg-yellow-700 text-white">Facilitators ({{programme.programme.speakers.length + 1}}) <i class="fa fa-eye"></i></span> </p>
-            <a :href="'/programme/calendar/'+programme.programme.id" class="text-lg text-center"><span class="hover:shadow-2xl text-sm hover:bg-yellow-600 shadow-lg p-1 px-3 rounded-md bg-yellow-700 text-white"> View Calendar <i class="fa fa-calendar-alt"></i></span> </a>
-            <div v-on:click="joinProgram(programme.programme.id)" v-if="!programme.requested&&programme.confirmed==false" class="text-lg flex justify-center text-center">
-                <div>
-                <p v-if="requesting == 'sending'" class=" p-1 px-3 rounded-md bg-yellow-700 text-white">Sending request...</p><p class="hover:shadow-2xl text-sm hover:bg-yellow-600 cursor-pointer shadow-lg p-1 px-3 rounded-md bg-yellow-700 text-white" v-else-if="requesting=='sent'">Request Sent</p><p class="hover:shadow-2xl text-sm hover:bg-yellow-600 cursor-pointer shadow-lg p-1 px-3 rounded-md bg-yellow-700 text-white" v-else>Join Programme<p></p></div> </div>
-            <a href="#" v-else-if="programme.requested&&programme.confirmed==true" class="text-lg text-center"><span class="hover:shadow-2xl text-sm hover:bg-yellow-600 shadow-lg p-1 px-3 rounded-md bg-green-700 text-white"><i class="fa fa-info"></i> You are attending</span> </a>
-            <a href="#" v-else-if="programme.requested" class="text-lg w-full text-center"> <span class="hover:shadow-2xl text-sm hover:bg-green-600 shadow-lg p-1 px-3 rounded-md bg-green-700 text-white">Awaiting Confirmation</span> </a>
+        <div class="relative w-3/12 hover:w-2/12 rounded-md flex xs:flex-none xs:w-full items-center flex-col bg-gray-500" :style="{backgroundImage:`url('/files/images?filename=${programme.programme.featured}')`, backgroundSize:'cover', backgroundRepeat:'no-repeat', backgroundPosition:'center'}">
+            <div class="absolute h-full w-full " style="background: rgba(0,0,0, 0.5)"></div>
+            <p class="font-extrabold z-10 bg-orange-400 pb-4 w-full pt-2 text-lg text-center">Event</p>
+            <p class="text-center bg-white z-10 rounded w-full text-black font-bold">{{programme.programme.title}}</p>
+            <div class="flex flex-col w-full z-10 items-center justify-center h-64 flex-wrap xs:flex-no-wrap">
+            <p v-on:click="viewFacilitators = true" class="text-lg w-full text-center"><span class="hover:shadow-2xl text-sm hover:bg-indigo-600 cursor-pointer shadow-lg p-2 px-3 rounded-md bg-blue-700 border-purple-900 border text-white">Facilitators ({{programme.programme.speakers.length + 1}}) <i class="fa fa-eye"></i></span> </p>
+            <a :href="'/programme/calendar/'+programme.programme.id" class="text-lg  text-center"><span class="hover:shadow-2xl text-sm hover:bg-yellow-700 shadow-lg p-2 px-3 rounded-md bg-yellow-700 text-white border-yellow-700 border"> View Calendar <i class="fa fa-calendar-alt"></i></span> </a>
+            <div v-on:click="joinProgram(programme.programme.id)" v-if="!programme.requested&&programme.confirmed==false" class="text-lg z-10 flex justify-center text-center">
+            <div>
+                <p v-if="requesting == 'sending'" class=" p-1 px-3 rounded-md bg-yellow-700 text-white">Sending request...</p><p class="hover:shadow-2xl text-sm hover:bg-yellow-700 cursor-pointer shadow-lg p-1 px-3 rounded-md bg-yellow-700 text-white" v-else-if="requesting=='sent'">Request Sent</p><p class="hover:shadow-2xl text-sm hover:bg-yellow-700 cursor-pointer shadow-lg p-1 px-3 rounded-md bg-yellow-700 text-white" v-else>Join Programme<p></p></div> </div>
+                <a href="#" v-else-if="programme.requested&&programme.confirmed==true" class="text-lg text-center"><span class="hover:shadow-2xl text-sm hover:bg-yellow-700 shadow-lg p-1 px-3 rounded-md bg-green-700 text-white"><i class="fa fa-info"></i> You are attending</span> </a>
+                <a href="#" v-else-if="programme.requested" class="text-lg w-full text-center"> <span class="hover:shadow-2xl text-sm hover:bg-green-600 shadow-lg p-1 px-3 rounded-md bg-green-700 text-white">Awaiting Confirmation</span> </a>
             </div>
-             <div class="flex flex-col xs:flex-row justify-center ">
-                <span class="text-lg text-center"><span class="hover:shadow-2xl text-sm hover:bg-yellow-600 shadow-lg p-1 px-3 rounded-md bg-yellow-700 text-white">{{programme.programme.users.length}} <i class="fa fa-user-plus"></i></span> </span>
-               <div class="flex-row justify-around w-full">
+            <div class="flex z-10 justify-center items-center w-full">
+                <span class="flex-1 text-lg text-center  bg-white"><span class="hover:shadow-2xl text-sm shadow-lg p-1 rounded-md text-blue-700"> <i class="fab fa fa-user-plus"></i> {{programme.programme.users.length}} </span></span>
                 <span class="flex-1 text-lg text-center  bg-white"><span class="hover:shadow-2xl text-sm  shadow-lg p-1  rounded-md text-blue-700"><i class="fab fa-facebook-square"></i></span> </span>
                 <span class="flex-1 text-lg text-center  bg-white"><span class="hover:shadow-2xl text-sm  shadow-lg p-1  rounded-md text-blue-500"><i class="fab fa-twitter-square"></i></span> </span>
-               </div>
             </div>
         </div>
          <div class="w-9/12 xs:w-full flex-col h-auto text-gray-800 bg-white">
@@ -114,7 +113,7 @@
         <p v-else>No Events Scheduled</p>
         </div>
          <facilitator-component v-bind:view="viewFacilitators" v-bind:facilitators="programme.programme.speakers" v-bind:creator="programme.programme.creator" @close="viewFacilitators=!viewFacilitators"></facilitator-component>
-        <a href="#" v-on:click="details=false" class="flex-1 float-left right-0 justify-end"><span class="px-3 py-2 rounded-full font-extrabold">X</span></a>
+        <a href="#" v-on:click="details=false" class="absolute z-50 flex-1 float-left right-0 justify-end"><span class="px-4 rounded-full shadow-xl bg-white py-2 font-extrabold" style="font-size: 30px">X</span></a>
     </div>
     </div>
     <div v-if="details == false && manager == false" key="programmeTiles" class="relative flex-1 xs:m-0 xs:mt-5 m-3 flex-col flex xs:flex-col rounded-lg bg-white">
@@ -155,7 +154,7 @@
 
                 </div>
               </transition-group>
-                    <edit-component key="edit" class="z-40 absolute" style="background: rgba(0,0,0,0.5)" v-bind:edit="edit" v-bind:programme="programme" @close="edit=!edit"></edit-component>
+                    <edit-component key="edit" class="z-50 h-full top-0 absolute" style="background: rgba(0,0,0,0.5)" v-bind:edit="edit" v-bind:programme="programme" @close="edit=!edit"></edit-component>
             <div class="pagination">
             <button class="text-gray-700 text-center bg-gray-400 px-4 py-2 m-2 disabled" @click="fetchStories(pagination.prev_page_url)"
                     :disabled="!pagination.prev_page_url">
@@ -180,6 +179,7 @@
 const MAX_SIZE = 1000000;
 const MAX_WIDTH = 720;
 const MAX_HEIGHT = 720;
+import EventBus from '../event-bus';
     export default {
           data(){
             return {
@@ -318,6 +318,11 @@ const MAX_HEIGHT = 720;
             this.isLoggedIn = window.Laravel.isLoggedin
             this.isLoggedIn ? this.user = window.Laravel.user : this.user = null
             this.fetchStories()
+             let vm  = this
+            EventBus.$on('events', function (payLoad) {
+                    vm.edit = payLoad.edit
+
+            });
         },
 
          beforeMount() {

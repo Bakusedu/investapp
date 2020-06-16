@@ -107,16 +107,16 @@
                 <!--/Dialog -->
             </div><!-- /Overlay -->
                 <!--Overlay-->
-                <div v-if="events == true" @events="events = true" class="absolute inset-0 xs:mt-56 mt-40 z-40 flex items-center justify-center" >
+                <div v-if="events == true" @events="events = true" style="background: rgba(0,0,0, .5)" class="absolute inset-0 bottom-0 z-50 items-center justify-center" >
                 <!--Dialog-->
-                <div class="bg-white w-9/12 xs:w-full h-auto overflow-y-auto md:max-w-md mx-auto rounded shadow py-4 px-8 mt-20 text-left pt-30 pb-40" style="top: 60px">
+                <div class="bg-white w-9/12 xs:w-full rounded shadow py-4 px-8 xs:mt-64 mt-24 text-left pt-30 " style="top: 60px;">
 
                     <!--Title-->
                     <div class="flex justify-between items-center pb-3">
-                        <p class="text-base px-6 py-2 bg-gray-200 rounded font-bold">Add Event(s)</p>
-                        <p @click="speakers = true" class="text-base cursor-pointer px-6 py-2 shadow-md bg-yellow-600 rounded font-bold">Add Speakers</p>
+                        <p class="text-base xs:px-3 xs:py-1 px-6 py-2 bg-gray-200 rounded font-bold">Add Event(s)</p>
+                        <p @click="speakers = true" class="text-base cursor-pointer xs:px-3 xs:py-1 px-6 py-2 shadow-md bg-yellow-600 rounded font-bold">Add Speakers</p>
                         <div class="cursor-pointer z-50" @click="events = false">
-                            <svg class="fill-current text-black" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
+                            <svg class="fill-current text-black" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 18 18">
                                 <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"></path>
                             </svg>
                         </div>

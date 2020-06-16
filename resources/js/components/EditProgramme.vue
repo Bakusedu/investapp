@@ -9,9 +9,9 @@
                     <!--Title-->
                     <div class="flex justify-between items-center pb-3">
                         <p class="text-2xl font-bold">{{programme.programme.title}}</p>
-                         <p @click="openEventForm" class="text-base bg-yellow-600 rounded cursor-pointer px-3 xs:text-sm shadow-md font-bold">Add Events and Speakers</p>
+                         <p @click="openEventForm" class="text-base bg-yellow-600 rounded cursor-pointer px-3 xs:text-sm xs:w-32 shadow-md font-bold">Add Events and Speakers</p>
                         <div class="cursor-pointer z-50" @click="hide()">
-                            <svg class="fill-current text-black" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
+                            <svg class="fill-current text-black" xmlns="http://www.w3.org/2000/svg" width="25" height="30" viewBox="0 0 18 18">
                                 <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"></path>
                             </svg>
                         </div>
@@ -23,18 +23,18 @@
                         </ul>
                     </p>
                     <form action="#" method="post" @submit="checkForm($event)" enctype="multipart/form-data">
-                         <div class="flex xs:flex-col">
-                            <div class="flex-col xs:flex-none xs:flex-row flex-1 w-full">
+                         <div class="flex xs:flex-col flex-row">
+                            <div class="flex-col xs:flex-none xs:flex-row flex-1 xs:w-full">
                                 <label class="block text-gray-700 text-sm font-bold m-2">
                                     Programme title
                                   </label>
-                                <input required class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline" :value="programme.programme.title" ref="title" type="text" placeholder="Enter Programme title">
+                                <input required class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-11/12 xs:w-full focus:outline-none focus:shadow-outline" :value="programme.programme.title" ref="title" type="text" placeholder="Enter Programme title">
                             </div>
-                            <div class="flex-col xs:flex-none xs:flex-row w-full">
+                            <div class="flex-col xs:flex-none xs:flex-row xs:w-full">
                                 <label class="block text-gray-700 text-sm font-bold m-2">
                                     Programme Duration
                                   </label>
-                                <input required type="number" placeholder="Enter duration in days" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" :value="programme.programme.duration" ref="duration" >
+                                <input required type="number" placeholder="Enter duration in days" class="shadow w-11/12 appearance-none border rounded xs:w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" :value="programme.programme.duration" ref="duration" >
                             </div>
                          </div>
                          <div class="flex xs:flex-col ">
@@ -42,13 +42,13 @@
                             <label class="block text-gray-700 text-sm font-bold m-2">
                                 Start Date
                               </label>
-                            <input required class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline" :value="programme.programme.startdate" ref="startdate" type="datetime-local">
+                            <input required class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-11/12 xs:w-full focus:outline-none focus:shadow-outline" :value="programme.programme.startdate" ref="startdate" type="datetime-local">
                          </div>
                             <div class="flex-col xs:flex-none w-full">
                             <label class="block text-gray-700 text-sm font-bold m-2">
                                 Event Entry Fee
                               </label>
-                            <input :value="programme.programme.fee" ref="fee" required type="number" placeholder="Enter Amount per attendee" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                            <input :value="programme.programme.fee" ref="fee" required type="number" placeholder="Enter Amount per attendee" class="shadow appearance-none border rounded w-11/12 xs:w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                         </div>
                         </div>
                         <div class="flex xs:flex-col ">
@@ -56,13 +56,13 @@
                             <label class="block text-gray-700 text-sm font-bold m-2">
                                 Venue
                               </label>
-                            <input required class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline" :value="programme.programme.venue" ref="venue" type="text" placeholder="Enter Venue">
+                            <input required class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-11/12 xs:w-full focus:outline-none focus:shadow-outline" :value="programme.programme.venue" ref="venue" type="text" placeholder="Enter Venue">
                         </div>
                         <div class="flex-col xs:flex-none w-full">
                             <label class="block text-gray-700 text-sm font-bold m-2">
                                 Maximum number of attendees
                               </label>
-                            <input required type="number" placeholder="Enter number of Attendees expected" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            <input required type="number" placeholder="Enter number of Attendees expected" class="shadow appearance-none border rounded w-11/12 xs:w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                             :value="programme.programme.attendee" ref="attendee">
                         </div>
                         </div>
@@ -77,7 +77,7 @@
                             <input type="radio" v-model="type" class="shadow" value="paid">
                         </div>
                         </div>
-                        <div class="flex-col w-full">
+                        <div class=" space-y-1 flex-col w-full">
                             <label class="block text-gray-700 text-lg font-bold m-2">
                                 Five key features of the event you wish to highlight to your target audience
                               </label>
@@ -586,9 +586,10 @@ import EventBus from '../event-bus';
           window.getSelection().removeAllRanges()
         },
         openEventForm(event){
-         let payload = {'event': true, 'progId': this.programme.programme.id}
+         let payload = {'event': true, 'edit': false, 'progId': this.programme.programme.id}
          EventBus.$emit('events', payload)
             console.log('emitted')
+
         },
     },
 

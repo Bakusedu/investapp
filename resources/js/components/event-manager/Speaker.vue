@@ -73,7 +73,7 @@
                                   </label>
                                 <input  class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline" v-model="speaker.linkedIn"  value="" type="text" placeholder="Link to speaker's linkedIn (optional)">
                             </div>
-                            <div class="p-16 flex-col w-1/2 xs:flex-row sm:w-full sm:flex-row xs:w-full">
+                            <div class="p-16 xs:p-4 flex-col w-1/2 xs:flex-row sm:w-full sm:flex-row xs:w-full">
                                 <div @click="trigger" class="border hover:shadow-lg flex flex-row justify-center items-center h-64 w-64" :style="{backgroundImage: `url( ${speakerFileUrl} )`, backgroundSize:'cover', backgroundSize:'no-repeat', backgroundPosition: 'center'}">
                                     <p v-if="speakerImage == null" class="text-black">Click to add Image</p>
                                     <input hidden ref="speakerFile" @change="speakerFileValidation" type="file">

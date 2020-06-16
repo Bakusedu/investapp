@@ -44,9 +44,9 @@
                 <div class="shadow-md rounded-md flex items-center justify-center hover:shadow-2xl h-64" style="background-image: url('/files/images?filename={{$item->featured}}'); background-size: cover">
                 </div>
                 <div class="flex-1 text-left flex-row p-3">
-                    <p class="font-seemibold text-xl mb-2">{{$item->title}}</p>
-                    <p class="text-gray-700 text-base">Duration: {{\Carbon\Carbon::now()->diffForHumans(\Carbon\Carbon::now()->addDays($item->duration), \Carbon\CarbonInterface::DIFF_ABSOLUTE)}}</p>
-                    <p>{{substrwords($item->overview, 100)}} <span class="px-2 text-base font-semibold text-blue-700">Join Now</span></p>
+                    <p class="font-semibold text-xl mb-2">{{$item->title}}</p>
+                    <p class="text-gray-500 xs:text-sm text-base">Duration: {{\Carbon\Carbon::now()->diffForHumans(\Carbon\Carbon::now()->addDays($item->duration), \Carbon\CarbonInterface::DIFF_ABSOLUTE)}}</p>
+                    <p class="py-1 xs:text-sm text-gray-700">{{substrwords($item->overview, 100)}} <span class="px-2 text-base xs:text-sm font-semibold text-blue-700">Join Now</span></p>
                 </div>
             </a>
             </div>
