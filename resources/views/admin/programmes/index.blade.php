@@ -22,6 +22,10 @@
 	left: 0;
 	opacity: 0;
 }
+
+[x-cloak] {
+    display: none;
+}
 .switch-label {
 	position: relative;
 	display: block;
@@ -120,7 +124,7 @@
     @endif
     <div class="flex justify-evenly font-semibold font-mono">
         <h1 class="flex-1 p-2 font-semibold font-mono text-gray-700 text-2xl">Programmes</h1>
-        <div x-data="{openForumModal: false}"><button x-on:click="openForumModal = true" class="bg-yellow-600 px-4 py-3 shadow-md rounded-lg text-white">Create Programme</button>
+        <div x-cloak x-data="{openForumModal: false}"><button x-on:click="openForumModal = true" class="bg-yellow-600 px-4 py-3 shadow-md rounded-lg text-white">Create Programme</button>
              <!--Overlay-->
              <div class="overflow-auto" style="background-color: rgba(0,0,0,0.5)" x-show="openForumModal" x-show="openForumModal" @click.away="openForumModal = false" :class="{ 'absolute inset-0 z-10 flex items-center justify-center': openForumModal }">
                 <!--Dialog-->
@@ -219,7 +223,7 @@
            <p>You have not created any programme yet</p>
         </div> @endif
              <!--Overlay-->
-             <div class="overflow-auto" style="background-color: rgba(0,0,0,0.5)" x-show="open" x-show="open" @click.away="open = false" :class="{ 'absolute inset-0 z-10 flex items-center justify-center': open }">
+             <div class="overflow-auto" x-cloak style="background-color: rgba(0,0,0,0.5)" x-show="open" x-show="open" @click.away="open = false" :class="{ 'absolute inset-0 z-10 flex items-center justify-center': open }">
                 <!--Dialog-->
                 <div class="bg-white w-1/2 xs:w-full md:max-w-md mx-auto rounded shadow-lg py-4 mt-10 text-left px-6" x-show="open" @click.away="open = false" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="ease-in duration-300" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-90">
 
@@ -289,7 +293,7 @@
         <thead>
           <tr>
             <th class="border px-4 py-2">Title</th>
-            <th class="border px-4 py-2">Description</th>
+            <th class="border w-24 px-4 py-2">Description</th>
             <th class="border px-4 py-2">Status</th>
             <th class="border px-4 py-2">Actions</th>
           </tr>
@@ -299,10 +303,13 @@
         @foreach ($programmes as $item)
           <tr>
           <td class="border px-4 py-2">{{$item->title}}</td>
-            <td class="border px-4 py-2">{{$item->description}}</td>
+            <td class="border px-4 py-2">{{$item->overview}}</td>
             <td class="border px-4 py-2">@if($item->isActive)Active @else Not Active @endif</td>
-            <td>
-            <a href="{{route('programme.calendar',['id'=>$item->id])}}" class="border-black bg-yellow-700 rounded p-2 hover:bg-yellow-600 text-white m-3"><span class="xs:hidden">View Events Calender</span> <span><i class="fa fa-eye"></i></span></a>
+            <td class="border px-4">
+            <a href="{{route('programme.calendar',['id'=>$item->id])}}" class="border-black bg-yellow-700 rounded p-2 hover:bg-yellow-600 text-white m-3"><span class="xs:hidden">View Calender</span> <span><i class="fa fa-eye"></i></span></a>
+            </td>
+            <td class="border px-4">
+            <a href="{{route('programme.calendar',['id'=>$item->id])}}" class="border-black bg-red-700 rounded p-2 hover:bg-red-600 text-white m-3"><span class="xs:hidden">Trash</span> <span><i class="fa fa-trash-alt"></i></span></a>
             </td>
           </tr>
         @endforeach

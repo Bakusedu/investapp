@@ -92,12 +92,12 @@
                            Detailed Overview of the programme
                         </label>
                         <textarea v-model="overview" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" cols="30" rows="10"></textarea>
-                        <div class="flex flex-row">
+                        <div class="flex flex-col">
                         <div id="preview">
                             <img v-if="imageUrl" :src="imageUrl" />
                         </div>
                         <input type="file" ref="myFile" @change="selectedFile" accept="image/*" class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight flex-none w-auto focus:outline-none focus:shadow-outline" name="featured" required >
-                        <div v-if="imageError" class="imageError">
+                        <div v-if="imageError" class="imageError text-red-700 p-3">
                             {{imageError}}
                         </div>
                         </div>
