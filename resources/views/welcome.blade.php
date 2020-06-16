@@ -42,16 +42,43 @@
         <a href="https://chat.whatsapp.com/JIenKYuZ9t42NbqACYiXfn" title="Whatsapp" class="bg-green-500 fab fa-whatsapp"></a>
    </div>
 </div>
-<footer class="p-16 h-64 text-white bg-gray-900">
+<footer class="p-16 h-auto text-white bg-gray-900">
     <div class="flex flex-row xs:flex-col justify-evenly">
         <div class="shadow py-6 px-8 hover:shadow-lg">
-            Blog
+            <h1 class="text-lg font-medium">  My LiftHub</h1>
+            <ul class="p-3">
+            <li><a href="{{route('user.dashboard')}}">Account profile</a></li>
+            <li><a href="{{route('forum.home')}}">Start/Join conversation</a></li>
+            </ul>
         </div>
         <div class="shadow py-6 px-8 hover:shadow-lg">
-            Programs
+            <h1 class="text-lg font-medium"> Lifthub FunSpaces</h1>
+            <ul class="p-3">
+                <li>Space Gyration</li>
+            </ul>
         </div>
         <div class="shadow py-6 px-8 hover:shadow-lg">
-            Forum
+            <h1 class="text-lg font-medium">  Lifthub Entrepreneurs</h1>
+            <ul class="p-3">
+                <li>Join community</li>
+            <li><a href="{{route('programme.join')}}">Join Program</a></li>
+            </ul>
+        </div>
+        <div class="shadow py-6 px-8 hover:shadow-lg">
+            <h1 class="text-lg font-medium">  All Jobs</h1>
+            <ul class="p-3">
+                <li>Create new job</li>
+                <li>Join Labor Market</li>
+            </ul>
+        </div>
+        <div class="shadow py-6 px-8 hover:shadow-lg">
+           <h1 class="text-lg font-medium"> Company</h1>
+            <ul class="p-3">
+                <li>Careers</li>
+                <li>About Lifthub </li>
+                <li><a href="blog/lifthub.org">Company news</a></li>
+                <li>People of the Lifthub</li>
+            </ul>
         </div>
     </div>
 </footer>
