@@ -23,7 +23,7 @@ class ProgrammeController extends Controller
      */
     public function index()
     {
-        $programmes = Programme::all();
+        $programmes = Programme::latest()->ypaginate(10);
         $pending = WaitingList::whereStatus('pending')->count();
         $waiting = WaitingList::latest()->paginate(10);
         return view('admin.programmes.index', compact('programmes','waiting', 'pending'));
@@ -450,5 +450,28 @@ class ProgrammeController extends Controller
         $user = User::findOrFail($waiting->user_id);
         Mail::to($user->email)->send(new JoinApproved($programme, $user));
         return response()->json(['status'=>'success'], 200);
+    }
+
+    public function deleteProgram(Request $request)
+    {
+        $id = $request->id;
+     $program = Programme::findOrFail($id);
+     $user = Auth::user();
+     if ($user->id === $program->user_id || $user->isAdmin === 1) {
+        $program->delete();
+        return response()->json(['status'=> 'deleted'], 200);
+        }
+        return response()->json(['status'=> 'you cannot delete'], 404);
+    }
+    public function deleteEvent(Request $request)
+    {
+        $id = $request->id;
+     $program = Programme::findOrFail($id);
+     $user = Auth::user();
+     if ($user->id === $program->user_id || $user->isAdmin === 1) {
+        $program->delete();
+        return response()->json(['status'=> 'deleted'], 200);
+        }
+        return response()->json(['status'=> 'you cannot delete'], 404);
     }
 }

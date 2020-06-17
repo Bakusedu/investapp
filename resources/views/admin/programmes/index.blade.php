@@ -107,7 +107,7 @@
 	-o-transition: All 0.3s ease;
 }
 </style>
-<div class="bg-gray-100 pl-3 px-2 pb-16 h-full overflow-y-scroll">
+<div x-data="page()" class="bg-gray-100 pl-3 px-2 pb-16 h-full overflow-y-scroll">
     @if(Session::has('success'))
     <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4" role="alert">
         <p class="font-bold">Success</p>
@@ -289,7 +289,7 @@
         </div>
     </div>
     <hr class="w-full bg-gray-500">
-    <table class="table-auto w-full font-mono">
+    <table id="prog" class="table-auto w-full font-mono">
         <thead>
           <tr>
             <th class="border px-4 py-2">Title</th>
@@ -303,13 +303,13 @@
         @foreach ($programmes as $item)
           <tr>
           <td class="border px-4 py-2">{{$item->title}}</td>
-            <td class="border px-4 py-2">{{$item->overview}}</td>
+            <td class="border px-4 py-2">{{\Illuminate\Support\Str::limit($item->overview, 150, $end='...')}}</td>
             <td class="border px-4 py-2">@if($item->isActive)Active @else Not Active @endif</td>
             <td class="border px-4">
             <a href="{{route('programme.calendar',['id'=>$item->id])}}" class="border-black bg-yellow-700 rounded p-2 hover:bg-yellow-600 text-white m-3"><span class="xs:hidden">View Calender</span> <span><i class="fa fa-eye"></i></span></a>
             </td>
             <td class="border px-4">
-            <a href="{{route('programme.calendar',['id'=>$item->id])}}" class="border-black bg-red-700 rounded p-2 hover:bg-red-600 text-white m-3"><span class="xs:hidden">Trash</span> <span><i class="fa fa-trash-alt"></i></span></a>
+              <button @click="handleClick($event, {{$item->id}})" value={{$item->id}} class="border-black bg-red-700 rounded p-2 hover:bg-red-600 text-white m-3"><span class="xs:hidden">Trash</span> <span><i class="fa fa-trash-alt"></i></span></button>
             </td>
           </tr>
         @endforeach
@@ -317,8 +317,9 @@
     @else
         <p class="px-8 text-red-600">No programme created!</p>
     @endif
+    {{$programmes->links()}}
     </table>
-    <div class="p-6 bg-gray-500 text-lg font-semibold">Join Programme Request - <span class="bg-red-500 text-sm rounded-full p-1">({{$pending}}) Pending Requests</span> </div>
+    <div class="p-6 bg-teal-900 text-white text-lg font-semibold">Join Programme Request - <span class="bg-red-700 text-sm rounded-full p-1 text-white">{{$pending}}</span> Pending Requests </div>
     <hr class="w-full bg-gray-500">
     <table class="table-auto w-full font-mono">
         <thead>
@@ -352,13 +353,48 @@
     </table>
 </div>
 
-<script
-  src="https://code.jquery.com/jquery-3.5.1.min.js"
-  integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
-  crossorigin="anonymous"></script>
-
+<script src={{asset("js/jquery.min.js")}}></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script>
+ function page() {
+            return {
+                handleClick(e, id) {
+                    // this.$event and this.$dispatch are **not** defined in x-on handler
+                this.delete(id, '/delete/programme')
+
+            },
+
+            deleteWaiter(e, id) {
+                    // this.$event and this.$dispatch are **not** defined in x-on handler
+                this.delete(id, '/delete/waiter')
+
+            },
+
+            delete(id, url){
+                var formdata = new FormData();
+                formdata.append("id", id);
+                var ajax = new XMLHttpRequest();
+                ajax.responseType = 'json';
+                ajax.open("POST", url);
+                ajax.setRequestHeader('X-CSRF-TOKEN', $('meta[name="csrf-token"]').attr('content'))// your url will pass to open method
+                ajax.send(formdata)
+                ajax.onreadystatechange = function() {
+                    if (ajax.readyState ===  XMLHttpRequest.DONE) {
+                    var status = ajax.status;
+                    var response = ajax.response
+                    if (status === 0 || (status >= 200 && status < 400)) {
+                        toastr.success(response.status);
+                        $("#prog").load(location.href+ " #prog");
+                        } else {
+                        toastr.warning(response.status)
+                        }
+                    }
+                }
+            }
+        };
+    }
  $(document).ready(function() {
+
     $('.switch-input').on('change', function() {
       var isChecked = $(this).is(':checked');
       var selectedData;
@@ -385,6 +421,9 @@
 
     // Usage
     setSwitchState($('.switch-input'), true);
+
+
   });
+
 </script>
 @endsection

@@ -8,6 +8,9 @@ use Auth;
 use App\Comment;
 use App\Forum;
 use App\ForumCategory;
+use App\User;
+use App\Programme;
+use App\Event;
 class HomeController extends Controller
 {
     /**
@@ -28,6 +31,10 @@ class HomeController extends Controller
     public function index()
     {
         $posts = Post::latest()->paginate(10);
-        return view('home', compact('posts'));
+        $users = User::count();
+        $topics = Post::count();
+        $events = Event::count();
+        $prog = Programme::count();
+        return view('home', compact('posts', 'users','topics','prog','events'));
     }
 }

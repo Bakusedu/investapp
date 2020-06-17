@@ -43,19 +43,19 @@
     <div class="flex-1 flex-row overflow-x-auto xs:overflow-visible xs:w-screen w-3/4 p-3">
         <section class="flex  xs:w-auto w-11/12 xs:items-center justify-evenly p-6">
             <div class="bg-white p-3 m-2 shadow-md rounded-md text-center">
-                <h3>1</h3>
+                <h3>{{$users}}</h3>
                 <p>Active Users</p>
             </div>
             <div class="bg-white p-3 m-2 shadow-md rounded-md text-center">
-                <h3>1</h3>
+            <h3>{{$prog}}</h3>
                 <p>Programme</p>
             </div>
             <div class="bg-white p-3 m-2 shadow-md rounded-md text-center">
-                <h3>1</h3>
+            <h3>{{$events}}</h3>
                 <p>Events</p>
             </div>
             <div class="bg-white p-3 m-2 shadow-md rounded-md text-center">
-                <h3>1</h3>
+            <h3>{{$topics}}</h3>
                 <p>Forum Posts</p>
             </div>
         </section>

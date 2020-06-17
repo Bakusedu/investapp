@@ -29,6 +29,8 @@ Route::get('/programme/details', 'ProgrammeController@details')->name('programme
 Route::get('/invite/{id}', 'SpeakerController@speakerInvite')->name('invitation.page');
 Route::get('/speaker-accept/{id}', 'SpeakerController@speakerAccept')->name('accept.speaker')->middleware('auth');
 Route::get('/speaker-decline/{id}', 'SpeakerController@speakerDecline')->name('decline.speaker')->middleware('auth');
+Route::post('/delete/programme', 'ProgrammeController@deleteProgram');
+Route::post('/delete/waiter', 'ProgrammeController@deleteWaiter');
 
 Route::group(['prefix' => 'forum'], function () {
     Route::get('/home', 'ForumController@index')->name('forum.home');
