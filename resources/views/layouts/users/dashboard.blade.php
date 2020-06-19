@@ -79,7 +79,7 @@
                     <a class="text-yellow-500 no-underline hover:text-yellow-600 hover:no-underline" href="/">
                     <img class="w-24" src="{{asset('images/160290cdb0652b0525e8191290986af1.png')}}" alt="">
                     </a>
-                    <div class="pt-2 pl-6 relative mx-auto text-gray-600">
+                    <div class="pt-2 pl-6 xs:pl-0 relative mx-auto text-gray-600">
                         <input class="border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none"
                           type="search" name="search" placeholder="Search Forum">
                         <button type="submit" class="absolute right-0 top-0 mt-5 mr-6">

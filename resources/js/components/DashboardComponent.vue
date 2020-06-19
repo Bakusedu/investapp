@@ -1,7 +1,7 @@
 <template>
     <div class="bg-gray-300 flex flex-row xs:flex-col pt-20 xs:px-0 px-6">
                     <notifications group="foo" />
-    <div class="flex-none flex xs:w-full flex-col xs:flex-row items-center rounded-md w-2/12 p-3 xs:m-0 m-3 bg-white">
+    <div class="flex-none static flex xs:w-full flex-col xs:flex-row items-center rounded-md w-2/12 p-3 xs:m-0 m-3 bg-white">
         <div class="h-24 w-24 xs:hidden rounded-full mt-8 mb-5">
          <img :src="'/files/images?filename=' + user.avatar" class="object-fit rounded-full h-24 w-24 mt-8 mb-5" alt="" srcset="">
         </div>

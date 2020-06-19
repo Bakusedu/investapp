@@ -42,4 +42,63 @@ class SpeakerController extends Controller
         $speaker->save();
         return redirect()->back();
     }
+    public function addSpeaker(Request $request)
+    {
+        $request->validate([
+            'programmeId' => 'exists:programmes,id',
+            'name' => 'required',
+            'title' => 'required',
+            'organization' => 'required',
+            'image' => 'required|image',
+        ]);
+        $programme = Programme::findOrFail($request->programmeId);
+
+     $speaker =   $programme->speakers()->create([
+            'programme_id' => $request->programmeId,
+            'name' => $request->name,
+            'title' => $request->title,
+            'organization' => $request->organization,
+            'image' => $request->image->store('speakers'),
+            'facebook' => $request->facebook,
+            'twitter' => $request->twitter,
+            'email' => $request->email,
+            'linkedIn' => $request->linkedin,
+            'invite_id' => Str::of('speaker IV'.$programme->title)->slug('-').'-'.Str::uuid()
+        ]);
+           $base = url('/').'/invite/'.$speaker->invite_id;
+           return response()->json(['status'=> 'success', 'programme' => $programme, 'invite_link'=>$base], 200);
+        }
+
+
+    public function updateSpeaker(Request $request)
+        {
+            $request->validate([
+                'speakerId' => 'exists:speakers,id',
+                'name' => 'required',
+                'title' => 'required',
+                'organization' => 'required',
+            ]);
+            $speaker = Speaker::findOrFail($request->speakerId);
+            if ($request->hasFile('image')) {
+                $speaker->image = $request->image->store('speakers');
+            }
+            $speaker->name = $request->name;
+            $speaker->title = $request->title;
+            $speaker->organization = $request->organization;
+            $speaker->facebook = $request->facebook;
+            $speaker->twitter = $request->twitter;
+            $speaker->email = $request->email;
+           $speaker->linkedIn = $request->linkedin;
+            $speaker->save();
+
+        return response()->json(['status'=> 'success'], 200);
+    }
+
+    public function deleteSpeaker(Request $request)
+    {
+        $id = $request->id;
+        $speaker = Speaker::findOrFail($id);
+        $speaker->delete();
+        return response()->json(['status'=> 'deleted'], 200);
+    }
 }

@@ -29,32 +29,6 @@ class ProgrammeController extends Controller
         return view('admin.programmes.index', compact('programmes','waiting', 'pending'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function createEvent(Request $request)
-    {
-        $request->validate([
-            'title' => 'required',
-            'details' => 'required',
-            'startdate' => 'required',
-            'enddate' => 'required',
-            'programmeId' => 'exists:programmes,id'
-        ]);
-
-        $programme = Programme::find($request->programmeId);
-       $programme->events()->create([
-            'title' => $request->title,
-            'details' => $request->details,
-            'start_date' => $request->startdate,
-            'end_date' => $request->enddate,
-        ]);
-
-        Session::flash('success','Event is added to calender');
-        return redirect()->back();
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -326,59 +300,7 @@ class ProgrammeController extends Controller
         return response()->json($programme, 200);
     }
 
-    public function addSpeaker(Request $request)
-    {
-        $request->validate([
-            'programmeId' => 'exists:programmes,id',
-            'name' => 'required',
-            'title' => 'required',
-            'organization' => 'required',
-            'image' => 'required|image',
-        ]);
-        $programme = Programme::findOrFail($request->programmeId);
-
-     $speaker =   $programme->speakers()->create([
-            'programme_id' => $request->programmeId,
-            'name' => $request->name,
-            'title' => $request->title,
-            'organization' => $request->organization,
-            'image' => $request->image->store('speakers'),
-            'facebook' => $request->facebook,
-            'twitter' => $request->twitter,
-            'email' => $request->email,
-            'linkedIn' => $request->linkedin,
-            'invite_id' => Str::of('speaker IV'.$programme->title)->slug('-').'-'.Str::uuid()
-        ]);
-           $base = url('/').'/invite/'.$speaker->invite_id;
-           return response()->json(['status'=> 'success', 'programme' => $programme, 'invite_link'=>$base], 200);
-        }
-
-
-        public function updateSpeaker(Request $request)
-        {
-            $request->validate([
-                'speakerId' => 'exists:speakers,id',
-                'name' => 'required',
-                'title' => 'required',
-                'organization' => 'required',
-            ]);
-            $speaker = Speaker::findOrFail($request->speakerId);
-            if ($request->hasFile('image')) {
-                $speaker->image = $request->image->store('speakers');
-            }
-            $speaker->name = $request->name;
-            $speaker->title = $request->title;
-            $speaker->organization = $request->organization;
-            $speaker->facebook = $request->facebook;
-            $speaker->twitter = $request->twitter;
-            $speaker->email = $request->email;
-           $speaker->linkedIn = $request->linkedin;
-            $speaker->save();
-
-               return response()->json(['status'=> 'success'], 200);
-        }
-
-        public function joinRequest(Request $request)
+   public function joinRequest(Request $request)
         {
             $user = Auth::user();
             $programme = Programme::findOrFail($request->id);
@@ -394,50 +316,7 @@ class ProgrammeController extends Controller
            return response()->json(['status'=>'success'], 200);
         }
 
-        public function addEvent(Request $request)
-    {
-        $request->validate([
-            'title' => 'required',
-            'details' => 'required',
-            'startdate' => 'required',
-            'enddate' => 'required',
-            'programmeId' => 'exists:programmes,id',
-            'useFeedback' => 'required',
-        ]);
 
-        $programme = Programme::find($request->programmeId);
-        $programme->events()->create([
-            'title' => $request->title,
-            'details' => $request->details,
-            'start_date' => $request->startdate,
-            'end_date' => $request->enddate,
-            'use_feedback' => $request->useFeedback == true ? 1 : 0,
-            'question' => $request->question ?? 'null',
-            'feedback_type' => $request->feedbackType ?? 'null'
-        ]);
-
-        return response()->json(['status' => 'success']);
-    }
-
-    public function updateEvent(Request $request)
-    {
-        $request->validate([
-            'eventId' => 'exists:events,id',
-        ]);
-
-        $event = Event::find($request->eventId);
-        $event->title = $request->title;
-        $event->details = $request->details;
-        $event->start_date = $request->startdate;
-        $event->end_date = $request->enddate;
-        $event->use_feedback = $request->useFeedback;
-        $event->question = $request->question;
-        $event->feedback_type = $request->feedbackType;
-
-        $event->save();
-
-        return response()->json(['status' => 'success']);
-    }
 
     public function waitingApproval(Request $request)
     {
@@ -453,17 +332,6 @@ class ProgrammeController extends Controller
     }
 
     public function deleteProgram(Request $request)
-    {
-        $id = $request->id;
-     $program = Programme::findOrFail($id);
-     $user = Auth::user();
-     if ($user->id === $program->user_id || $user->isAdmin === 1) {
-        $program->delete();
-        return response()->json(['status'=> 'deleted'], 200);
-        }
-        return response()->json(['status'=> 'you cannot delete'], 404);
-    }
-    public function deleteEvent(Request $request)
     {
         $id = $request->id;
      $program = Programme::findOrFail($id);

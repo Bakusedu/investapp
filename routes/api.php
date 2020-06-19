@@ -19,12 +19,14 @@ Route::get('/programmes/{type}', 'UsersController@programmes')->middleware('auth
 Route::get('/program/details', 'ProgrammeController@programmeDetails');
 
 Route::post('/saveprogram', 'ProgrammeController@save')->middleware('auth:sanctum');
-Route::post('/addevent', 'ProgrammeController@addEvent')->middleware('auth:sanctum');
-Route::post('/editevent', 'ProgrammeController@updateEvent')->middleware('auth:sanctum');
+Route::post('/addevent', 'EventsController@addEvent')->middleware('auth:sanctum');
+Route::post('/editevent', 'EventsController@updateEvent')->middleware('auth:sanctum');
+Route::post('/delete/event', 'EventsController@deleteEvent');
 
 Route::post('/updateprogram', 'ProgrammeController@update')->middleware('auth:sanctum');
-Route::post('/addspeaker', 'ProgrammeController@addSpeaker')->middleware('auth:sanctum');
-Route::post('/updatespeaker', 'ProgrammeController@updateSpeaker')->middleware('auth:sanctum');
+Route::post('/addspeaker', 'SpeakerController@addSpeaker')->middleware('auth:sanctum');
+Route::post('/updatespeaker', 'SpeakerController@updateSpeaker')->middleware('auth:sanctum');
+Route::post('/delete/speaker', 'SpeakerController@deleteSpeaker')->middleware('auth:sanctum');
 
 Route::get('/join', 'ProgrammeController@joinRequest')->middleware('auth:sanctum');
 Route::post('/approve', 'ProgrammeController@waitingApproval')->middleware('auth:sanctum');

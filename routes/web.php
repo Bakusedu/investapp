@@ -55,7 +55,7 @@ Route::group(['prefix' => 'admin', 'middleware'=>'admin'], function () {
     Route::get('/programmes', "ProgrammeController@index")->name('programmes.index')->middleware('auth');
     Route::post('/programme/store', 'ProgrammeController@store')->name('store.programme');
     Route::get('/programme/calendar', 'ProgrammeController@viewCalender')->name('programme.calendar');
-    Route::post('/events/store', 'ProgrammeController@createEvent')->name('save.event');
+    Route::post('/events/store', 'EventsController@createEvent')->name('save.event');
 });
 
 // Serve Files
