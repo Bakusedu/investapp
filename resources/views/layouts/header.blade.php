@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title>The LiftHUB</title>
+        <link rel="icon" href="{{ URL::asset('images/160290cdb0652b0525e8191290986af1.png') }}" type="image/x-icon"/>
         <!-- Styles -->
      <link href="{{ mix('css/app.css') }}" rel="stylesheet">
      <link rel="stylesheet" href="https://rsms.me/inter/inter.css">

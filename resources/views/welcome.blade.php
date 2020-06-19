@@ -28,17 +28,17 @@
     <a class="font-semibold shadow-lg text-lg bg-yellow-600 hover:bg-yellow-400 text-white xs:py-2 py-3 xs:px-5 px-10 rounded-full" href="{{route('user.dashboard')}}">Grow with BizNest</a>
 </div>
 </div>
-<div class="relative h-48 p-8 bg-yellow-600" style="background: url({{asset('images/forum.jpg')}}); background-size: cover; background-repeat: no-repeat">
+<div class="relative h-48 mb-6 mt-6 p-8 bg-yellow-600" style="background: url({{asset('images/forum.jpg')}}); background-size: cover; background-repeat: no-repeat">
     <p class="text-white text-3xl">Join our community forum</p>
     <button    style="bottom: 10px;   right:20px" class="absolute right-0 bottom-0 bg-gray-100 p-2 px-6 font-bold rounded-lg">Learn more</button>
 </div>
 <div class="flex w-full p-16 pb-0 pt-16 xs:p-4 xs:flex-col-reverse">
     <div class="flex-1 w-6/12 pt-8 xs:w-full xs:flex-none xs:p-4">
         <h1 class="font-bold xs:text-2xl text-4xl">Enter Our Marketplace.</h1>
-        <p>Immortalize your brands along thousands of other
+        <p class="pb-10">Immortalize your brands along thousands of other
             businesses from around the world. Step into our
             brand showcase today!</p>
-            <a href="blog.lifthub.org" class="font-semibold shadow-lg text-lg bg-yellow-600 hover:bg-yellow-400 text-white mt-6 xs:py-2 py-3 xs:px-5 px-10 rounded-full">Publish</a>
+            <a href="blog.lifthub.org" class="font-semibold shadow-lg text-lg bg-yellow-600 hover:bg-yellow-400 text-white xs:py-2 py-3 xs:px-5 px-10 rounded-full">Publish</a>
     </div>
     <div class="flex-1 w-6/12 xs:w-full xs:flex-none">
         <img src="{{asset('images/market.jpg')}}" class="object-fill rounded-lg w-full shadow-2xl h-auto" alt="">
@@ -55,9 +55,9 @@
             <button class="font-semibold shadow-lg text-lg bg-yellow-600 hover:bg-yellow-400 text-white mt-6 xs:py-2 py-3 xs:px-5 px-10 rounded-full">Find Jobs</button>
     </div>
 </div>
-<div class="h-auto bg-yellow-200 p-8 xs:text-sm xs:w-full">
+<div class="h-auto bg-yellow-200 shadow-inner p-8 xs:text-sm xs:w-full">
     <div class="font-bold">Follow The LiftHub</div>
-        <div class="flex-none">
+        <div class="flex justify-evenly">
             <a href="https://web.facebook.com/thelifthub/" class="fab fa-facebook"></a>
             <a href="https://twitter.com/thelifthub" class="fab fa-twitter"></a>
             <a href="#" class="fab fa-instagram"></a>
