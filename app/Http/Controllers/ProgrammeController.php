@@ -66,7 +66,7 @@ class ProgrammeController extends Controller
         $programme->enddate = Carbon::parse($request->startdate)->addDays($request->duration);
         $programme->featured = $request->featured->store('programmes');
         $programme->save();
-        Session::flash('success', 'Programme creted successfully');
+        Session::flash('success', 'Programme created successfully');
         return redirect()->back();
     }
 
@@ -296,7 +296,6 @@ class ProgrammeController extends Controller
         $programme->enddate = Carbon::parse($request->startdate)->addDays($request->duration);
         $programme->featured = $request->featured->store('programmes');
         $programme->save();
-        Session::flash('success', 'Programme created successfully');
         return response()->json($programme, 200);
     }
 

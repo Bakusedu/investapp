@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Event;
 use Session;
 use App\Programme;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
 class EventsController extends Controller {
@@ -38,7 +39,7 @@ class EventsController extends Controller {
 
     public function addEvent(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'title' => 'required',
             'details' => 'required',
             'startdate' => 'required',
@@ -46,6 +47,10 @@ class EventsController extends Controller {
             'programmeId' => 'exists:programmes,id',
             'useFeedback' => 'required',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json(['status' => 'failed', 'errors'=>$validator->errors()], 422);
+        }
 
         $programme = Programme::find($request->programmeId);
         $programme->events()->create([

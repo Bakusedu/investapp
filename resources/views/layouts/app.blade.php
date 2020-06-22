@@ -6,10 +6,10 @@
         <meta name="csrf-token" content="{{ csrf_token() }}" />
         <title>The LiftHub</title>
         <!-- Styles -->
+    <link rel="stylesheet" href="{{asset('css/switch.css')}}">
      <link href="{{ mix('css/app.css') }}" rel="stylesheet">
      <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.3.5/dist/alpine.min.js" defer></script>
     <script src="{{ asset('js/app.js') }}" defer></script>
 
     <!-- Fonts -->
@@ -118,8 +118,8 @@
             @yield('content')
         </div>
 
-        <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.0.1/dist/alpine.js" defer></script>
+    <script src={{asset('js/alpine.js')}}></script>
         <script src={{asset("js/jquery.min.js")}}></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+        {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script> --}}
     </body>
 </html>

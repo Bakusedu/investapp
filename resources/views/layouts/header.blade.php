@@ -43,7 +43,7 @@
           </style>
     </head>
     <body>
-        <main class="bg-white font-montserrat h-full">
+        <main class="bg-white h-full">
             <nav class="flex items-center justify-between flex-wrap py-4 px-6 fixed w-full z-50 top-0"
                 x-data="{ isOpen: false }" x-cloak
                 @keydown.escape="isOpen = false"
@@ -110,7 +110,7 @@
             @yield('content')
 
     </main>
-    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.0.1/dist/alpine.js" defer></script>
+    <script src={{asset('js/alpine.js')}}></script>
     <script src={{asset("js/jquery.min.js")}}></script>
 
     <script>

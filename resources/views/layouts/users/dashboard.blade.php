@@ -8,6 +8,7 @@
         <!-- Styles -->
      <link href="{{ mix('css/app.css') }}" rel="stylesheet">
      <link href="{{ asset('css/share.css') }}" rel="stylesheet">
+     <link href="{{ asset('css/switch.css') }}" rel="stylesheet">
      <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>

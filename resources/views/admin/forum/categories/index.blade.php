@@ -16,8 +16,8 @@
         @endforeach
     </div>
     @endif
-    <div class="flex justify-evenly font-semibold font-mono">
-        <h1 class="flex-1 p-2 font-semibold font-mono text-gray-700 text-2xl">Forums</h1>
+    <div class="flex justify-evenly font-semibold ">
+        <h1 class="flex-1 p-2 font-semibold  text-gray-700 text-2xl">Forums</h1>
         <div x-data="{openForumModal: false}"><button x-on:click="openForumModal = true" class="bg-yellow-600 px-4 py-3 shadow-md rounded-lg text-white">Create Forum</button>
              <!--Overlay-->
              <div class="overflow-auto" style="background-color: rgba(0,0,0,0.5)" x-show="openForumModal" x-show="openForumModal" @click.away="openForumModal = false" :class="{ 'absolute inset-0 z-10 flex items-center justify-center': openForumModal }">
@@ -95,7 +95,7 @@
         </div>
     </div>
     <hr class="w-full bg-gray-500">
-    <table class="table-auto w-full font-mono">
+    <table class="table-auto w-full ">
         <thead>
           <tr>
             <th class="border px-4 py-2">Title</th>
@@ -124,9 +124,9 @@
         <p class="px-8 text-red-600">No forum created!</p>
     @endif
     </table>
-    <h2 class="text-2xl font-semibold font-mono pl-3 p-4 text-gray-700">Forum Categories</h2>
+    <h2 class="text-2xl font-semibold  pl-3 p-4 text-gray-700">Forum Categories</h2>
     <hr class="w-full bg-gray-500">
-    <table class="table-auto w-full font-mono">
+    <table class="table-auto w-full ">
         <thead>
           <tr class="hover:shadow-md">
             <th class="border px-4 py-2">Title</th>

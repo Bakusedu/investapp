@@ -1,112 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<style>
-    .switch {
-	position: relative;
-	display: block;
-	vertical-align: top;
-	width: 100px;
-	height: 30px;
-	padding: 3px;
-	margin: 0 10px 10px 0;
-	background: linear-gradient(to bottom, #eeeeee, #FFFFFF 25px);
-	background-image: -webkit-linear-gradient(top, #eeeeee, #FFFFFF 25px);
-	border-radius: 18px;
-	box-shadow: inset 0 -1px white, inset 0 1px 1px rgba(0, 0, 0, 0.05);
-	cursor: pointer;
-}
-.switch-input {
-	position: absolute;
-	top: 0;
-	left: 0;
-	opacity: 0;
-}
 
-[x-cloak] {
-    display: none;
-}
-.switch-label {
-	position: relative;
-	display: block;
-	height: inherit;
-	font-size: 10px;
-	text-transform: uppercase;
-	background: #eceeef;
-	border-radius: inherit;
-	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12), inset 0 0 2px rgba(0, 0, 0, 0.15);
-}
-.switch-label:before, .switch-label:after {
-	position: absolute;
-	top: 50%;
-	margin-top: -.5em;
-	line-height: 1;
-	-webkit-transition: inherit;
-	-moz-transition: inherit;
-	-o-transition: inherit;
-	transition: inherit;
-}
-.switch-label:before {
-	content: attr(data-off);
-	right: 11px;
-	color: #aaaaaa;
-	text-shadow: 0 1px rgba(255, 255, 255, 0.5);
-}
-.switch-label:after {
-	content: attr(data-on);
-	left: 11px;
-	color: #FFFFFF;
-	text-shadow: 0 1px rgba(0, 0, 0, 0.2);
-	opacity: 0;
-}
-.switch-input:checked ~ .switch-label {
-	background: #E1B42B;
-	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15), inset 0 0 3px rgba(0, 0, 0, 0.2);
-}
-.switch-input:checked ~ .switch-label:before {
-	opacity: 0;
-}
-.switch-input:checked ~ .switch-label:after {
-	opacity: 1;
-}
-.switch-handle {
-	position: absolute;
-	top: 4px;
-	left: 4px;
-	width: 28px;
-	height: 28px;
-	background: linear-gradient(to bottom, #FFFFFF 40%, #f0f0f0);
-	background-image: -webkit-linear-gradient(top, #FFFFFF 40%, #f0f0f0);
-	border-radius: 100%;
-	box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
-}
-.switch-handle:before {
-	content: "";
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	margin: -6px 0 0 -6px;
-	width: 12px;
-	height: 12px;
-	background: linear-gradient(to bottom, #eeeeee, #FFFFFF);
-	background-image: -webkit-linear-gradient(top, #eeeeee, #FFFFFF);
-	border-radius: 6px;
-	box-shadow: inset 0 1px rgba(0, 0, 0, 0.02);
-}
-.switch-input:checked ~ .switch-handle {
-	left: 74px;
-	box-shadow: -1px 1px 5px rgba(0, 0, 0, 0.2);
-}
-
-/* Transition
-========================== */
-.switch-label, .switch-handle {
-	transition: All 0.3s ease;
-	-webkit-transition: All 0.3s ease;
-	-moz-transition: All 0.3s ease;
-	-o-transition: All 0.3s ease;
-}
-</style>
 <div x-data="page()" class="bg-gray-100 pl-3 px-2 pb-16 h-full overflow-y-scroll">
     @if(Session::has('success'))
     <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4" role="alert">
@@ -122,8 +17,8 @@
         @endforeach
     </div>
     @endif
-    <div class="flex justify-evenly font-semibold font-mono">
-        <h1 class="flex-1 p-2 font-semibold font-mono text-gray-700 text-2xl">Programmes</h1>
+    <div class="flex justify-evenly font-semibold">
+        <h1 class="flex-1 p-2 font-semibold text-gray-700 text-2xl">Programmes</h1>
         <div x-cloak x-data="{openForumModal: false}"><button x-on:click="openForumModal = true" class="bg-yellow-600 px-4 py-3 shadow-md rounded-lg text-white">Create Programme</button>
              <!--Overlay-->
              <div class="overflow-auto" style="background-color: rgba(0,0,0,0.5)" x-show="openForumModal" x-show="openForumModal" @click.away="openForumModal = false" :class="{ 'absolute inset-0 z-10 flex items-center justify-center': openForumModal }">
@@ -141,16 +36,16 @@
                             </svg>
                         </div>
                     </div>
-                    <form action="{{route("store.programme")}}" method="post" enctype="multipart/form-data">
+                    <form x-data="programme()" action="{{route("store.programme")}}" method="post" enctype="multipart/form-data">
                         @csrf
                          <div class="flex">
-                            <div class="flex-col w-full">
+                            <div class="flex-col px-3 w-full">
                                 <label class="block text-gray-700 text-sm font-bold m-2">
                                     Programme title
                                   </label>
-                                <input required class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline" name="title" value="{{ old('title') }}" type="text" placeholder="Enter Forum Name">
+                                <input required class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline" name="title" value="{{ old('title') }}" type="text" placeholder="Enter title">
                             </div>
-                            <div class="flex-col w-full">
+                            <div class="flex-col px-3 w-full">
                                 <label class="block text-gray-700 text-sm font-bold m-2">
                                     Programme Duration
                                   </label>
@@ -158,43 +53,37 @@
                             </div>
                          </div>
                          <div class="flex">
-                         <div class="flex-col w-full">
+                         <div class="flex-col w-full px-3">
                             <label class="block text-gray-700 text-sm font-bold m-2">
                                 Start Date
                               </label>
                             <input required class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline" name="startdate" value="{{ old('startdate') }}" type="datetime-local">
                          </div>
-                            <div class="flex-col w-full">
-                            <label class="block text-gray-700 text-sm font-bold m-2">
-                                Event Entry Fee
-                              </label>
-                            <input required type="number" placeholder="Enter Amount per attendee" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name="amount">
-                        </div>
-                        </div>
-                        <div class="flex">
-                        <div class="flex-col w-full">
+                        <div class="flex-col w-full px-3">
                             <label class="block text-gray-700 text-sm font-bold m-2">
                                 Venue
                               </label>
                             <input required class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline" name="venue" value="{{ old('venue') }}" type="text" placeholder="Enter Venue">
                         </div>
-                        <div class="flex-col w-full">
+                        <div class="flex-col w-full px-3">
                             <label class="block text-gray-700 text-sm font-bold m-2">
                                 Maximum number of attendees
                               </label>
-                            <input required type="number" placeholder="Enter number per attendee" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name="attendee">
+                            <input required type="number" placeholder="Enter number of attendees" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name="attendee">
                         </div>
                         </div>
                         <label>Choose Event Type</label>
-                        <div class="flex">
-                         <div class="flex-col border">
-                            <label for="" class="block text-gray-700 text-sm font-bold m-2">Free Event</label>
-                            <input type="radio" name="type" class="shadow" value="free">
-                         </div>
-                        <div class="flex-col border">
-                            <label for="" class="block text-gray-700 text-sm font-bold m-2">Paid Event</label>
-                            <input type="radio" name="type" class="shadow" value="paid">
-                        </div>
+                        <label class="switch">
+                            <input class="switch-input" x-bind:checked="paid" type="checkbox" value=""/>
+                            <span class="switch-label" data-on="Paid" @click="checkbox()" data-off="Free"></span>
+                            <span class="switch-handle" @click="checkbox()"></span>
+                        </label>
+                        <input type="text" x-model:name="type" hidden name="type" id="">
+                        <div x-show="paid" class="flex-col w-full px-3">
+                            <label class="block text-gray-700 text-sm font-bold m-2">
+                                Event Entry Fee
+                              </label>
+                            <input required type="number" placeholder="Enter Amount per attendee" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="0" name="amount">
                         </div>
                         <div class="flex-col w-full">
                             <label class="block text-gray-700 text-lg font-bold m-2">
@@ -236,52 +125,57 @@
                             </svg>
                         </div>
                     </div>
-                    <form action="{{route('save.event')}}" method="post">
+                    <form x-data="create()" action="#" method="post">
                         @csrf
-                            <div class="flex">
-                                <div class="flex-none w-1/2">
-                                    <select required name="programmeId" class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline">
+                            <div class="flex flex-col">
+                                <div class="flex-1 p-3 flex-row">
+                                    <select required x-model:name="programmeId" class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline">
+                                       <option value="">Select Programme</option>
                                         @foreach ($programmes as $item)
                                         <option value="{{$item->id}}">{{$item->title}}</option>
                                         @endforeach
                                     </select>
                                     </div>
-                                    <div class="flex-none w-1/2">
-                                    <input required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="{{old('title')}}" name="title" type="text" placeholder="Enter  title">
+                                    <div class="flex-1 flex-row">
+                                    <input required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="{{old('title')}}" x-model:name="title" type="text" placeholder="Enter  title">
                                     </div>
                                 </div>
                                 <div class="flex flex-row w-full">
                                     <div class="flex-1">
                                     <label class="block text-gray-700 text-sm font-bold m-2" > Start Date</label>
-                                    <input required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="{{old('startdate')}}" name="startdate" type="datetime-local" placeholder="Start Date">
+                                    <input required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="{{old('startdate')}}" x-model:name="startdate" type="datetime-local" placeholder="Start Date">
                                     </div>
                                     <div class="flex-1">
 
                                     <label class="block text-gray-700 text-sm font-bold m-2">End Date</label>
-                                    <input required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="{{old('enddate')}}" name="enddate" type="datetime-local" placeholder="End Date">
+                                    <input required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="{{old('enddate')}}" x-model:name="enddate" type="datetime-local" placeholder="End Date">
                                     </div>
                                 </div>
                             <div>
                                 Will you require feedback from users?
                             </div>
                             <label class="switch">
-                                <input class="switch-input" type="checkbox" value=""/>
-                                <span class="switch-label" data-on="Yes" data-off="No"></span>
-                                <span class="switch-handle"></span>
+                                <input class="switch-input" x-bind:checked="useFeedback" type="checkbox" value=""/>
+                                <span class="switch-label" data-on="Yes" @click="checkbox()" data-off="No"></span>
+                                <span class="switch-handle" @click="checkbox()"></span>
                             </label>
-                            <div class="attachment">
-                                <input type="text" name="question" id="">
-                                <select name="feadbackType" id="">
-                                    <option value=""></option>
+                            <div x-show="useFeedback" x-init="true" x-cloak class="attachment">
+                                <input type="text" x-model:name="question" placeholder="Write a question that requires feedback" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="">
+
+                                <select x-model:name="feedbackType" class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="">
+                                    <option value="">Select Feedback type</option>
+                                    <option value="text">Text</option>
+                                    <option value="video">Video</option>
+                                    <option value="document">Document</option>
                                 </select>
                             </div>
 
 
                             <label class="block text-gray-700 text-sm font-bold m-2">
-                                Event Task
+                                Event Details
                              </label>
-                             <button class="font-semibold px-10 py-3 rounded-t bg-yellow-600">Create</button>
-                             <textarea name="details" required placeholder="Enter event details here" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" cols="30" rows="10">{{old('details')}}</textarea>
+                             <textarea x-model:name="details" required placeholder="Enter event details here" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" cols="30" rows="10">{{old('details')}}</textarea>
+                             <button @click="createEvent($event)" class="font-semibold px-10 py-3 rounded-t bg-yellow-600">Create</button>
                     </form>
                 </div>
                 <!--/Dialog -->
@@ -289,7 +183,7 @@
         </div>
     </div>
     <hr class="w-full bg-gray-500">
-    <table id="prog" class="table-auto w-full font-mono">
+    <table id="prog" class="table-auto w-full">
         <thead>
           <tr>
             <th class="border px-4 py-2">Title</th>
@@ -304,7 +198,7 @@
           <tr>
           <td class="border px-4 py-2">{{$item->title}}</td>
             <td class="border px-4 py-2">{{\Illuminate\Support\Str::limit($item->overview, 150, $end='...')}}</td>
-            <td class="border px-4 py-2">@if($item->isActive)Active @else Not Active @endif</td>
+            <td class="border px-4 py-2">@if($item->isActive)Active @else <p>Not Active</p> <span>Approve Programme</span> @endif</td>
             <td class="border px-4">
             <a href="{{route('programme.calendar',['id'=>$item->id])}}" class="border-black bg-yellow-700 rounded p-2 hover:bg-yellow-600 text-white m-3"><span class="xs:hidden">View Calender</span> <span><i class="fa fa-eye"></i></span></a>
             </td>
@@ -321,7 +215,7 @@
     </table>
     <div class="p-6 bg-teal-900 text-white text-lg font-semibold">Join Programme Request - <span class="bg-red-700 text-sm rounded-full p-1 text-white">{{$pending}}</span> Pending Requests </div>
     <hr class="w-full bg-gray-500">
-    <table class="table-auto w-full font-mono">
+    <table class="table-auto w-full">
         <thead>
           <tr>
             <th class="border px-4 py-2">User Name</th>
@@ -358,9 +252,10 @@
 <script>
  function page() {
             return {
-                handleClick(e, id) {
-                    // this.$event and this.$dispatch are **not** defined in x-on handler
-                this.delete(id, '/delete/programme')
+
+            handleClick(e, id) {
+            // this.$event and this.$dispatch are **not** defined in x-on handler
+            this.delete(id, '/delete/programme')
 
             },
 
@@ -390,40 +285,79 @@
                         }
                     }
                 }
-            }
+            },
         };
     }
- $(document).ready(function() {
+function create(){
+    return {
+        title: '',
+        startdate: '',
+        useFeedback: false,
+        programmeId:'',
+        enddate: '',
+        question:'',
+        feedbackType:'',
+        details: '',
+        createEvent(e){
+            console.log(this.programmeId)
+            var feedback =  this.useFeedback ? 1 : 0;
+            var formdata = new FormData();
+            formdata.append("id", this.programmeId);
+            formdata.append('programmeId', this.programmeId);
+            formdata.append('startdate', this.startdate);
+            formdata.append('title', this.title);
+            formdata.append('enddate', this.enddate);
+            formdata.append('useFeedback', feedback);
 
-    $('.switch-input').on('change', function() {
-      var isChecked = $(this).is(':checked');
-      var selectedData;
-      var $switchLabel = $('.switch-label');
+            if (feedback) {
+                    formdata.append('question', this.question);
+                formdata.append('feedbackType', this.feedbackType);
+            }
+            formdata.append('details', this.details);
+            var ajax = new XMLHttpRequest();
+            ajax.responseType = 'json';
+            ajax.open("POST", '/api/addevent');
+            ajax.setRequestHeader('X-CSRF-TOKEN', $('meta[name="csrf-token"]').attr('content'))// your url will pass to open method
+            ajax.send(formdata)
+            ajax.onreadystatechange = function() {
+                if (ajax.readyState ===  XMLHttpRequest.DONE) {
+                var status = ajax.status;
+                var response = ajax.response
+                if (status === 0 || (status >= 200 && status < 400)) {
+                    toastr.success(response.status);
+                    $("#prog").load(location.href+ " #prog");
+                    } else {
+                    console.log(response)
+                    var errors = Object.values(response.errors);
+                    errors.forEach(element => {
+                        toastr.warning(element[0])
+                    });
+                    toastr.warning(response.status)
 
-      if(isChecked) {
-        $("#attachment").removeClass("invisible");
-        selectedData = $switchLabel.attr('data-on');
-        $(this).val('1')
-      } else {
-        $(this).val('0')
-        selectedData = $switchLabel.attr('data-off');
-        $("#attachment").addClass("invisible");
-      }
 
-      console.log('Selected data: ' + selectedData);
-
-    });
-
-    // Params ($selector, boolean)
-    function setSwitchState(el, flag) {
-      el.attr('checked', flag);
+                    }
+                }
+            }
+            e.preventDefault()
+        },
+        checkbox(){
+        this.useFeedback = !this.useFeedback
+        console.log(this.useFeedback)
+        }
     }
+}
 
-    // Usage
-    setSwitchState($('.switch-input'), true);
-
-
-  });
+function programme() {
+    return {
+        type: 'free',
+        paid: false,
+        checkbox(){
+        this.paid = !this.paid,
+        this.paid ? this.type = 'paid' : this.type = "free";
+        console.log(this.type)
+        }
+    }
+}
 
 </script>
 @endsection

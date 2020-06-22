@@ -25,13 +25,13 @@
 
                     <form action="#" method="post" @submit="checkForm($event)" enctype="multipart/form-data">
                          <div class="flex xs:flex-col">
-                            <div class="flex-col w-full">
+                            <div class="flex-col px-3 w-full">
                                 <label class="block text-gray-700 text-sm font-bold m-2">
                                     Programme title
                                   </label>
                                 <input required class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline" v-model="title" value="" type="text" placeholder="Enter Programme title">
                             </div>
-                            <div class="flex-col w-full">
+                            <div class="flex-col px-3 w-full">
                                 <label class="block text-gray-700 text-sm font-bold m-2">
                                     Programme Duration
                                   </label>
@@ -39,27 +39,19 @@
                             </div>
                          </div>
                          <div class="flex xs:flex-col">
-                         <div class="flex-col w-full">
-                            <label class="block text-gray-700 text-sm font-bold m-2">
+                         <div class="flex-col px-3 w-full">
+                            <label class="block px-3 text-gray-700 text-sm font-bold m-2">
                                 Start Date
                               </label>
                             <input required class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline" v-model="startdate" value="" type="datetime-local">
                          </div>
-                            <div class="flex-col w-full">
-                            <label class="block text-gray-700 text-sm font-bold m-2">
-                                Event Entry Fee
-                              </label>
-                            <input required type="number" placeholder="Enter Amount per attendee" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" v-model="amount">
-                        </div>
-                        </div>
-                        <div class="flex xs:flex-col">
-                        <div class="flex-col w-full">
+                        <div class="flex-col px-3 w-full">
                             <label class="block text-gray-700 text-sm font-bold m-2">
                                 Venue
                               </label>
                             <input required class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline" v-model="venue" value="" type="text" placeholder="Enter Venue">
                         </div>
-                        <div class="flex-col w-full">
+                        <div class="flex-col px-3 w-full">
                             <label class="block text-gray-700 text-sm font-bold m-2">
                                 Maximum number of attendees
                               </label>
@@ -68,17 +60,19 @@
                         </div>
                         </div>
                         <label class="font-bold">Choose Event Type</label>
-                        <div class="flex">
-                         <div class="flex-col border">
-                            <label for="" class="block text-gray-700 text-sm font-bold m-2">Free Event</label>
-                            <input type="radio" v-model="type" class="shadow" value="free">
-                         </div>
-                        <div class="flex-col border">
-                            <label for="" class="block text-gray-700 text-sm font-bold m-2">Paid Event</label>
-                            <input type="radio" v-model="type" class="shadow" value="paid">
+                        <label class="switch">
+                            <input class="switch-input" type="checkbox" value=""/>
+                            <span class="switch-label" data-on="Paid" @click="checkbox()" data-off="Free"></span>
+                            <span class="switch-handle" @click="checkbox()"></span>
+                        </label>
+                        <input type="text" v-model="type" hidden name="type" id="">
+                        <div v-show="paid" class="flex-col w-full px-3">
+                            <label class="block text-gray-700 text-sm font-bold m-2">
+                                Event Entry Fee
+                              </label>
+                            <input required type="number" placeholder="Enter Amount per attendee" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" v-model="amount">
                         </div>
-                        </div>
-                        <div class="flex-col w-full">
+                        <div class="flex-col px-3 w-full">
                             <label class="block text-gray-700 text-sm font-bold m-2">
                                 Five key features of the event you wish to highlight to your target audience
                               </label>
@@ -92,7 +86,7 @@
                            Detailed Overview of the programme
                         </label>
                         <textarea v-model="overview" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" cols="30" rows="10"></textarea>
-                        <div class="flex flex-col">
+                        <div class="flex px-3 flex-col">
                         <div id="preview">
                             <img v-if="imageUrl" :src="imageUrl" />
                         </div>
@@ -109,7 +103,7 @@
                 <!--Overlay-->
                 <div v-if="events == true" @events="events = true" style="background: rgba(0,0,0, .5)" class="absolute inset-0 bottom-0 z-50 items-center justify-center" >
                 <!--Dialog-->
-                <div class="bg-white w-9/12 xs:w-full rounded shadow py-4 px-8 xs:mt-64 mt-24 text-left pt-30 " style="top: 60px;">
+                <div class="bg-white w-9/12 xs:w-full rounded shadow py-4 px-8 inset-x-0 xs:mt-64 mt-24 text-left pt-30 " style="top: 60px;">
 
                     <!--Title-->
                     <div class="flex justify-between items-center pb-3">
@@ -261,7 +255,8 @@ import EventBus from '../event-bus';
                     width:''
                 },
                 //Events Data
-
+                paid: false,
+                type:'free',
 
                 adding: false,
                 inviteLink: '',
@@ -286,10 +281,9 @@ import EventBus from '../event-bus';
                 title: '',
                 feedback: false,
                 overview: '',
-                amount: '',
+                amount: 0,
                 duration: '',
                 venue: '',
-                type: '',
                 open: true,
                 speakers: false,
                 speaker:{
@@ -375,7 +369,7 @@ import EventBus from '../event-bus';
                 this.errors.push('Overview is required and must be atleast 200 characters.');
             }
             if (this.amount.length < 1) {
-                this.errors.push('Fee is required, can must 0 for a free event.');
+                this.errors.push('Fee is required, can be 0 for a free event.');
             }
             if (!this.attendee) {
                 this.errors.push('Number of expected attendees cannot be empty');
@@ -687,6 +681,11 @@ import EventBus from '../event-bus';
                 text: 'unable to add speaker'
                 })
             });
+        },
+         checkbox(){
+        this.paid = !this.paid,
+        this.paid ? this.type = 'paid' : this.type = "free";
+        console.log(this.type)
         }
     },
     mounted () {
