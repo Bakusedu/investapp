@@ -25,7 +25,7 @@
             </div>
             <div class="flex items-center border-b border-b-2 border-yellow-500 py-2">
               <button class="flex-shrink-0 bg-yellow-600 hover:bg-yellow-700 border-yellow-600 hover:border-yellow-700 text-sm border-4 text-white py-1 px-2 rounded" type="submit">
-                Sign Up
+                Sign In
               </button>
               <p class="ml-2 text-gray-500">Don't have an account?</p>
             <a class="flex-shrink-0 border-transparent border-4 text-yellow-500 hover:text-yellow-800 text-sm py-1 px-2 rounded" href="{{route('register')}}">

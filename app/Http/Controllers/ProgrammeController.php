@@ -23,7 +23,7 @@ class ProgrammeController extends Controller
      */
     public function index()
     {
-        $programmes = Programme::latest()->ypaginate(10);
+        $programmes = Programme::latest()->paginate(10);
         $pending = WaitingList::whereStatus('pending')->count();
         $waiting = WaitingList::latest()->paginate(10);
         return view('admin.programmes.index', compact('programmes','waiting', 'pending'));
