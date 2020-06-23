@@ -7,6 +7,6 @@
 }
 </style>
 <div id="app" class="h-screen">
-    <dashboard-component></dashboard-component>
+    <router-view></router-view>
 </div>
 @endsection

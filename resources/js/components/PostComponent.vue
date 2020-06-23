@@ -1,19 +1,11 @@
 <template>
 
-        <div class="h-full">
-              <!--Overlay-->
-             <div style="background-color: rgba(0,0,0,0.5)" v-if="create == true" class="absolute inset-0 z-40 flex items-center justify-center" >
-                <!--Dialog-->
-                <div class="bg-white w-9/12 xs:w-full h-screen overflow-y-auto md:max-w-md mx-auto rounded shadow-lg py-4 mt-20 text-left pt-20 pb-40 px-6" style="top: 30px">
-
+       <div class="flex-1 xs:m-0 xs:mt-5 m-3 flex-col flex xs:flex-col rounded-lg bg-white">
+            <div class="w-full p-2 flex xs:flex-col rounded-lg bg-white">
+               <div class="flex-col relative ">
                     <!--Title-->
                     <div class="flex justify-between items-center pb-3">
                         <p class="text-2xl font-bold">Create Programme</p>
-                        <div class="cursor-pointer z-50" @click="hide()">
-                            <svg class="fill-current text-black" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
-                                <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"></path>
-                            </svg>
-                        </div>
                     </div>
                     <p v-if="errors.length">
                         <b><i class="fa fa-exclamation-triangle"></i>Please correct the following error(s):</b>
@@ -59,18 +51,20 @@
                             v-model="attendee">
                         </div>
                         </div>
-                        <label class="font-bold">Choose Event Type</label>
-                        <label class="switch">
-                            <input class="switch-input" type="checkbox" value=""/>
-                            <span class="switch-label" data-on="Paid" @click="checkbox()" data-off="Free"></span>
-                            <span class="switch-handle" @click="checkbox()"></span>
-                        </label>
+                        <label class="px-6 py-6 font-bold">Choose Event Type</label>
+                        <div class="p-3">
+                            <label class="switch">
+                                <input class="switch-input" type="checkbox" value=""/>
+                                <span class="switch-label" data-on="Paid" @click="checkbox()" data-off="Free"></span>
+                                <span class="switch-handle" @click="checkbox()"></span>
+                            </label>
+                        </div>
                         <input type="text" v-model="type" hidden name="type" id="">
-                        <div v-show="paid" class="flex-col w-full px-3">
+                        <div v-show="paid" class="flex-col w-full px-6">
                             <label class="block text-gray-700 text-sm font-bold m-2">
                                 Event Entry Fee
                               </label>
-                            <input required type="number" placeholder="Enter Amount per attendee" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" v-model="amount">
+                            <input required type="number" placeholder="Enter Amount per attendee" class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" v-model="amount">
                         </div>
                         <div class="flex-col px-3 w-full">
                             <label class="block text-gray-700 text-sm font-bold m-2">
@@ -90,147 +84,12 @@
                         <div id="preview">
                             <img v-if="imageUrl" :src="imageUrl" />
                         </div>
-                        <input type="file" ref="myFile" @change="selectedFile" accept="image/*" class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight flex-none w-auto focus:outline-none focus:shadow-outline" name="featured" required >
+                        <input type="file" ref="myFile" @change="selectedFile" accept="image/*" class="shadow w-2/12 appearance-none border rounded py-2 px-3 text-gray-700 leading-tight flex-none w-auto focus:outline-none focus:shadow-outline" name="featured" required >
                         <div v-if="imageError" class="imageError text-red-700 p-3">
                             {{imageError}}
                         </div>
                         </div>
-                        <button class="font-semibold px-10 py-3 rounded-t bg-yellow-600"  v-bind:class="{ disabled: adding}" v-on:click="checkForm($event)"><p v-if="adding">Proccessing...</p><p v-else>Create Programme</p></button>
-                    </form>
-                </div>
-                <!--/Dialog -->
-            </div><!-- /Overlay -->
-                <!--Overlay-->
-                <div v-if="events == true" @events="events = true" style="background: rgba(0,0,0, .5)" class="absolute inset-0 bottom-0 z-50 items-center justify-center" >
-                <!--Dialog-->
-                <div class="bg-white w-9/12 xs:w-full rounded shadow py-4 px-8 inset-x-0 xs:mt-64 mt-24 text-left pt-30 " style="top: 60px;">
-
-                    <!--Title-->
-                    <div class="flex justify-between items-center pb-3">
-                        <p class="text-base xs:px-3 xs:py-1 px-6 py-2 bg-gray-200 rounded font-bold">Add Event(s)</p>
-                        <p @click="speakers = true" class="text-base cursor-pointer xs:px-3 xs:py-1 px-6 py-2 shadow-md bg-yellow-600 rounded font-bold">Add Speakers</p>
-                        <div class="cursor-pointer z-50" @click="events = false">
-                            <svg class="fill-current text-black" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 18 18">
-                                <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"></path>
-                            </svg>
-                        </div>
-                    </div>
-                     <p v-if="errors.length">
-                        <b><i class="fa fa-exclamation-triangle"></i>Please correct the following error(s):</b>
-                        <ul>
-                        <li class="text-red-600" v-for="(error,index) in errors" :key="index">{{ error }}</li>
-                        </ul>
-                    </p>
-
-                        <div class="flex">
-                            <div class="flex-none w-full">
-                            <input required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" ref="eventTitle" type="text" placeholder="Enter  title">
-                            </div>
-                        </div>
-                        <div class="flex flex-row w-full xs:flex-col pb-4">
-                            <div class="flex-1">
-                            <label class="block text-gray-700 text-sm font-bold m-2" > Start Date</label>
-                            <input ref="eventStartDate" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"  type="datetime-local" placeholder="Start Date">
-                            </div>
-                            <div class="flex-1 xs:w-full xs:flex-none">
-                            <label class="block text-gray-700 text-sm font-bold m-2">End Date</label>
-                            <input ref="eventEndDate" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="datetime-local" placeholder="End Date">
-                            </div>
-                        </div>
-                        <label for="checkbox" class="font-bold">Tick if this task expects a feedback from attendee(s)</label>
-                        <input type="checkbox" id="checkbox" v-model="feedback">
-                        <div v-if="feedback">
-                            <div class="flex-none flex-col">
-                                <label for="" class="flex-none flex font-bold">Question</label>
-                            <input type="text" ref="eventQuestion" class="px-3 flex shadow w-full py-2 appearance-none border rounded text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Write a Question">
-                            </div>
-                             <div class="flex-none flex-col">
-                            <label for="" class="flex font-bold">Response Format</label>
-                            <select ref="eventResponse" class="flex shadow appearance-none border rounded w-1/2 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" >
-                                <option value="image">Image</option>
-                                <option value="text">Text</option>
-                                <option value="video">Video</option>
-                                <option value="docs">Documents</option>
-                            </select>
-                            </div>
-                        </div>
-                        <label class="block text-gray-700 text-sm font-bold m-2">
-                        Event Description
-                        </label>
-                        <textarea ref="eventDetails" required placeholder="Enter event details here" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" cols="30" rows="10"></textarea>
-                    <button @click="validateEvent" class="font-semibold px-10 py-3 rounded-t bg-yellow-600"><p v-if="adding">Proccessing...</p> <p v-else>Add to Calendar</p></button>
-                </div>
-            </div>
-             <!-- End Overlay for events -->
-                          <!--Overlay-->
-             <div v-if="speakers == true" class="absolute inset-0 mt-12 xs:pt-64 z-50 flex items-center justify-center" >
-                <!--Dialog-->
-                <div class="bg-white w-9/12 xs:w-full h-auto md:max-w-md mx-auto rounded shadow-lg pb-32 xs:pt-64 pt-56 text-left p-4 px-6" style="top: 60px">
-
-                    <!--Title-->
-                    <div class="flex justify-between items-center pb-3">
-                        <p class="text-2xl font-bold">Add speaker(s)</p>
-                        <div class="cursor-pointer z-50" @click="speakers = false">
-                            <svg class="fill-current text-black" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
-                                <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"></path>
-                            </svg>
-                        </div>
-                    </div>
-                    <form action="#" method="post" @submit="checkSpeakerForm($event)" enctype="multipart/form-data">
-                        <div class="xl:flex lg:flex md:flex xs:flex-none  sm:flex-none">
-                            <div class="flex-row w-1/2 xs:w-full sm:w-full">
-                                <label class="block text-gray-700 text-sm font-bold m-2">
-                                    Speaker Name
-                                  </label>
-                                <input required class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline" v-model="speaker.name" value="" type="text" placeholder="Enter Speaker Name">
-                                 <label class="block text-gray-700 text-sm font-bold m-2">
-                                    Speaker Email
-                                  </label>
-                                <input required class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline" v-model="speaker.email" value="" type="text" placeholder="Enter Speaker Name">
-                                <label class="block text-gray-700 text-sm font-bold m-2">
-                                   Organization
-                                  </label>
-                                <input required type="text" placeholder="Example: LiftHub, Amazon" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" v-model="speaker.organization">
-                                <label class="block text-gray-700 text-sm font-bold m-2">
-                                    Title
-                                </label>
-                                <input required type="text" placeholder="CEO, Manager" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" v-model="speaker.title">
-                                <label class="block text-gray-700 text-sm font-bold m-2">
-                                    Facebook Profile
-                                  </label>
-                                <input ref="facebook" class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline" v-model="speaker.facebook"  value="" type="text" placeholder="Link to speaker's facebook profile (optional)">
-                                <label class="block text-gray-700 text-sm font-bold m-2">
-                                    Twitter
-                                  </label>
-                                <input ref="twitter" class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline" v-model="speaker.twitter"  value="" type="text" placeholder="Link to speaker's twitter handle (optional)">
-                                 <label class="block text-gray-700 text-sm font-bold m-2">
-                                    linkedIn
-                                  </label>
-                                <input  class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline" v-model="speaker.linkedIn"  value="" type="text" placeholder="Link to speaker's linkedIn (optional)">
-                            </div>
-                            <div class="p-16 flex-col w-1/2 xs:flex-row sm:w-full sm:flex-row xs:w-full">
-                                <div @click="trigger" class="border hover:shadow-lg flex flex-row justify-center items-center h-64 w-64" :style="{backgroundImage: `url( ${speakerFileUrl} )`, backgroundSize:'cover', backgroundSize:'no-repeat', backgroundPosition: 'center'}">
-                                    <p v-if="speakerImage == null" class="text-black">Click to add Image</p>
-                                    <input hidden ref="speakerFile" @change="speakerFileValidation" type="file">
-                                </div>
-                                <span v-if="speakerFileError" class="text-gray-700">
-                                    <span class="text-yellow-500"><i class="fa fa-exclamation-triangle"></i></span> {{speakerFileError}}
-                                </span>
-                                 <p v-if="errors.length">
-                                    <b><i class="fa fa-exclamation-triangle"></i>Please correct the following error(s):</b>
-                                    <ul>
-                                    <li class="text-red-600" v-for="(error,index) in errors" :key="index">{{ error }}</li>
-                                    </ul>
-                                </p>
-                            </div>
-                         </div>
-                         <div class="flex">
-                            <div class="flex-col w-full">
-                                <label for="">Copy Unique Invite Link</label>
-                                <input type="text" :value="inviteLink">
-                            </div>
-                         </div>
-                        <button class="font-semibold px-10 py-3 mt-5 rounded-t bg-yellow-600"  v-bind:class="{ disabled: adding,}" v-on:click="checkSpeakerForm($event)"><b v-if="adding == true">Proccessing...</b> <b v-else>Add Speaker</b> </button>
+                        <button class="font-semibold px-10 py-3 rounded bg-yellow-600"  v-bind:class="{ disabled: adding}" v-on:click="checkForm($event)"><p v-if="adding">Proccessing...</p><p v-else>Create Programme</p></button>
                     </form>
                 </div>
                 <!--/Dialog -->
@@ -246,7 +105,6 @@ const MAX_WIDTH = 720;
 const MAX_HEIGHT = 720;
 import EventBus from '../event-bus';
     export default {
-            props:['create'],
           data(){
             return {
                     image:{
@@ -257,20 +115,17 @@ import EventBus from '../event-bus';
                 //Events Data
                 paid: false,
                 type:'free',
-
                 adding: false,
                 inviteLink: '',
                 programmeId: '',
                 imageUrl: null,
-                speakerFileUrl: null,
-                speakerFileError: '',
-                speakerImage: null,
                  errors: [],
                  imageError: '',
                 imageFile: '',
                 imageLoaded:false,
                 enddate : '',
                 startdate: '',
+                overview: '',
                 attendee: '',
                 highlight: [],
                 highlight1: '',
@@ -280,21 +135,10 @@ import EventBus from '../event-bus';
                 highlight5: '',
                 title: '',
                 feedback: false,
-                overview: '',
                 amount: 0,
                 duration: '',
                 venue: '',
                 open: true,
-                speakers: false,
-                speaker:{
-                    facebook: '',
-                    twitter: '',
-                    linkedIn: '',
-                    name: '',
-                    email: '',
-                    organization: '',
-                    title: ''
-                },
                 events: false
             }
         },
@@ -435,171 +279,13 @@ import EventBus from '../event-bus';
             text: 'Invite speakers to your programme',
              duration: 10000,
             });
-           vm.events = true
+           vm.$router.push({name:"addevent", params:{programmeId: response.data.id}})
 
         })
         .catch(function(e){
             this.$notify({
                 type: 'warn',
                 text: 'unable to create a new programme'
-                })
-            });
-        },
-
-        hide(event){
-            this.$emit('close', true)
-        },
-
-        trigger(){
-            this.$refs.speakerFile.click()
-        },
-        speakerFileValidation() {
-            this.speakerFileError = '';
-
-            let speakerFile = this.$refs.speakerFile.files[0];
-            this.speakerFileUrl = URL.createObjectURL(speakerFile)
-
-            if(!speakerFile || speakerFile.type.indexOf('image/') !== 0) return;
-            this.image.size = speakerFile.size;
-            if(this.image.size > MAX_SIZE) {
-                this.speakerFileError= `The image size (${this.image.size}) is too much (max is ${MAX_SIZE}).`;
-                return;
-            }
-
-            let reader = new FileReader();
-
-            reader.readAsDataURL(speakerFile);
-            reader.onload = evt => {
-                let img = new Image();
-                img.onload = () => {
-                this.image.width = img.width;
-                this.image.height = img.height;
-                console.log(this.image);
-                if(this.image.width > MAX_WIDTH) {
-                    this.speakerFileError = `The image width (${this.image.width}) is too much (max is ${MAX_WIDTH}).`;
-                    return;
-                }
-                if(this.image.height > MAX_HEIGHT) {
-                    this.speakerFileError = `The image height (${this.image.height}) is too much (max is ${MAX_HEIGHT}).`;
-                    return;
-                }
-
-            }
-                img.src = evt.target.result;
-            }
-
-            this.speakerImage = speakerFile;
-
-            reader.onerror = evt => {
-                console.error(evt);
-            }
-
-        },
-        ValidateEmail(mail)
-        {
-          if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail))
-        {
-            return (true)
-        }
-            return (false)
-        },
-        validURL(str) {
-            var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
-                '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
-                '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
-                '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
-                '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
-                '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
-            return !!pattern.test(str);
-        },
-        checkSpeakerForm: function (e) {
-            this.errors = [];
-            if (!this.speaker.title) {
-                this.errors.push('Speaker\'s Title is required.');
-            }
-            if (!this.speaker.name || this.speaker.name.length < 5) {
-                this.errors.push('Enter a valid name.');
-            }
-            if (!this.speaker.organization) {
-                this.errors.push('Speaker organization cannot be empty');
-            }
-            if (this.speaker.facebook) {
-               let url = this.validURL(this.speaker.facebook)
-
-               url ? true : this.errors.push('The facebook URL is invalid');
-            }
-            if (this.speaker.twitter) {
-               let url = this.validURL(this.speaker.twitter)
-
-               url ? true : this.errors.push('The Twitter URL is invalid');
-            }
-            if (this.speaker.linkedIn) {
-               let url = this.validURL(this.speaker.linkedIn)
-
-               url ? true : this.errors.push('The speaker linkedIn URL is invalid');
-            }
-             if (!this.speaker.email || !this.speaker.email) {
-               let email = this.ValidateEmail(this.speaker.email)
-
-               email ? true : this.errors.push('The speaker email is invalid');
-            }
-            if (!this.speakerImage || this.speakerFileError) {
-                this.errors.push('Image field is required.');
-            }
-            if (this.errors.length > 0) {
-            this.$notify({
-            group: 'foo',
-            title: 'Errors Found',
-            text: 'Unable to submit form',
-             type: 'warn',
-             duration: 10000,
-            });
-            }
-            e.preventDefault();
-            if (this.errors.length == 0) {
-                this.addSpeaker();
-            }
-        },
-        addSpeaker(){
-            this.adding = true;
-            let formdata = new FormData();
-            formdata.append('programmeId', this.programmeId)
-            formdata.append('image', this.speakerImage)
-            formdata.append('title', this.speaker.title)
-            formdata.append('name', this.speaker.name)
-            formdata.append('facebook', this.speaker.facebook)
-            formdata.append('twitter', this.speaker.twitter)
-            formdata.append('linkedIn', this.speaker.linkedIn)
-            formdata.append('organization', this.speaker.organization)
-            formdata.append('email', this.speaker.email)
-
-        let vm = this
-        axios.post( '/api/addspeaker',
-            formdata,
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-           }
-        ).then(function(response){
-
-           vm.$notify({
-            group: 'foo',
-            title: 'success',
-            text: 'Speaker added',
-            type: 'success',
-             duration: 10000,
-            });
-           vm.speakers = true
-           vm.adding = false
-           vm.inviteLink = response.data.invite_link
-
-        })
-        .catch(function(e){
-           vm.adding = false
-            vm.$notify({
-                type: 'warn',
-                text: 'unable to add speaker'
                 })
             });
         },
@@ -685,7 +371,6 @@ import EventBus from '../event-bus';
          checkbox(){
         this.paid = !this.paid,
         this.paid ? this.type = 'paid' : this.type = "free";
-        console.log(this.type)
         }
     },
     mounted () {

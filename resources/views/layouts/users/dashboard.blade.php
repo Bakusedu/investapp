@@ -153,7 +153,7 @@
             @yield('header')
             @yield('content')
 
-    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.0.1/dist/alpine.js" defer></script>
+     <script src={{asset('js/alpine.js')}}></script>
     <script src={{asset("js/jquery.min.js")}}></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
      @yield('script')

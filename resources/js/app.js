@@ -2,8 +2,10 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 Vue.use(require('vue-moment'));
+import App from "./views/App.vue";
 import Notifications from 'vue-notification'
-import ExampleComponent from './components/DashboardComponent.vue';
+import DashboardComponent from './components/DashboardComponent.vue';
+import SideBarComponent from './components/SideBarComponent.vue';
 import PostComponent from './components/PostComponent.vue';
 import Facilitator from './components/Facilitator.vue';
 import EditProgramme from './components/EditProgramme.vue';
@@ -12,7 +14,9 @@ import Speaker from './components/event-manager/Speaker';
 import Event from './components/event-manager/Event';
 import WaitingList from './components/event-manager/WaitingList';
 import UserList from './components/event-manager/UserList';
-Vue.component('dashboard-component', ExampleComponent);
+import Routes from './routes.js';
+Vue.component('dashboard-component', DashboardComponent);
+Vue.component('sidebar-component', SideBarComponent);
 Vue.component('post-component', PostComponent)
 Vue.component('edit-component', EditProgramme)
 Vue.component('facilitator-component', Facilitator)
@@ -39,4 +43,7 @@ Vue.filter('truncate', filter);
 
 const app = new Vue({
     el: '#app',
+    router: Routes,
+    render: h => h(App),
 });
+export default app;

@@ -14,19 +14,19 @@ class UsersController extends Controller
     }
 
     public function programmes($type)
-{
+    {
 
         $data = Programme::with('events')->latest()->paginate(6);
         $programme = Auth::user()->programmes()->where('createdBy', '!=', Auth::user()->id)->latest()->with('events')->paginate(6);
         if ($type == 'mine') {
             $user = Auth::user();
-         $data = Programme::where("createdBy", $user->id)->latest()->with('events')->with('users')->with('waitinglist')->with('speakers')->paginate(6);
+        $data = Programme::where("createdBy", $user->id)->latest()->with('events')->with('users')->with('waitinglist')->with('speakers')->paginate(6);
         }
         if ($type == 'attended') {
-           $data = $programme;
+        $data = $programme;
         }
 
-       return response()->json($data, 200);
+        return response()->json($data, 200);
     }
 
     public function Logout()

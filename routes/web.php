@@ -60,3 +60,5 @@ Route::group(['prefix' => 'admin', 'middleware'=>'admin'], function () {
 
 // Serve Files
 Route::get('/files/images/', 'FileController@fetchFile')->name('file-fetch');
+
+Route::get('/{any}', 'UsersController@dashboard')->where('any', '.*')->middleware('auth');

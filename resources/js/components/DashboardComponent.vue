@@ -1,54 +1,7 @@
 <template>
-    <div class="bg-gray-300 flex flex-row xs:flex-col pt-20 xs:px-0 px-6">
-                    <notifications group="foo" />
-    <div class="flex-none static flex xs:w-full flex-col xs:flex-row items-center rounded-md w-2/12 p-3 xs:m-0 m-3 bg-white">
-        <div class="h-24 w-24 xs:hidden rounded-full mt-8 mb-5">
-         <img :src="'/files/images?filename=' + user.avatar" class="object-fit rounded-full h-24 w-24 mt-8 mb-5" alt="" srcset="">
-        </div>
-        <div class="xs:flex-1 p-4 xs:hidden"><h3 class="font-bold"><span>{{user.first_name}}</span> <span>{{user.last_name}}</span></h3>
-            <h3>{{user.email}}</h3></div>
-        <div class="flex-col flex xs:flex-row flex-wrap items-center justify-between">
-            <div class="p-4">
-                <a :href="'/forum/home'"
-                    class="bg-gray-300 text-gray-700 font-semibold py-2 xs:py-1 xs:px-10 px-16 rounded inline-flex items-center"
-                    >
-                    <span class="mr-1">Forum</span>
-                </a>
-            </div>
-            <div class="p-4">
-                <div class="dropdown inline-block relative">
-                  <button id="programmes" v-on:click="fetchStories('/api/programmes/all')" class="bg-gray-300 text-gray-700 font-semibold py-2 xs:py-1 xs:p-4 xs:text-sm px-8 rounded inline-flex items-center">
-                    <span class="mr-1">Programmes</span>
-                    <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/> </svg>
-                  </button>
-                  <ul class="dropdown-menu absolute hidden text-gray-700 pt-1">
-                    <li v-on:click="fetchStories('/api/programmes/mine')" class=""><button class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-10 block whitespace-no-wrap">Hosted</button></li>
-                    <li v-on:click="fetchStories('/api/programmes/attended')" class=""><button class="bg-gray-200 hover:bg-gray-400 py-2 px-8 block whitespace-no-wrap" >Attended</button></li>
-                  </ul>
-                </div>
-            </div>
 
-            <div v-if="hasProgram" class="p-4">
-                <div class="inline-block">
-                  <button @click="manager=true" id="users" class="bg-gray-300 text-gray-700 font-semibold py-2 xs:py-1 xs:p-4 xs:text-sm px-8 rounded inline-flex items-center">
-                    <span class="mr-1">Events Manager</span>
-                   </button>
-                </div>
-            </div>
-            <div class="p-4">
-            <div class="inline-block">
-
-            <a href="/logout">
-                    <li class="bg-gray-200 hover:bg-gray-400 rounded py-2 px-8 block xs:py-1 xs:p-4 xs:px-10 xs:text-sm whitespace-no-wrap">
-                        Logout
-                    </li>
-            </a>
-            </div>
-            </div>
-        </div>
-    </div>
     <transition name="flip-list" mode="out-in">
-    <div key="overview" v-if="details==true && manager == false"  class="flex-1 z-10 xs:m-0 xs:mt-5 m-3 p-6 flex xs:flex-col rounded-lg bg-white">
+    <div key="overview" v-if="details==true"  class="flex-1 z-10 xs:m-0 xs:mt-5 m-3 p-6 flex xs:flex-col rounded-lg bg-white">
         <div v-if="isloading" class="flex w-full justify-center text-center">
              <span class="text-xl">Loading...</span>
         </div>
@@ -116,16 +69,16 @@
         <a href="#" v-on:click="details=false" class="absolute z-50 flex-1 float-left right-0 justify-end"><span class="px-4 rounded-full shadow-xl bg-white py-2 font-extrabold" style="font-size: 30px">X</span></a>
     </div>
     </div>
-    <div v-if="details == false && manager == false" key="programmeTiles" class="relative flex-1 xs:m-0 xs:mt-5 m-3 flex-col flex xs:flex-col rounded-lg bg-white">
+    <div v-if="details == false" key="programmeTiles" class="relative flex-1 xs:m-0 xs:mt-5 m-3 flex-col flex xs:flex-col rounded-lg bg-white">
             <div class="flex-1 text-lg font-bold"><span><i class="fa fa-calendar-alt"></i> Programmes</span>
             </div>
                 <!-- button -->
                 <div class="absolute right-0 mt-5 pr-10 xs:pr-2">
-                    <a v-on:click="create = true" href="#"
+                    <router-link to="/create/programme"
                         class="bg-green-600 xs:text-xs shadow-lg text-white font-semibold py-2 xs:py-1 text-sm xs:px-10 px-16 rounded inline-flex items-center"
                         >
                         <span class="mr-1">Create Programme</span>
-                    </a>
+                    </router-link>
                 </div>
                 <transition-group name="slide-fade" class="flex flex-wrap xs:flex-col justify-evenly items-center">
                 <div v-for="item in programmes" :key="item.id" class="flex flex-col xs:w-full px-6 py-2 w-1/3">
@@ -167,13 +120,11 @@
             </div>
     </div>
 
-    <div v-if="manager == true" key="manager" class="flex-1 xs:m-0 xs:mt-5 m-3 flex-col flex xs:flex-col rounded-lg bg-white">
+    <!-- <div v-if="manager == true" key="manager" class="flex-1 xs:m-0 xs:mt-5 m-3 flex-col flex xs:flex-col rounded-lg bg-white">
             <manager class="w-full p-2 flex xs:flex-col rounded-lg bg-white" v-bind:myprogrammes="myprogrammes"></manager>
-    </div>
+    </div> -->
     </transition>
-    <post-component v-bind:create="create" @close="create=!create"></post-component>
 
-</div>
 </template>
 <script>
 const MAX_SIZE = 1000000;
@@ -181,6 +132,7 @@ const MAX_WIDTH = 720;
 const MAX_HEIGHT = 720;
 import EventBus from '../event-bus';
     export default {
+        props: ['myprogrammes', 'programmes'],
           data(){
             return {
                 image:{
@@ -188,12 +140,12 @@ import EventBus from '../event-bus';
                 height:'',
                 width:''
                 },
-                myprogrammes: [],
+                // myprogrammes: [],
                  imageError:'',
                 imageLoaded:false,
                 isLoggedIn : true,
                 user: '',
-                programmes: [],
+                // programmes: [],
                 hasProgram: false,
                 show: true,
                 pagination: {},
@@ -209,19 +161,19 @@ import EventBus from '../event-bus';
             }
         },
         methods: {
-            fetchStories: function (page_url) {
-                let vm = this;
-                this.show=false;
-                this.manager=false;
-                page_url = page_url || '/api/programmes/all'
-                axios
-                .get(page_url)
-                    .then(function (response) {
-                        vm.makePagination(response.data)
-                        vm.programmes = response.data.data
+            // fetchStories: function (page_url) {
+            //     let vm = this;
+            //     this.show=false;
+            //     this.manager=false;
+            //     page_url = page_url || '/api/programmes/all'
+            //     axios
+            //     .get(page_url)
+            //         .then(function (response) {
+            //             vm.makePagination(response.data)
+            //             vm.programmes = response.data.data
 
-                 });
-            },
+            //      });
+            // },
 
             makePagination: function(data){
                     let pagination = {
@@ -317,24 +269,25 @@ import EventBus from '../event-bus';
             //Check if the user is Authenticated
             this.isLoggedIn = window.Laravel.isLoggedin
             this.isLoggedIn ? this.user = window.Laravel.user : this.user = null
-            this.fetchStories()
+         //   this.fetchStories()
              let vm  = this
+                 console.log(vm.myprogrammes)
             EventBus.$on('events', function (payLoad) {
                     vm.edit = payLoad.edit
 
             });
         },
 
-         beforeMount() {
-            hasProgram: {
-               let vm = this
-            axios.get('/api/programmes/mine').then((response)=>{
-                this.myprogrammes = response.data.data
-                response.data.data.length > 0 ? vm.hasProgram = true : vm.hasProgram = false;
+        //  beforeMount() {
+        //     hasProgram: {
+        //        let vm = this
+        //     axios.get('/api/programmes/mine').then((response)=>{
+        //         this.myprogrammes = response.data.data
+        //         response.data.data.length > 0 ? vm.hasProgram = true : vm.hasProgram = false;
 
-            })
-            }
-        }
+        //     })
+        //     }
+        // }
 }
 </script>
 
